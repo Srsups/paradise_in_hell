@@ -2,33 +2,66 @@ package br.com.srsups.paradiseinhell;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
-    private Texture image;
+    // Agora a classe Main tem uma referência para um objeto Jogador
+    private Jogador jogador;
 
     @Override
-    public void create() {
+    public void create () {
         batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        // Cria uma nova instância do jogador na posição x=200, y=150
+        jogador = new Jogador(200, 150);
     }
 
     @Override
-    public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+    public void render () {
+        float delta = Gdx.graphics.getDeltaTime();
+
+        // Limpa a tela
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Atualiza posição e estado do jogador
+        jogador.update(delta);
+        tratarInput(jogador, delta);
+
+        // Desenha o jogador
         batch.begin();
-        batch.draw(image, 140, 210);
+        jogador.draw(batch);
         batch.end();
     }
 
+    //Lógica de movimento
+    private void tratarInput(Jogador jogador, float delta) {
+        float velocidade = 100f;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            jogador.y += velocidade * delta;
+            jogador.setEstado(Jogador.Estado.COSTAS);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            jogador.y -= velocidade * delta;
+            jogador.setEstado(Jogador.Estado.FRENTE);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            jogador.x -= velocidade * delta;
+            jogador.setEstado(Jogador.Estado.LADO_ESQUERDO);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            jogador.x += velocidade * delta;
+            jogador.setEstado(Jogador.Estado.LADO_DIREITO);
+        } else {
+            jogador.setEstado(Jogador.Estado.PARADO);
+        }
+    }
+
     @Override
-    public void dispose() {
+    public void dispose () {
         batch.dispose();
-        image.dispose();
+        // Pede para o jogador liberar seus recursos (a textura)
+        jogador.dispose();
     }
 }
