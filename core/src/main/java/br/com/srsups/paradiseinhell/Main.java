@@ -4,40 +4,53 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
-    // Agora a classe Main tem uma referência para um objeto Jogador
+    private OrthographicCamera camera;
     private Jogador jogador;
+    private TileMap tileMap;
 
     @Override
-    public void create () {
+    public void create() {
         batch = new SpriteBatch();
-        // Cria uma nova instância do jogador na posição x=200, y=150
-        jogador = new Jogador(200, 150);
+
+        // Cria uma câmera com a mesma dimensão da tela
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        tileMap = new TileMap();
+
+        jogador = new Jogador(100, 100);
     }
 
     @Override
-    public void render () {
+    public void render() {
         float delta = Gdx.graphics.getDeltaTime();
 
-        // Limpa a tela
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Atualiza posição e estado do jogador
+
         jogador.update(delta);
         tratarInput(jogador, delta);
 
-        // Desenha o jogador
+        // Atualiza a posição da câmera para seguir o jogador
+        camera.position.set(jogador.x, jogador.y, 0);
+        camera.update();
+
+        tileMap.update(camera); // atualiza o mapa baseado na câmera
+
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        jogador.draw(batch);
+        tileMap.draw(batch);    // desenha os tiles primeiro (fundo)
+        jogador.draw(batch);    // desenha o jogador por cima
         batch.end();
     }
 
-    //Lógica de movimento
     private void tratarInput(Jogador jogador, float delta) {
         float velocidade = 100f;
 
@@ -59,9 +72,9 @@ public class Main extends ApplicationAdapter {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         batch.dispose();
-        // Pede para o jogador liberar seus recursos (a textura)
+        tileMap.dispose();
         jogador.dispose();
     }
 }

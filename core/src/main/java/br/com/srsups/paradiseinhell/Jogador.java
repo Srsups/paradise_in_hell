@@ -18,7 +18,8 @@ public class Jogador {
     // que é uma animação composta por TextureRegions.
     private Animation<TextureRegion> animacaoFrente;
     private Animation<TextureRegion> animacaoCostas;
-    private Animation<TextureRegion> animacaoLado;
+    private Animation<TextureRegion> animacaoLadoEsquerdo;
+    private Animation<TextureRegion> animacaoLadoDireito;
 
     // Variável para contar o tempo de animação. (É essencial)
     private float stateTime;
@@ -45,11 +46,19 @@ public class Jogador {
         animacaoFrente.setPlayMode(Animation.PlayMode.LOOP);
 
         // Exemplo para "Lado"
-        TextureRegion[] framesLado = new TextureRegion[2];
-        framesLado[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
-        framesLado[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
-        animacaoLado = new Animation<>(0.25f, framesLado);
-        animacaoLado.setPlayMode(Animation.PlayMode.LOOP);
+        TextureRegion[] framesLadoEsquerdo = new TextureRegion[2];
+        framesLadoEsquerdo[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
+        framesLadoEsquerdo[0].flip(true, false);
+        framesLadoEsquerdo[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
+        framesLadoEsquerdo[1].flip(true, false);
+        animacaoLadoEsquerdo = new Animation<>(0.25f, framesLadoEsquerdo);
+        animacaoLadoEsquerdo.setPlayMode(Animation.PlayMode.LOOP);
+
+        TextureRegion[] framesLadoDireito = new TextureRegion[2];
+        framesLadoDireito[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
+        framesLadoDireito[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
+        animacaoLadoDireito = new Animation<>(0.25f, framesLadoDireito);
+        animacaoLadoDireito.setPlayMode(Animation.PlayMode.LOOP);
 
         // Exemplo para "Costas/Cima"
         TextureRegion[] framesCostas = new TextureRegion[2];
@@ -84,8 +93,9 @@ public class Jogador {
             case COSTAS:
                 return animacaoCostas.getKeyFrame(stateTime, true);
             case LADO_ESQUERDO:
+                return animacaoLadoEsquerdo.getKeyFrame(stateTime, true);
             case LADO_DIREITO:
-                return animacaoLado.getKeyFrame(stateTime, true);
+                return animacaoLadoDireito.getKeyFrame(stateTime, true);
             case PARADO:
             default:
                 return animacaoFrente.getKeyFrame(0); // Primeiro frame da frente como "parado"
