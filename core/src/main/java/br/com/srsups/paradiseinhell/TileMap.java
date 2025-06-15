@@ -27,8 +27,8 @@ public class TileMap {
     }
 
     public boolean ehSolido(float px, float py) {
-        int tx = (int)(px / Tile.TILE_SIZE);
-        int ty = (int)(py / Tile.TILE_SIZE);
+        int tx = (int)Math.floor(px / Tile.TILE_SIZE);
+        int ty = (int)Math.floor(py / Tile.TILE_SIZE);
         String key = tx + "," + ty;
 
         Tile tile = tiles.get(key);
@@ -37,10 +37,10 @@ public class TileMap {
     }
 
     public void update(Camera camera) {
-        int camLeft = (int)(camera.position.x - camera.viewportWidth / 2) / Tile.TILE_SIZE - 1;
-        int camRight = (int)(camera.position.x + camera.viewportWidth / 2) / Tile.TILE_SIZE + 1;
-        int camBottom = (int)(camera.position.y - camera.viewportHeight / 2) / Tile.TILE_SIZE - 1;
-        int camTop = (int)(camera.position.y + camera.viewportHeight / 2) / Tile.TILE_SIZE + 1;
+        int camLeft = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Tile.TILE_SIZE) - 1;
+        int camRight = (int)Math.floor((camera.position.x + camera.viewportWidth / 2) / Tile.TILE_SIZE) + 1;
+        int camBottom = (int)Math.floor((camera.position.y - camera.viewportHeight / 2) / Tile.TILE_SIZE) - 1;
+        int camTop = (int)Math.floor((camera.position.y + camera.viewportHeight / 2) / Tile.TILE_SIZE) + 1;
 
         for (int x = camLeft; x <= camRight; x++) {
             for (int y = camBottom; y <= camTop; y++) {
@@ -72,8 +72,8 @@ public class TileMap {
     //Pré-gera uma área quadrada ao redor de um ponto específico para garantir que não haja obstáculos sólidos no início do jogo.
     public void gerarAreaInicialSegura(float spawnX, float spawnY, int raio) {
         // Converte a posição do mundo (em pixels) para a grade de tiles
-        int tileXCentral = (int)(spawnX / Tile.TILE_SIZE);
-        int tileYCentral = (int)(spawnY / Tile.TILE_SIZE);
+        int tileXCentral = (int)Math.floor(spawnX / Tile.TILE_SIZE);
+        int tileYCentral = (int)Math.floor(spawnY / Tile.TILE_SIZE);
 
         System.out.println("Gerando area segura ao redor do tile: " + tileXCentral + "," + tileYCentral);
 
