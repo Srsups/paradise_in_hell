@@ -20,12 +20,11 @@ public class Jogador {
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
 
-    public Jogador(float x, float y) {
+    public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
         this.y = y;
         this.stateTime = 0f;
-
-        spritesheet = new Texture("spritesheet.png");
+        this.spritesheet = spritesheet;
 
         TextureRegion[] framesFrente = new TextureRegion[2];
         framesFrente[0] = new TextureRegion(spritesheet, 0, 11, 16, 16);
@@ -143,6 +142,5 @@ public class Jogador {
 
 
     public void dispose() {
-        spritesheet.dispose();
     }
 }

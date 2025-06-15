@@ -14,10 +14,10 @@ public class TileMap {
     private TextureRegion[] grassTiles;
     private Random random;
 
-    public TileMap() {
+    public TileMap(Texture spritesheet) {
         tiles = new HashMap<>();
         random = new Random();
-        spritesheet = new Texture("spritesheet.png");
+        this.spritesheet = spritesheet;
 
         // Cria os 3 tipos de grama
         grassTiles = new TextureRegion[3];
@@ -93,6 +93,5 @@ public class TileMap {
     }
 
     public void dispose() {
-        spritesheet.dispose();
     }
 }
