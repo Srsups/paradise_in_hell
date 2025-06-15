@@ -8,11 +8,13 @@ public class Tile {
 
     public int gridX, gridY;
     private TextureRegion tileRegion;
+    public boolean solido;
 
-    public Tile(int gridX, int gridY, TextureRegion region) {
+    public Tile(int gridX, int gridY, TextureRegion region, boolean solido) {
         this.gridX = gridX;
         this.gridY = gridY;
         this.tileRegion = region;
+        this.solido = solido;
     }
 
     public void draw(SpriteBatch batch) {

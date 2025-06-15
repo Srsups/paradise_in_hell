@@ -25,6 +25,8 @@ public class Main extends ApplicationAdapter {
         tileMap = new TileMap();
 
         jogador = new Jogador(100, 100);
+
+        tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
     }
 
     @Override
@@ -35,11 +37,10 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        jogador.update(delta);
-        tratarInput(jogador, delta);
+        jogador.update(delta, tileMap);
 
         // Atualiza a posição da câmera para seguir o jogador
-        camera.position.set(jogador.x, jogador.y, 0);
+        camera.position.set(jogador.x + 8, jogador.y + 8, 0);
         camera.update();
 
         tileMap.update(camera); // atualiza o mapa baseado na câmera
@@ -49,26 +50,6 @@ public class Main extends ApplicationAdapter {
         tileMap.draw(batch);    // desenha os tiles primeiro (fundo)
         jogador.draw(batch);    // desenha o jogador por cima
         batch.end();
-    }
-
-    private void tratarInput(Jogador jogador, float delta) {
-        float velocidade = 100f;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            jogador.y += velocidade * delta;
-            jogador.setEstado(Jogador.Estado.COSTAS);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            jogador.y -= velocidade * delta;
-            jogador.setEstado(Jogador.Estado.FRENTE);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            jogador.x -= velocidade * delta;
-            jogador.setEstado(Jogador.Estado.LADO_ESQUERDO);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            jogador.x += velocidade * delta;
-            jogador.setEstado(Jogador.Estado.LADO_DIREITO);
-        } else {
-            jogador.setEstado(Jogador.Estado.PARADO);
-        }
     }
 
     @Override

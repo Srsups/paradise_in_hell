@@ -1,66 +1,44 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation;
-
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector2;
 
 public class Jogador {
 
-    // Posição do jogador no mundo
     public float x, y;
-
-    // A folha de sprites completa
     private Texture spritesheet;
-
-    // As animações para cada direção. Animation<TextureRegion> significa
-    // que é uma animação composta por TextureRegions.
-    private Animation<TextureRegion> animacaoFrente;
-    private Animation<TextureRegion> animacaoCostas;
-    private Animation<TextureRegion> animacaoLadoEsquerdo;
-    private Animation<TextureRegion> animacaoLadoDireito;
-
-    // Variável para contar o tempo de animação. (É essencial)
+    private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private float stateTime;
+    private float velocidade = 60f; // velocidade normal
+    private float dashVelocidade = 200f;
+    private boolean dashing = false;
+    private float dashDuration = 0.15f;
+    private float dashCooldown = 1f;
+    private float dashTimer = 0f;
+    private float dashCooldownTimer = 0f;
 
-    // O construtor é chamado quando cria um novo jogador.
     public Jogador(float x, float y) {
         this.x = x;
         this.y = y;
-        this.stateTime = 0f; // Inicializa o contador de tempo
+        this.stateTime = 0f;
 
-        // 1. Carrega a imagem principal do spritesheet
-        // Imagem na pasta core/assets
         spritesheet = new Texture("spritesheet.png");
 
-        // 2. Cria os frames da animação "Frente"
         TextureRegion[] framesFrente = new TextureRegion[2];
-        framesFrente[0] = new TextureRegion(spritesheet, 0, 11, 16, 16); // Equivalente a getSprite(0, 11, 16, 16)
-        framesFrente[1] = new TextureRegion(spritesheet, 16, 11, 16, 16); // Equivalente a getSprite(16, 11, 16, 16)
-
-        // 3. Cria o objeto de Animação para "Frente"
-        // 0.25f é a duração de cada frame em segundos.
-        // Animation.PlayMode.LOOP significa que a animação irá repetir.
+        framesFrente[0] = new TextureRegion(spritesheet, 0, 11, 16, 16);
+        framesFrente[1] = new TextureRegion(spritesheet, 16, 11, 16, 16);
         animacaoFrente = new Animation<>(0.25f, framesFrente);
         animacaoFrente.setPlayMode(Animation.PlayMode.LOOP);
 
-        // Exemplo para "Lado"
-        TextureRegion[] framesLadoEsquerdo = new TextureRegion[2];
-        framesLadoEsquerdo[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
-        framesLadoEsquerdo[0].flip(true, false);
-        framesLadoEsquerdo[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
-        framesLadoEsquerdo[1].flip(true, false);
-        animacaoLadoEsquerdo = new Animation<>(0.25f, framesLadoEsquerdo);
-        animacaoLadoEsquerdo.setPlayMode(Animation.PlayMode.LOOP);
+        TextureRegion[] framesLado = new TextureRegion[2];
+        framesLado[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
+        framesLado[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
+        animacaoLado = new Animation<>(0.25f, framesLado);
+        animacaoLado.setPlayMode(Animation.PlayMode.LOOP);
 
-        TextureRegion[] framesLadoDireito = new TextureRegion[2];
-        framesLadoDireito[0] = new TextureRegion(spritesheet, 51, 11, 16, 16);
-        framesLadoDireito[1] = new TextureRegion(spritesheet, 35, 11, 16, 16);
-        animacaoLadoDireito = new Animation<>(0.25f, framesLadoDireito);
-        animacaoLadoDireito.setPlayMode(Animation.PlayMode.LOOP);
-
-        // Exemplo para "Costas/Cima"
         TextureRegion[] framesCostas = new TextureRegion[2];
         framesCostas[0] = new TextureRegion(spritesheet, 69, 11, 16, 16);
         framesCostas[1] = new TextureRegion(spritesheet, 86, 11, 16, 16);
@@ -68,47 +46,102 @@ public class Jogador {
         animacaoCostas.setPlayMode(Animation.PlayMode.LOOP);
     }
 
-    // Método responsável por desenhar o jogador
-    // O Gdx.graphics.getDeltaTime() retorna o tempo passado desde o último frame.
-    // Isso garante que a animação rode na mesma velocidade em qualquer computador.
-    public void update(float delta) {
-        stateTime += delta; // Acumula o tempo
+    public enum Direcao {
+        FRENTE, COSTAS, ESQUERDA, DIREITA, PARADO
     }
 
-    public void setEstado(Estado novoEstado) {
-        this.estadoAtual = novoEstado;
-    }
+    private Direcao direcaoAtual = Direcao.PARADO;
 
 
-    public enum Estado {
-        FRENTE, COSTAS, LADO_ESQUERDO, LADO_DIREITO, PARADO
-    }
+    public void update(float delta, TileMap tileMap) {
+        stateTime += delta;
 
-    private Estado estadoAtual = Estado.PARADO;
+        Vector2 movimento = new Vector2();
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) movimento.y += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) movimento.y -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) movimento.x -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) movimento.x += 1;
 
-    private TextureRegion getFrameAtual() {
-        switch (estadoAtual) {
-            case FRENTE:
-                return animacaoFrente.getKeyFrame(stateTime, true);
-            case COSTAS:
-                return animacaoCostas.getKeyFrame(stateTime, true);
-            case LADO_ESQUERDO:
-                return animacaoLadoEsquerdo.getKeyFrame(stateTime, true);
-            case LADO_DIREITO:
-                return animacaoLadoDireito.getKeyFrame(stateTime, true);
-            case PARADO:
-            default:
-                return animacaoFrente.getKeyFrame(0); // Primeiro frame da frente como "parado"
+        if (movimento.len() > 0) {
+            movimento.nor();
+
+            // Dash
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && dashCooldownTimer <= 0) {
+                dashing = true;
+                dashTimer = dashDuration;
+                dashCooldownTimer = dashCooldown;
+            }
+
+            float velocidadeFinal = dashing ? dashVelocidade : velocidade;
+            float novaX = x + movimento.x * velocidadeFinal * delta;
+            float novaY = y + movimento.y * velocidadeFinal * delta;
+
+            // Verifica colisão nos cantos
+            boolean colideX = tileMap.ehSolido(novaX, y) ||             // Canto superior esquerdo
+                tileMap.ehSolido(novaX + 15, y) ||         // Canto superior direito
+                tileMap.ehSolido(novaX, y + 15) ||         // Canto inferior esquerdo
+                tileMap.ehSolido(novaX + 15, y + 15);      // Canto inferior direito
+
+            // Pontos de verificação para o eixo Y
+            boolean colideY = tileMap.ehSolido(x, novaY) ||             // Canto superior esquerdo
+                tileMap.ehSolido(x + 15, novaY) ||         // Canto superior direito
+                tileMap.ehSolido(x, novaY + 15) ||         // Canto inferior esquerdo
+                tileMap.ehSolido(x + 15, novaY + 15);      // Canto inferior direito
+
+            if (!colideX) x = novaX;
+            if (!colideY) y = novaY;
+
+            // Define direção atual
+            if (Math.abs(movimento.x) > Math.abs(movimento.y)) {
+                direcaoAtual = movimento.x > 0 ? Direcao.DIREITA : Direcao.ESQUERDA;
+            } else {
+                direcaoAtual = movimento.y > 0 ? Direcao.COSTAS : Direcao.FRENTE;
+            }
+        } else {
+            direcaoAtual = Direcao.PARADO;
+        }
+
+        // Atualiza timers
+        if (dashing) {
+            dashTimer -= delta;
+            if (dashTimer <= 0) dashing = false;
+        }
+        if (dashCooldownTimer > 0) {
+            dashCooldownTimer -= delta;
         }
     }
 
+
     public void draw(SpriteBatch batch) {
-        batch.draw(getFrameAtual(), x, y);
+        TextureRegion currentFrame;
+
+        switch (direcaoAtual) {
+            case FRENTE:
+                currentFrame = animacaoFrente.getKeyFrame(stateTime, true);
+                break;
+            case COSTAS:
+                currentFrame = animacaoCostas.getKeyFrame(stateTime, true);
+                break;
+            case ESQUERDA:
+                currentFrame = animacaoLado.getKeyFrame(stateTime, true);
+                if (!currentFrame.isFlipX()) {
+                    currentFrame.flip(true, false); // Vira a própria região
+                }
+                break;
+            case DIREITA:
+                currentFrame = animacaoLado.getKeyFrame(stateTime, true);
+                if (currentFrame.isFlipX()) {
+                    currentFrame.flip(true, false); // Desvira a região se ela estiver virada
+                }
+                break;
+            default:
+                currentFrame = animacaoFrente.getKeyFrame(0); // parado
+        }
+
+        batch.draw(currentFrame, x, y);
     }
 
 
-
-    // Método para liberar a textura da memória quando o jogo fechar
     public void dispose() {
         spritesheet.dispose();
     }
