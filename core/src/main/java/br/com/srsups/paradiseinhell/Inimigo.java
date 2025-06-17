@@ -1,5 +1,6 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,10 @@ public class Inimigo {
     private int dano;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private Jogador.Direcao direcaoAtual = Jogador.Direcao.PARADO;
+    private float tempoFlash = 0.15f;
+    private float timerFlash = 0f;
+    private float cooldownAtaque = 1f; // Inimigo pode atacar a cada 1 segundo
+    private float timerAtaque = 0f;
 
     public Inimigo(float spawnX, float spawnY, Texture spritesheet) {
         this.x = spawnX; // Correto
@@ -70,6 +75,22 @@ public class Inimigo {
         } else {
             direcaoAtual = Jogador.Direcao.PARADO;
         }
+
+        if (timerAtaque > 0) {
+            timerAtaque -= delta;
+        }
+
+        if (timerFlash > 0) {
+            timerFlash -= delta;
+        }
+    }
+
+    public boolean podeAtacar() {
+        return timerAtaque <= 0;
+    }
+
+    public void resetarCooldownAtaque() {
+        this.timerAtaque = this.cooldownAtaque;
     }
 
     public void draw(SpriteBatch batch) {
@@ -98,11 +119,19 @@ public class Inimigo {
                 currentFrame = animacaoFrente.getKeyFrame(0); // parado
         }
 
+        if (timerFlash > 0) {
+            batch.setColor(Color.RED);
+        }
+
         batch.draw(currentFrame, x, y);
+
+        // CRUCIAL: Reseta a cor do batch para branco para não afetar outros sprites
+        batch.setColor(Color.WHITE);
     }
 
     public void sofrerDano(int quantidade) {
         this.vida -= quantidade;
+        this.timerFlash = this.tempoFlash; // Ativa o flash
     }
 
     public boolean estaMorto() {

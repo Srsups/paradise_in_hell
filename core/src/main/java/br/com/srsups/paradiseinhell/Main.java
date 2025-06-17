@@ -3,11 +3,14 @@ package br.com.srsups.paradiseinhell;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -18,7 +21,9 @@ import java.util.Random;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
+    private OrthographicCamera hudCamera;
     private Jogador jogador;
     private TileMap tileMap;
     private Texture spritesheet;
@@ -28,10 +33,15 @@ public class Main extends ApplicationAdapter {
     private TextureRegion texturaProjetil;
     private ArrayList<Projetil> projeteis = new ArrayList<>();
     public static Main instance;
+    private ArrayList<OrbeXP> orbes = new ArrayList<>();
+    private TextureRegion texturaOrbeXP;
+    private BitmapFont font;
+    private ArrayList<DamageNumber> damageNumbers = new ArrayList<>();
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
         spritesheet = new Texture("spritesheet.png");
 
@@ -39,7 +49,13 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
+
+        texturaOrbeXP = new TextureRegion(spritesheet, 9, 200, 6, 6);
 
         tileMap = new TileMap(spritesheet);
 
@@ -48,6 +64,8 @@ public class Main extends ApplicationAdapter {
         instance = this;
 
         tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
+
+        font = new BitmapFont();
     }
 
     public void criarProjetil(float x, float y, OrthographicCamera camera) {
@@ -86,7 +104,7 @@ public class Main extends ApplicationAdapter {
         spawnTimer += delta;
         if (spawnTimer >= spawnInterval) {
             // A Main agora é responsável por adicionar o inimigo à lista
-            inimigos.add(EnemySpawner.spawnInimigoForaDaTela(camera, spritesheet));
+            inimigos.add(EnemySpawner.spawnInimigoForaDaTela(camera, spritesheet, tileMap));
             spawnTimer = 0f;
         }
 
@@ -111,7 +129,11 @@ public class Main extends ApplicationAdapter {
                     i.sofrerDano(p.dano);
                     p.deveSerRemovido = true; // Marca o projétil para remoção
 
+                    damageNumbers.add(new DamageNumber(String.valueOf(p.dano), i.x + 8, i.y + 16));
+
                     if (i.estaMorto()) {
+                        // Cria um novo orbe na posição do inimigo
+                        orbes.add(new OrbeXP(i.x, i.y, texturaOrbeXP));
                         inimigoIterator.remove();
                     }
                     break; // Sai do loop de inimigos, pois o projétil já atingiu seu alvo
@@ -128,8 +150,30 @@ public class Main extends ApplicationAdapter {
         while (inimigoIterator.hasNext()) {
             Inimigo i = inimigoIterator.next();
             if (jogador.x < i.x + 16 && jogador.x + 16 > i.x && jogador.y < i.y + 16 && jogador.y + 16 > i.y) {
-                jogador.sofrerDano(10); // Jogador sofre 10 de dano por toque
-                inimigoIterator.remove(); // Remove o inimigo para não dar dano contínuo
+                // Checa se o inimigo pode atacar
+                if (i.podeAtacar()) {
+                    jogador.sofrerDano(10);
+                    i.resetarCooldownAtaque(); // Inicia o cooldown do inimigo
+                }
+            }
+        }
+
+        Iterator<OrbeXP> orbeIterator = orbes.iterator();
+        while (orbeIterator.hasNext()) {
+            OrbeXP orbe = orbeIterator.next();
+            // Checa colisão simples por distância
+            if (new Vector2(jogador.x, jogador.y).dst(orbe.x, orbe.y) < 16) {
+                jogador.ganharXP(orbe.valorXP);
+                orbeIterator.remove(); // Remove o orbe após a coleta
+            }
+        }
+
+        Iterator<DamageNumber> dnIterator = damageNumbers.iterator();
+        while (dnIterator.hasNext()) {
+            DamageNumber dn = dnIterator.next();
+            dn.update(delta);
+            if (dn.deveSerRemovido()) {
+                dnIterator.remove();
             }
         }
 
@@ -146,14 +190,71 @@ public class Main extends ApplicationAdapter {
             projetil.draw(batch);
         }
 
+        for (OrbeXP orbe : orbes) {
+            orbe.draw(batch);
+        }
+
+        for (DamageNumber dn : damageNumbers) {
+            dn.draw(batch, font); // Passa a fonte para o método de desenho
+        }
+
+        batch.end();
+
+        // Começamos com o ShapeRenderer para desenhar as barras (formas preenchidas)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // --- Barra de Vida ---
+        float barX = 10f;
+        float barY = Gdx.graphics.getHeight() - 30f;
+        float barWidth = 200f;
+        float barHeight = 20f;
+        float percentualVida = jogador.getVida() / 100f; // Assumindo que a vida máxima é 100
+
+        // Desenha o fundo da barra de vida
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(barX, barY, barWidth, barHeight);
+        // Desenha a parte da frente da barra de vida
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(barX, barY, barWidth * percentualVida, barHeight);
+
+        // --- Barra de Estamina ---
+        barY -= 30f; // Posição da barra de estamina, um pouco abaixo da de vida
+        float percentualEstamina = jogador.getEstaminaAtual() / jogador.getEstaminaMaxima();
+
+        // Desenha o fundo da barra de estamina
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(barX, barY, barWidth, barHeight);
+        // Desenha a parte da frente da barra de estamina, com cor dinâmica
+        if (jogador.isExausto()) {
+            shapeRenderer.setColor(Color.FIREBRICK); // Vermelho escuro para exaustão
+        } else {
+            shapeRenderer.setColor(Color.GREEN);
+        }
+        shapeRenderer.rect(barX, barY, barWidth * percentualEstamina, barHeight);
+
+        shapeRenderer.end(); // Termina o desenho das formas
+
+        // Desenha o texto por cima das barras
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.begin();
+
+        // Desenha os textos
+        String textoNivel = "Nível: " + jogador.getNivel();
+        font.draw(batch, textoNivel, 10, Gdx.graphics.getHeight() - 80);
+
+        String textoXP = "XP: " + jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel();
+        font.draw(batch, textoXP, 10, Gdx.graphics.getHeight() - 100);
+
         batch.end();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
+        shapeRenderer.dispose();
         tileMap.dispose();
         jogador.dispose();
         spritesheet.dispose();
+        font.dispose();
     }
 }
