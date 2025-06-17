@@ -2,12 +2,12 @@ package br.com.srsups.paradiseinhell;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 
 public class Jogador {
-
     public float x, y;
     private Texture spritesheet;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
@@ -19,6 +19,9 @@ public class Jogador {
     private float dashCooldown = 1f;
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
+    public int vida = 100;
+    private float tempoEntreTiros = 1f; // Define o intervalo de 1 segundo
+    private float cooldownTiro = 0f;      // O timer que fará a contagem regressiva
 
     public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
@@ -52,8 +55,33 @@ public class Jogador {
     private Direcao direcaoAtual = Direcao.PARADO;
 
 
-    public void update(float delta, TileMap tileMap) {
+    public void update(float delta, TileMap tileMap, OrthographicCamera camera) {
         stateTime += delta;
+
+        // Atualiza o timer de cooldown do tiro a cada frame
+        if (cooldownTiro > 0) {
+            cooldownTiro -= delta;
+        }
+
+        // Atualiza timers
+        if (dashing) {
+            dashTimer -= delta;
+            if (dashTimer <= 0) dashing = false;
+        }
+        if (dashCooldownTimer > 0) {
+            dashCooldownTimer -= delta;
+        }
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) { // 1. Checa se o botão ESTÁ pressionado
+            if (cooldownTiro <= 0) { // 2. Checa se o tempo de recarga acabou
+                // 3. Se sim, atira!
+                // Passamos a câmera para o método criarProjetil
+                Main.instance.criarProjetil(this.x + 8, this.y + 8, camera); // +8 para atirar do centro
+
+                // 4. E reseta o tempo de recarga para o valor definido
+                cooldownTiro = tempoEntreTiros;
+            }
+        }
 
         Vector2 movimento = new Vector2();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) movimento.y += 1;
@@ -99,15 +127,6 @@ public class Jogador {
         } else {
             direcaoAtual = Direcao.PARADO;
         }
-
-        // Atualiza timers
-        if (dashing) {
-            dashTimer -= delta;
-            if (dashTimer <= 0) dashing = false;
-        }
-        if (dashCooldownTimer > 0) {
-            dashCooldownTimer -= delta;
-        }
     }
 
 
@@ -140,6 +159,13 @@ public class Jogador {
         batch.draw(currentFrame, x, y);
     }
 
+    public void sofrerDano(int quantidade) {
+        this.vida -= quantidade;
+    }
+
+    public boolean estaMorto() {
+        return this.vida <= 0;
+    }
 
     public void dispose() {
     }
