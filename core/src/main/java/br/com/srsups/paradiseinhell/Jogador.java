@@ -106,7 +106,7 @@ public class Jogador {
         // Lógica de Tiro
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (cooldownTiro <= 0) {
-                Main.instance.criarProjetil(this.x + 8, this.y + 8, camera);
+                GameScreen.instance.criarProjetil(this.x + 8, this.y + 8, camera);
                 cooldownTiro = tempoEntreTiros;
             }
         }
