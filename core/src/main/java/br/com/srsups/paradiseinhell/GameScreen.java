@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -17,9 +18,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+// Definição dos estados do jogo
+enum GameState {
+    JOGANDO,
+    LEVEL_UP
+}
+
 public class GameScreen implements Screen {
     private Game game;
-    private float tempoDePreparo = 0.005f; // Meio segundo de tempo de preparo
+    private GameState estadoAtual = GameState.JOGANDO; // O jogo começa no estado JOGANDO
+    private float tempoDePreparo = 0.05f; // Meio segundo de tempo de preparo
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
@@ -37,9 +45,15 @@ public class GameScreen implements Screen {
     private TextureRegion texturaOrbeXP;
     private BitmapFont font;
     private ArrayList<DamageNumber> damageNumbers = new ArrayList<>();
+    private ArrayList<String> todasAsMelhorias;
+    private ArrayList<String> melhoriasAtuais;
+    private ArrayList<Rectangle> retangulosMelhorias;
 
     public GameScreen(Game game) {
         this.game = game;
+        todasAsMelhorias = new ArrayList<>();
+        melhoriasAtuais = new ArrayList<>();
+        retangulosMelhorias = new ArrayList<>();
     }
 
     @Override
@@ -56,7 +70,6 @@ public class GameScreen implements Screen {
         hudCamera = new OrthographicCamera();
         hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
         texturaOrbeXP = new TextureRegion(spritesheet, 9, 200, 6, 6);
@@ -70,13 +83,113 @@ public class GameScreen implements Screen {
         tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
 
         font = new BitmapFont();
+
+        todasAsMelhorias.add("Resistência de Ares");
+        todasAsMelhorias.add("Inteligência de Atena");
+        todasAsMelhorias.add("Saúde de Minotauro");
+        todasAsMelhorias.add("Sandálias aladas de Hermes");
+        todasAsMelhorias.add("Cura de Apolo");
+        todasAsMelhorias.add("Fúria da Quimera");
+        todasAsMelhorias.add("Ressurreição de Asclépio");
+        todasAsMelhorias.add("Aniquilação de Tifão");
     }
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    public void iniciarLevelUp() {
+        estadoAtual = GameState.LEVEL_UP; // PAUSA O JOGO
+        jogador.subirDeNivel(); // Atualiza o XP e nível do jogador
 
+        // Limpa as escolhas anteriores
+        melhoriasAtuais.clear();
+        retangulosMelhorias.clear();
+
+        // Sorteia 3 melhorias únicas da lista principal
+        Random random = new Random();
+        ArrayList<String> copiaMelhorias = new ArrayList<>(todasAsMelhorias);
+        for (int i = 0; i < 3 && !copiaMelhorias.isEmpty(); i++) {
+            int index = random.nextInt(copiaMelhorias.size());
+            String escolha = copiaMelhorias.remove(index);
+            melhoriasAtuais.add(escolha);
+
+            // Cria um retângulo de clique para cada opção de melhoria
+            retangulosMelhorias.add(new Rectangle(
+                Gdx.graphics.getWidth() / 2f - 150,
+                Gdx.graphics.getHeight() / 2f + 50 - (i * 60), // Posição Y de cada opção
+                300, 50
+            ));
+        }
+    }
+
+    private void aplicarMelhoria(String escolha) {
+        System.out.println("Melhoria escolhida: " + escolha);
+        // Aplica o efeito da melhoria ao jogador
+        switch (escolha) {
+            case "Força de Hércules":
+            case "Celeridade de Ártemis":
+            case "Saúde de Minotauro": jogador.aumentarVidaMaxima(25); break;
+            case "Sandálias Aladas de Hermes": jogador.aumentarVelocidadeMovimento(0.10f); break;
+            case "Resistência de Ares": jogador.aumentarResistencia(0.15f); break;
+            case "Inteligência de Atena": jogador.aumentarInteligencia(0.20f); break;
+            case "Cura de Apolo": jogador.curar(40); break;
+            case "Fúria da Quimera": jogador.ativarCuraPorAbate(1); break;
+            case "Égide":
+            case "Raio de Zeus":
+            case "Ressurreição de Asclépio": jogador.ganharRessurreicao(); todasAsMelhorias.remove("Ressurreição de Asclépio"); break;
+            case "TITANOMAQUIA":
+            case "GIGANTOMAQUIA":
+            case "Magia de Hécate":
+            case "Aniquilação de Tifão": inimigos.clear(); break;
+            case "Necromancia de Hades":
+            case "Correnteza de Poseidon":
+            case "Cronocinese de Cronos":
+            case "Limiar de Aquiles":
+        }
+        System.out.println("Vida Máxima: " + jogador.vidaMaxima);
+        System.out.println("Vida Atual: " + jogador.vida);
+        estadoAtual = GameState.JOGANDO; // VOLTA AO JOGO
+    }
+
+    private void updateLevelUp() {
+        // Checa por cliques na tela de level up
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+
+            for (int i = 0; i < retangulosMelhorias.size(); i++) {
+                Rectangle r = retangulosMelhorias.get(i);
+                // É preciso converter as coordenadas do clique para o sistema da UI
+                if (r.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
+                    aplicarMelhoria(melhoriasAtuais.get(i));
+                    return; // Sai do método para não checar outros cliques
+                }
+            }
+        }
+    }
+
+    private void desenharUiLevelUp() {
+        // Usa o ShapeRenderer para desenhar um fundo semitransparente para pausar a tela
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 0, 0, 0.5f); // Cor preta com 50% de transparência
+        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        // Usa o SpriteBatch para desenhar o texto das opções
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.begin();
+
+        font.draw(batch, "SUBIU DE NÍVEL! ESCOLHA UMA MELHORIA:", Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f + 150);
+
+        for (int i = 0; i < melhoriasAtuais.size(); i++) {
+            String texto = melhoriasAtuais.get(i);
+            Rectangle r = retangulosMelhorias.get(i);
+            font.draw(batch, texto, r.x + 10, r.y + 35);
+        }
+
+        batch.end();
+    }
+
+    private void updateJogando(float delta){
         // Se o tempo de preparo ainda não acabou...
         if (tempoDePreparo > 0) {
             tempoDePreparo -= delta; // ...apenas diminui o timer.
@@ -130,6 +243,7 @@ public class GameScreen implements Screen {
                         if (i.estaMorto()) {
                             // Cria um novo orbe na posição do inimigo
                             orbes.add(new OrbeXP(i.x, i.y, texturaOrbeXP));
+                            jogador.curar(jogador.getCuraPorAbate());
                             inimigoIterator.remove();
                         }
                         break; // Sai do loop de inimigos, pois o projétil já atingiu seu alvo
@@ -175,11 +289,18 @@ public class GameScreen implements Screen {
 
             // VERIFICA SE O JOGADOR MORREU
             if (jogador.estaMorto()) {
-                game.setScreen(new GameOverScreen(game)); // Troca para a tela de Game Over
-                return; // Para a execução do método render
+                if (jogador.possuiRessurreicao()) {
+                    jogador.usarRessurreicao(); // Método que seta a flag para false e cura o jogador pela metade
+                } else {
+                    game.setScreen(new GameOverScreen(game));
+                    dispose();
+                    return;
+                }
             }
         }
+    }
 
+    private void desenharMundo(){
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         tileMap.draw(batch);    // desenha os tiles primeiro (fundo)
@@ -202,7 +323,9 @@ public class GameScreen implements Screen {
         }
 
         batch.end();
+    }
 
+    private void desenharUI(){
         // Começamos com o ShapeRenderer para desenhar as barras (formas preenchidas)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -211,7 +334,7 @@ public class GameScreen implements Screen {
         float barY = Gdx.graphics.getHeight() - 30f;
         float barWidth = 200f;
         float barHeight = 20f;
-        float percentualVida = jogador.getVida() / 100f; // Assumindo que a vida máxima é 100
+        float percentualVida = (float)jogador.getVida() / jogador.getVidaMaxima();
 
         // Desenha o fundo da barra de vida
         shapeRenderer.setColor(Color.DARK_GRAY);
@@ -252,6 +375,29 @@ public class GameScreen implements Screen {
     }
 
     @Override
+    public void render(float delta) {
+        // A lógica de update agora depende do estado atual
+        switch (estadoAtual) {
+            case JOGANDO:
+                // Toda a lógica de update vai aqui
+                updateJogando(delta);
+                break;
+            case LEVEL_UP:
+                // A lógica de input para a tela de level up vai aqui
+                updateLevelUp();
+                break;
+        }
+
+        desenharMundo();
+        desenharUI();
+
+        // Se estivermos no estado de level up, desenha a UI de melhorias por cima
+        if (estadoAtual == GameState.LEVEL_UP) {
+            desenharUiLevelUp();
+        }
+    }
+
+    @Override
     public void resize(int i, int i1) {
 
     }
@@ -277,7 +423,7 @@ public class GameScreen implements Screen {
         Vector3 mousePosMundo = camera.unproject(mousePosTela);
         Vector2 direcao = new Vector2(mousePosMundo.x - x, mousePosMundo.y - y).nor();
 
-        // Modificação: Passe a TextureRegion que já foi carregada e recortada
+        // Modificação: Passa a TextureRegion que já foi carregada e recortada
         projeteis.add(new Projetil(x, y, direcao, texturaProjetil));
     }
 

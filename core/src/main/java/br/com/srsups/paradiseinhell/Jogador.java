@@ -24,7 +24,7 @@ public class Jogador {
     private float tempoEntreTiros = 1f; // Define o intervalo de 1 segundo
     private float cooldownTiro = 0f;  // O timer que fará a contagem regressiva
     public int nivel = 1;
-    private int xpAtual = 0;
+    private float xpAtual = 0;
     private int xpParaProximoNivel = 10; // Começa precisando de 10 XP
     private float estaminaMaxima = 100f;
     private float estaminaAtual = estaminaMaxima;
@@ -33,6 +33,12 @@ public class Jogador {
     private boolean exausto = false;
     private float tempoFlash = 0.15f;
     private float timerFlash = 0f;
+    private float modVelocidade = 1.0f; // 1.0f = 100% da velocidade base
+    private float modDanoRecebido = 1.0f; // 1.0f = 100% do dano recebido
+    private float modXpGanho = 1.0f; // 1.0f = 100% do XP ganho
+    public int vidaMaxima = 100;
+    private boolean temRessurreicao = false;
+    private int curaPorAbate = 0;
 
     public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
@@ -88,7 +94,7 @@ public class Jogador {
         }
 
         // Condição para ENTRAR na exaustão
-        if (estaminaAtual <= 20 && !exausto) {
+        if (estaminaAtual <= 5 && !exausto) {
             exausto = true;
         }
 
@@ -130,7 +136,7 @@ public class Jogador {
                 estaminaAtual -= custoDash;
             }
 
-            float velocidadeNormal = exausto ? velocidade * 0.6f : velocidade;
+            float velocidadeNormal = exausto ? (velocidade * modVelocidade) * 0.6f : (velocidade * modVelocidade);
             float velocidadeFinal = dashing ? dashVelocidade : velocidadeNormal;
             float novaX = x + movimento.x * velocidadeFinal * delta;
             float novaY = y + movimento.y * velocidadeFinal * delta;
@@ -202,7 +208,7 @@ public class Jogador {
     }
 
     public void sofrerDano(int quantidade) {
-        this.vida -= quantidade;
+        this.vida -= (int)(quantidade * modDanoRecebido);
         this.timerFlash = this.tempoFlash; // Ativa o flash
     }
 
@@ -211,29 +217,59 @@ public class Jogador {
     }
 
     public void ganharXP(int quantidade) {
-        this.xpAtual += quantidade;
-        System.out.println("Ganhou " + quantidade + " de XP! Total: " + xpAtual + "/" + xpParaProximoNivel);
+        this.xpAtual += quantidade * modXpGanho;
 
-        // Checa se o jogador subiu de nível
         if (xpAtual >= xpParaProximoNivel) {
-            subirDeNivel();
+            // Em vez de chamar subirDeNivel() diretamente, notifica a GameScreen
+            GameScreen.instance.iniciarLevelUp();
         }
     }
 
-    private void subirDeNivel() {
+    public void subirDeNivel() {
         this.nivel++;
-        this.xpAtual -= xpParaProximoNivel; // Zera o XP, mantendo o excesso
-        this.xpParaProximoNivel *= 1.75; // Aumenta a necessidade de XP para o próximo nível
+        this.xpAtual -= xpParaProximoNivel;
+        this.xpParaProximoNivel *= 1.5;
+    }
 
-        System.out.println("SUBIU PARA O NÍVEL " + this.nivel + "!");
-        // Aqui, no futuro, abrirá a tela de escolha de habilidades.
+    public void aumentarVidaMaxima(int valor) {
+        this.vidaMaxima += valor;
+        this.vida += valor; // Também cura o jogador no mesmo valor
+    }
+    public void aumentarVelocidadeMovimento(float percentual) {
+        this.modVelocidade += percentual; // ex: 0.10f para +10%
+    }
+    public void aumentarResistencia(float percentual) {
+        this.modDanoRecebido -= percentual; // ex: 0.10f para -10% de dano
+    }
+    public void aumentarInteligencia(float percentual) {
+        this.modXpGanho += percentual;
+    }
+    public void curar(int valor){
+        this.vida = Math.min(this.vida + valor, this.vidaMaxima);
+    }
+    public boolean possuiRessurreicao(){
+        return temRessurreicao;
+    }
+    public void ganharRessurreicao(){
+        temRessurreicao = true;
+    }
+    public void usarRessurreicao(){
+        temRessurreicao = false;
+        this.vida = this.vidaMaxima / 2;
+    }
+    public void ativarCuraPorAbate(int valor){
+        curaPorAbate = valor;
+    }
+    public int getCuraPorAbate(){
+        return curaPorAbate;
     }
 
     // Métodos "get" para que a Main possa ler os valores para a UI
     public int getVida() { return this.vida; }
     public int getNivel() { return this.nivel; }
-    public int getXpAtual() { return this.xpAtual; }
+    public float getXpAtual() { return this.xpAtual; }
     public int getXpParaProximoNivel() { return this.xpParaProximoNivel; }
+    public int getVidaMaxima() { return this.vidaMaxima; }
 
     public void dispose() {
     }
