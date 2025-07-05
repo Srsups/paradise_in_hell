@@ -20,11 +20,11 @@ public class Jogador {
     private float dashCooldown = 1f;
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
-    public int vida = 100;
+    public float vida = 100f;
     private float tempoEntreTiros = 1f; // Define o intervalo de 1 segundo
     private float cooldownTiro = 0f;  // O timer que fará a contagem regressiva
     public int nivel = 1;
-    private float xpAtual = 0;
+    private float xpAtual = 0f;
     private int xpParaProximoNivel = 10; // Começa precisando de 10 XP
     private float estaminaMaxima = 100f;
     private float estaminaAtual = estaminaMaxima;
@@ -36,9 +36,17 @@ public class Jogador {
     private float modVelocidade = 1.0f; // 1.0f = 100% da velocidade base
     private float modDanoRecebido = 1.0f; // 1.0f = 100% do dano recebido
     private float modXpGanho = 1.0f; // 1.0f = 100% do XP ganho
-    public int vidaMaxima = 100;
+    public float vidaMaxima = 100f;
     private boolean temRessurreicao = false;
     private int curaPorAbate = 0;
+    private boolean auraDePoseidonAtiva = false;
+    private float danoAura = 7.5f; // 10 de dano por segundo
+    private float raioAura = 80f; // Raio da aura em pixels
+    private boolean habilidadeEgideAtiva = false;
+    private boolean escudoAtivo = false;
+    private float duracaoEscudo = 2f;    // Escudo dura 2 segundos
+    private float cooldownEscudo = 10f;  // Recarrega por 10 segundos
+    private float timerEscudo = 0f;
 
     public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
@@ -107,6 +115,21 @@ public class Jogador {
             }
         }
         estaminaAtual = Math.min(estaminaAtual, estaminaMaxima);
+
+        if (habilidadeEgideAtiva) {
+            timerEscudo -= delta;
+            if (timerEscudo <= 0) {
+                // Alterna entre o estado do escudo e o cooldown
+                escudoAtivo = !escudoAtivo;
+                if (escudoAtivo) {
+                    timerEscudo = duracaoEscudo; // Ativa o escudo pela sua duração
+                    System.out.println("ÉGIDE ATIVADA!");
+                } else {
+                    timerEscudo = cooldownEscudo; // Entra em cooldown
+                    System.out.println("Égide em cooldown...");
+                }
+            }
+        }
         // --------------------------------------------------------------------------
 
         // Lógica de Tiro
@@ -207,9 +230,11 @@ public class Jogador {
         batch.setColor(Color.WHITE);
     }
 
-    public void sofrerDano(int quantidade) {
-        this.vida -= (int)(quantidade * modDanoRecebido);
-        this.timerFlash = this.tempoFlash; // Ativa o flash
+    public void sofrerDano(float quantidade) {
+        if (escudoAtivo) return; // Se o escudo estiver ativo, ignora todo o dano
+
+        this.vida -= quantidade * modDanoRecebido;
+        this.timerFlash = this.tempoFlash;
     }
 
     public boolean estaMorto() {
@@ -265,11 +290,17 @@ public class Jogador {
     }
 
     // Métodos "get" para que a Main possa ler os valores para a UI
-    public int getVida() { return this.vida; }
+    public float getVida() { return this.vida; }
     public int getNivel() { return this.nivel; }
     public float getXpAtual() { return this.xpAtual; }
     public int getXpParaProximoNivel() { return this.xpParaProximoNivel; }
-    public int getVidaMaxima() { return this.vidaMaxima; }
+    public float getVidaMaxima() { return this.vidaMaxima; }
+    public void ativarAuraDePoseidon() { this.auraDePoseidonAtiva = true; }
+    public boolean possuiAura() { return this.auraDePoseidonAtiva; }
+    public float getRaioAura() { return this.raioAura; }
+    public float getDanoAura() { return this.danoAura; }
+    public boolean isEscudoAtivo() { return this.escudoAtivo; }
+    public void ativarHabilidadeEgide() { this.habilidadeEgideAtiva = true; }
 
     public void dispose() {
     }

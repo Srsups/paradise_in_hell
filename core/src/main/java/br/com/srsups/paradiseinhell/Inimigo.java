@@ -12,7 +12,7 @@ public class Inimigo {
     public float x, y;
     private Texture spritesheet;
     private float velocidade = 30f;
-    public int vida = 10;
+    public float vida = 10f;
     private int dano;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private Jogador.Direcao direcaoAtual = Jogador.Direcao.PARADO;
@@ -129,7 +129,7 @@ public class Inimigo {
         batch.setColor(Color.WHITE);
     }
 
-    public void sofrerDano(int quantidade) {
+    public void sofrerDano(float quantidade) {
         this.vida -= quantidade;
         this.timerFlash = this.tempoFlash; // Ativa o flash
     }

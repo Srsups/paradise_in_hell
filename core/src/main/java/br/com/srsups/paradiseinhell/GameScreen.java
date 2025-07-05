@@ -84,14 +84,9 @@ public class GameScreen implements Screen {
 
         font = new BitmapFont();
 
-        todasAsMelhorias.add("Resistência de Ares");
-        todasAsMelhorias.add("Inteligência de Atena");
-        todasAsMelhorias.add("Saúde de Minotauro");
-        todasAsMelhorias.add("Sandálias aladas de Hermes");
-        todasAsMelhorias.add("Cura de Apolo");
-        todasAsMelhorias.add("Fúria da Quimera");
-        todasAsMelhorias.add("Ressurreição de Asclépio");
-        todasAsMelhorias.add("Aniquilação de Tifão");
+
+        todasAsMelhorias.add("Égide");
+        todasAsMelhorias.add("Correnteza de Poseidon");
     }
 
     public void iniciarLevelUp() {
@@ -131,15 +126,15 @@ public class GameScreen implements Screen {
             case "Inteligência de Atena": jogador.aumentarInteligencia(0.20f); break;
             case "Cura de Apolo": jogador.curar(40); break;
             case "Fúria da Quimera": jogador.ativarCuraPorAbate(1); break;
-            case "Égide":
+            case "Égide": jogador.ativarHabilidadeEgide(); break;
             case "Raio de Zeus":
             case "Ressurreição de Asclépio": jogador.ganharRessurreicao(); todasAsMelhorias.remove("Ressurreição de Asclépio"); break;
-            case "TITANOMAQUIA":
-            case "GIGANTOMAQUIA":
+            case "TITANOMAQUIA": //muitos inimigos
+            case "GIGANTOMAQUIA": //ainda mais inimigos
             case "Magia de Hécate":
             case "Aniquilação de Tifão": inimigos.clear(); break;
             case "Necromancia de Hades":
-            case "Correnteza de Poseidon":
+            case "Correnteza de Poseidon": jogador.ativarAuraDePoseidon(); break;
             case "Cronocinese de Cronos":
             case "Limiar de Aquiles":
         }
@@ -210,6 +205,16 @@ public class GameScreen implements Screen {
             camera.update();
             tileMap.update(camera); // atualiza o mapa baseado na câmera
 
+            if (jogador.possuiAura()) {
+                for (Inimigo inimigo : inimigos) {
+                    // Usamos dst2 (distância ao quadrado) porque é mais rápido que dst (que usa raiz quadrada)
+                    if (new Vector2(jogador.x, jogador.y).dst2(inimigo.x, inimigo.y) < jogador.getRaioAura() * jogador.getRaioAura()) {
+                        // Aplica dano contínuo baseado no delta time
+                        inimigo.sofrerDano(jogador.getDanoAura() * delta);
+                    }
+                }
+            }
+
             spawnTimer += delta;
             if (spawnTimer >= spawnInterval) {
                 // A Main agora é responsável por adicionar o inimigo à lista
@@ -229,10 +234,7 @@ public class GameScreen implements Screen {
                 }
 
                 // Se não atingiu uma parede, checa se atingiu um inimigo
-                Iterator<Inimigo> inimigoIterator = inimigos.iterator();
-                while (inimigoIterator.hasNext()) {
-                    Inimigo i = inimigoIterator.next();
-
+                for (Inimigo i : inimigos) {
                     // Checa colisão entre projétil e inimigo
                     if (p.x < i.x + 16 && p.x + 8 > i.x && p.y < i.y + 16 && p.y + 8 > i.y) {
                         i.sofrerDano(p.dano);
@@ -240,12 +242,6 @@ public class GameScreen implements Screen {
 
                         damageNumbers.add(new DamageNumber(String.valueOf(p.dano), i.x + 8, i.y + 16));
 
-                        if (i.estaMorto()) {
-                            // Cria um novo orbe na posição do inimigo
-                            orbes.add(new OrbeXP(i.x, i.y, texturaOrbeXP));
-                            jogador.curar(jogador.getCuraPorAbate());
-                            inimigoIterator.remove();
-                        }
                         break; // Sai do loop de inimigos, pois o projétil já atingiu seu alvo
                     }
                 }
@@ -287,6 +283,18 @@ public class GameScreen implements Screen {
                 }
             }
 
+            Iterator<Inimigo> inimigoIteratorMorte = inimigos.iterator();
+            while (inimigoIteratorMorte.hasNext()) {
+                Inimigo i = inimigoIteratorMorte.next();
+
+                if (i.estaMorto()) {
+                    // Se o inimigo estiver morto, processa a morte
+                    orbes.add(new OrbeXP(i.x, i.y, texturaOrbeXP));
+                    jogador.curar(jogador.getCuraPorAbate());
+                    inimigoIteratorMorte.remove(); // Remove o inimigo da lista com segurança
+                }
+            }
+
             // VERIFICA SE O JOGADOR MORREU
             if (jogador.estaMorto()) {
                 if (jogador.possuiRessurreicao()) {
@@ -300,12 +308,12 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void desenharMundo(){
-        batch.setProjectionMatrix(camera.combined);
+    private void desenharMundo() {
+        // --- 1. DESENHA TODOS OS SPRITES DO MUNDO ---
+        batch.setProjectionMatrix(camera.combined); // Usa a câmera do mundo
         batch.begin();
-        tileMap.draw(batch);    // desenha os tiles primeiro (fundo)
-        jogador.draw(batch);    // desenha o jogador por cima
-
+        tileMap.draw(batch);
+        jogador.draw(batch);
         for (Inimigo inimigo : inimigos) {
             inimigo.draw(batch);
         }
@@ -321,12 +329,13 @@ public class GameScreen implements Screen {
         for (DamageNumber dn : damageNumbers) {
             dn.draw(batch, font); // Passa a fonte para o método de desenho
         }
-
         batch.end();
     }
 
     private void desenharUI(){
         // Começamos com o ShapeRenderer para desenhar as barras (formas preenchidas)
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.setProjectionMatrix(hudCamera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // --- Barra de Vida ---
@@ -366,12 +375,33 @@ public class GameScreen implements Screen {
 
         // Desenha os textos
         String textoNivel = "Nível: " + jogador.getNivel();
+        int nvly = Gdx.graphics.getHeight() - 80;
         font.draw(batch, textoNivel, 10, Gdx.graphics.getHeight() - 80);
 
+        int xpy = Gdx.graphics.getHeight() - 100;
         String textoXP = "XP: " + jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel();
         font.draw(batch, textoXP, 10, Gdx.graphics.getHeight() - 100);
 
         batch.end();
+    }
+
+    private void desenharPoderes(){
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line); // Desenha apenas a borda
+
+        // Lógica para desenhar a aura de Poseidon, se ativa
+        if (jogador.possuiAura()) {
+            shapeRenderer.setColor(0, 0.5f, 1, 0.8f); // Azul mais visível
+            shapeRenderer.circle(jogador.x + 8, jogador.y + 8, jogador.getRaioAura());
+        }
+
+        // Lógica para desenhar o escudo da Égide, se ativo
+        if (jogador.isEscudoAtivo()) {
+            shapeRenderer.setColor(1, 0.8f, 0, 0.9f); // Dourado mais visível
+            shapeRenderer.circle(jogador.x + 8, jogador.y + 8, 12f);
+        }
+
+        shapeRenderer.end();
     }
 
     @Override
@@ -390,6 +420,7 @@ public class GameScreen implements Screen {
 
         desenharMundo();
         desenharUI();
+        desenharPoderes();
 
         // Se estivermos no estado de level up, desenha a UI de melhorias por cima
         if (estadoAtual == GameState.LEVEL_UP) {
