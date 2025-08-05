@@ -50,8 +50,8 @@ public class TileMap {
                     TextureRegion tile = grassTiles[random.nextInt(grassTiles.length)];
                     boolean solido = false;
 
-                    // Simula 10% de chance de ser um obstáculo
-                    if (random.nextFloat() < 0.05f) {
+                    // Simula a chance de ser um obstáculo
+                    if (random.nextFloat() < 0.005f) {
                         tile = new TextureRegion(spritesheet, 281, 241, 16, 16); // exemplo: tile de pedra
                         solido = true;
                     }

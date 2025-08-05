@@ -2,6 +2,7 @@ package br.com.srsups.paradiseinhell;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -19,9 +20,33 @@ public class Jogador {
     private float dashCooldown = 1f;
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
-    public int vida = 100;
+    public float vida = 100f;
     private float tempoEntreTiros = 1f; // Define o intervalo de 1 segundo
-    private float cooldownTiro = 0f;      // O timer que fará a contagem regressiva
+    private float cooldownTiro = 0f;  // O timer que fará a contagem regressiva
+    public int nivel = 1;
+    private float xpAtual = 0f;
+    private int xpParaProximoNivel = 10; // Começa precisando de 10 XP
+    private float estaminaMaxima = 100f;
+    private float estaminaAtual = estaminaMaxima;
+    private float custoDash = 20f;
+    private float regeneracaoEstamina = 10f; // Estamina por segundo
+    private boolean exausto = false;
+    private float tempoFlash = 0.15f;
+    private float timerFlash = 0f;
+    private float modVelocidade = 1.0f; // 1.0f = 100% da velocidade base
+    private float modDanoRecebido = 1.0f; // 1.0f = 100% do dano recebido
+    private float modXpGanho = 1.0f; // 1.0f = 100% do XP ganho
+    public float vidaMaxima = 100f;
+    private boolean temRessurreicao = false;
+    private int curaPorAbate = 0;
+    private boolean auraDePoseidonAtiva = false;
+    private float danoAura = 7.5f; // 10 de dano por segundo
+    private float raioAura = 80f; // Raio da aura em pixels
+    private boolean habilidadeEgideAtiva = false;
+    private boolean escudoAtivo = false;
+    private float duracaoEscudo = 2f;    // Escudo dura 2 segundos
+    private float cooldownEscudo = 10f;  // Recarrega por 10 segundos
+    private float timerEscudo = 0f;
 
     public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
@@ -58,30 +83,64 @@ public class Jogador {
     public void update(float delta, TileMap tileMap, OrthographicCamera camera) {
         stateTime += delta;
 
-        // Atualiza o timer de cooldown do tiro a cada frame
-        if (cooldownTiro > 0) {
-            cooldownTiro -= delta;
-        }
+        // ETAPA 1: LÓGICA BASEADA NO TEMPO (Acontece sempre)
 
-        // Atualiza timers
+        // Atualiza timers de cooldowns (tiro e dash)
+        if (cooldownTiro > 0) cooldownTiro -= delta;
+        if (dashCooldownTimer > 0) dashCooldownTimer -= delta;
+        if (timerFlash > 0) timerFlash -= delta;
+
+        // --- LÓGICA DE ESTAMINA E EXAUSTÃO (MOVIDA PARA FORA DO BLOCO DE MOVIMENTO) ---
         if (dashing) {
             dashTimer -= delta;
             if (dashTimer <= 0) dashing = false;
         }
-        if (dashCooldownTimer > 0) {
-            dashCooldownTimer -= delta;
+
+        // Condição para SAIR da exaustão
+        if (exausto && estaminaAtual >= 20) {
+            exausto = false;
         }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) { // 1. Checa se o botão ESTÁ pressionado
-            if (cooldownTiro <= 0) { // 2. Checa se o tempo de recarga acabou
-                // 3. Se sim, atira!
-                // Passamos a câmera para o método criarProjetil
-                Main.instance.criarProjetil(this.x + 8, this.y + 8, camera); // +8 para atirar do centro
+        // Condição para ENTRAR na exaustão
+        if (estaminaAtual <= 5 && !exausto) {
+            exausto = true;
+        }
 
-                // 4. E reseta o tempo de recarga para o valor definido
+        // Lógica de Regeneração da Estamina
+        if (!dashing) {
+            if (exausto) {
+                estaminaAtual += (regeneracaoEstamina / 3f) * delta;
+            } else {
+                estaminaAtual += regeneracaoEstamina * delta;
+            }
+        }
+        estaminaAtual = Math.min(estaminaAtual, estaminaMaxima);
+
+        if (habilidadeEgideAtiva) {
+            timerEscudo -= delta;
+            if (timerEscudo <= 0) {
+                // Alterna entre o estado do escudo e o cooldown
+                escudoAtivo = !escudoAtivo;
+                if (escudoAtivo) {
+                    timerEscudo = duracaoEscudo; // Ativa o escudo pela sua duração
+                    System.out.println("ÉGIDE ATIVADA!");
+                } else {
+                    timerEscudo = cooldownEscudo; // Entra em cooldown
+                    System.out.println("Égide em cooldown...");
+                }
+            }
+        }
+        // --------------------------------------------------------------------------
+
+        // Lógica de Tiro
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (cooldownTiro <= 0) {
+                GameScreen.instance.criarProjetil(this.x + 8, this.y + 8, camera);
                 cooldownTiro = tempoEntreTiros;
             }
         }
+
+        // ETAPA 2: LÓGICA BASEADA NO INPUT DE MOVIMENTO
 
         Vector2 movimento = new Vector2();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) movimento.y += 1;
@@ -92,33 +151,27 @@ public class Jogador {
         if (movimento.len() > 0) {
             movimento.nor();
 
-            // Dash
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && dashCooldownTimer <= 0) {
+            // Dash só pode ser iniciado se houver movimento
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && dashCooldownTimer <= 0 && estaminaAtual >= custoDash && !exausto) {
                 dashing = true;
                 dashTimer = dashDuration;
                 dashCooldownTimer = dashCooldown;
+                estaminaAtual -= custoDash;
             }
 
-            float velocidadeFinal = dashing ? dashVelocidade : velocidade;
+            float velocidadeNormal = exausto ? (velocidade * modVelocidade) * 0.6f : (velocidade * modVelocidade);
+            float velocidadeFinal = dashing ? dashVelocidade : velocidadeNormal;
             float novaX = x + movimento.x * velocidadeFinal * delta;
             float novaY = y + movimento.y * velocidadeFinal * delta;
 
-            // Verifica colisão nos cantos
-            boolean colideX = tileMap.ehSolido(novaX, y) ||             // Canto superior esquerdo
-                tileMap.ehSolido(novaX + 15, y) ||         // Canto superior direito
-                tileMap.ehSolido(novaX, y + 15) ||         // Canto inferior esquerdo
-                tileMap.ehSolido(novaX + 15, y + 15);      // Canto inferior direito
-
-            // Pontos de verificação para o eixo Y
-            boolean colideY = tileMap.ehSolido(x, novaY) ||             // Canto superior esquerdo
-                tileMap.ehSolido(x + 15, novaY) ||         // Canto superior direito
-                tileMap.ehSolido(x, novaY + 15) ||         // Canto inferior esquerdo
-                tileMap.ehSolido(x + 15, novaY + 15);      // Canto inferior direito
+            // Colisão (agora com a correção que sugeri anteriormente)
+            boolean colideX = tileMap.ehSolido(novaX + 1, y + 1) || tileMap.ehSolido(novaX + 15, y + 1) || tileMap.ehSolido(novaX + 1, y + 15) || tileMap.ehSolido(novaX + 15, y + 15);
+            boolean colideY = tileMap.ehSolido(x + 1, novaY) || tileMap.ehSolido(x + 15, novaY) || tileMap.ehSolido(x + 1, novaY + 15) || tileMap.ehSolido(x + 15, novaY + 15);
 
             if (!colideX) x = novaX;
             if (!colideY) y = novaY;
 
-            // Define direção atual
+            // Animação
             if (Math.abs(movimento.x) > Math.abs(movimento.y)) {
                 direcaoAtual = movimento.x > 0 ? Direcao.DIREITA : Direcao.ESQUERDA;
             } else {
@@ -129,6 +182,17 @@ public class Jogador {
         }
     }
 
+    public float getEstaminaAtual() {
+        return estaminaAtual;
+    }
+
+    public float getEstaminaMaxima() {
+        return estaminaMaxima;
+    }
+
+    public boolean isExausto() {
+        return exausto;
+    }
 
     public void draw(SpriteBatch batch) {
         TextureRegion currentFrame;
@@ -156,16 +220,87 @@ public class Jogador {
                 currentFrame = animacaoFrente.getKeyFrame(0); // parado
         }
 
+        if (timerFlash > 0) {
+            batch.setColor(Color.RED);
+        }
+
         batch.draw(currentFrame, x, y);
+
+        // CRUCIAL: Reseta a cor do batch para branco para não afetar outros sprites
+        batch.setColor(Color.WHITE);
     }
 
-    public void sofrerDano(int quantidade) {
-        this.vida -= quantidade;
+    public void sofrerDano(float quantidade) {
+        if (escudoAtivo) return; // Se o escudo estiver ativo, ignora todo o dano
+
+        this.vida -= quantidade * modDanoRecebido;
+        this.timerFlash = this.tempoFlash;
     }
 
     public boolean estaMorto() {
         return this.vida <= 0;
     }
+
+    public void ganharXP(int quantidade) {
+        this.xpAtual += quantidade * modXpGanho;
+
+        if (xpAtual >= xpParaProximoNivel) {
+            // Em vez de chamar subirDeNivel() diretamente, notifica a GameScreen
+            GameScreen.instance.iniciarLevelUp();
+        }
+    }
+
+    public void subirDeNivel() {
+        this.nivel++;
+        this.xpAtual -= xpParaProximoNivel;
+        this.xpParaProximoNivel *= 1.5;
+    }
+
+    public void aumentarVidaMaxima(int valor) {
+        this.vidaMaxima += valor;
+        this.vida += valor; // Também cura o jogador no mesmo valor
+    }
+    public void aumentarVelocidadeMovimento(float percentual) {
+        this.modVelocidade += percentual; // ex: 0.10f para +10%
+    }
+    public void aumentarResistencia(float percentual) {
+        this.modDanoRecebido -= percentual; // ex: 0.10f para -10% de dano
+    }
+    public void aumentarInteligencia(float percentual) {
+        this.modXpGanho += percentual;
+    }
+    public void curar(int valor){
+        this.vida = Math.min(this.vida + valor, this.vidaMaxima);
+    }
+    public boolean possuiRessurreicao(){
+        return temRessurreicao;
+    }
+    public void ganharRessurreicao(){
+        temRessurreicao = true;
+    }
+    public void usarRessurreicao(){
+        temRessurreicao = false;
+        this.vida = this.vidaMaxima / 2;
+    }
+    public void ativarCuraPorAbate(int valor){
+        curaPorAbate = valor;
+    }
+    public int getCuraPorAbate(){
+        return curaPorAbate;
+    }
+
+    // Métodos "get" para que a Main possa ler os valores para a UI
+    public float getVida() { return this.vida; }
+    public int getNivel() { return this.nivel; }
+    public float getXpAtual() { return this.xpAtual; }
+    public int getXpParaProximoNivel() { return this.xpParaProximoNivel; }
+    public float getVidaMaxima() { return this.vidaMaxima; }
+    public void ativarAuraDePoseidon() { this.auraDePoseidonAtiva = true; }
+    public boolean possuiAura() { return this.auraDePoseidonAtiva; }
+    public float getRaioAura() { return this.raioAura; }
+    public float getDanoAura() { return this.danoAura; }
+    public boolean isEscudoAtivo() { return this.escudoAtivo; }
+    public void ativarHabilidadeEgide() { this.habilidadeEgideAtiva = true; }
 
     public void dispose() {
     }

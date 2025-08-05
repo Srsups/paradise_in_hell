@@ -11,7 +11,7 @@ public class EnemySpawner {
     private static Random random = new Random();
 
     // Esta é a nova função de spawn
-    public static Inimigo spawnInimigoForaDaTela(OrthographicCamera camera, Texture spritesheet) {
+    public static Inimigo spawnInimigoForaDaTela(OrthographicCamera camera, Texture spritesheet, TileMap tileMap) {
         // 1. Calcula a área do mundo que a câmera está vendo
         float viewX = camera.position.x - camera.viewportWidth / 2;
         float viewY = camera.position.y - camera.viewportHeight / 2;
@@ -25,6 +25,11 @@ public class EnemySpawner {
         int lado = random.nextInt(4);
 
         float spawnX = 0, spawnY = 0;
+
+        // Checa se a posição gerada é sólida. Usamos o centro do inimigo (8,8) para a checagem.
+        if (tileMap.ehSolido(spawnX + 8, spawnY + 8)) {
+            return null; // Posição inválida, não cria o inimigo desta vez.
+        }
 
         switch (lado) {
             case 0: // Cima
@@ -46,7 +51,6 @@ public class EnemySpawner {
         }
 
         // 4. Cria o novo inimigo e adiciona à lista
-        // Supondo que você tenha uma classe Inimigo com um construtor Inimigo(x, y)
         return new Inimigo(spawnX, spawnY, spritesheet);
     }
 }
