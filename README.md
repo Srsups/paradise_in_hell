@@ -1,15 +1,6 @@
-\<div align="center"\>
-
 # 🏺 Paradise in Hell 🏺
 
 *Um roguelite 2D de sobrevivência com inspiração na mitologia grega.*
-
-\</div\>
-
-\<p align="center"\>
-\<img src="[https://github-readme-stats.vercel.app/api?username=Srsups\&show\_icons=true\&theme=radical\&hide\_border=true\&include\_all\_commits=true\&count\_private=true](https://www.google.com/search?q=https://github-readme-stats.vercel.app/api%3Fusername%3DSrsups%26show_icons%3Dtrue%26theme%3Dradical%26hide_border%3Dtrue%26include_all_commits%3Dtrue%26count_private%3Dtrue)" alt="Estatísticas do GitHub de Srsups" /\>
-\<img src="[https://github-readme-stats.vercel.app/api/top-langs/?username=Srsups\&layout=compact\&theme=radical\&hide\_border=true](https://www.google.com/search?q=https://github-readme-stats.vercel.app/api/top-langs/%3Fusername%3DSrsups%26layout%3Dcompact%26theme%3Dradical%26hide_border%3Dtrue)" alt="Top Linguagens de Srsups" /\>
-\</p\>
 
 -----
 
