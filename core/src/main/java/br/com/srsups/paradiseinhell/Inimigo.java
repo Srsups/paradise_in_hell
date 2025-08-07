@@ -11,8 +11,8 @@ public class Inimigo {
     private float stateTime;
     public float x, y;
     private Texture spritesheet;
-    private float velocidade = 30f;
-    public float vida = 10f;
+    public float velocidade = 30f;
+    public float vida = 20f;
     private int dano;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private Jogador.Direcao direcaoAtual = Jogador.Direcao.PARADO;
@@ -136,6 +136,10 @@ public class Inimigo {
 
     public boolean estaMorto() {
         return this.vida <= 0;
+    }
+
+    public void matar(){
+        this.vida = 0;
     }
 
     public void dispose() {

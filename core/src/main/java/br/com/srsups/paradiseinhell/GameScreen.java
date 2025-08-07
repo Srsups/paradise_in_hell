@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,6 +47,7 @@ public class GameScreen implements Screen {
     private ArrayList<String> todasAsMelhorias;
     private ArrayList<String> melhoriasAtuais;
     private ArrayList<Rectangle> retangulosMelhorias;
+    private ArrayList<Raio> raios = new ArrayList<>();
 
     public GameScreen(Game game) {
         this.game = game;
@@ -84,9 +84,17 @@ public class GameScreen implements Screen {
 
         font = new BitmapFont();
 
-
+        todasAsMelhorias.add("Saúde de Minotauro");
+        todasAsMelhorias.add("Sandálias Aladas de Hermes");
+        todasAsMelhorias.add("Resistência de Ares");
+        todasAsMelhorias.add("Inteligência de Atena");
+        todasAsMelhorias.add("Cura de Apolo");
+        todasAsMelhorias.add("Fúria da Quimera");
         todasAsMelhorias.add("Égide");
+        todasAsMelhorias.add("Ressurreição de Asclépio");
+        todasAsMelhorias.add("Aniquilação de Tifão");
         todasAsMelhorias.add("Correnteza de Poseidon");
+        todasAsMelhorias.add("Raio de Zeus");
     }
 
     public void iniciarLevelUp() {
@@ -125,14 +133,19 @@ public class GameScreen implements Screen {
             case "Resistência de Ares": jogador.aumentarResistencia(0.15f); break;
             case "Inteligência de Atena": jogador.aumentarInteligencia(0.20f); break;
             case "Cura de Apolo": jogador.curar(40); break;
-            case "Fúria da Quimera": jogador.ativarCuraPorAbate(1); break;
+            case "Sangue de Quimera": jogador.ativarCuraPorAbate(1); break;
             case "Égide": jogador.ativarHabilidadeEgide(); break;
-            case "Raio de Zeus":
+            case "Raio de Zeus": jogador.ativarHabilidadeRaio(); break;
             case "Ressurreição de Asclépio": jogador.ganharRessurreicao(); todasAsMelhorias.remove("Ressurreição de Asclépio"); break;
             case "TITANOMAQUIA": //muitos inimigos
             case "GIGANTOMAQUIA": //ainda mais inimigos
             case "Magia de Hécate":
-            case "Aniquilação de Tifão": inimigos.clear(); break;
+            case "Aniquilação de Tifão":
+                // Itera sobre uma cópia da lista para evitar problemas de modificação concorrente
+                for (Inimigo inimigo : new ArrayList<>(inimigos)) {
+                    inimigo.matar();
+                }
+                break;
             case "Necromancia de Hades":
             case "Correnteza de Poseidon": jogador.ativarAuraDePoseidon(); break;
             case "Cronocinese de Cronos":
@@ -240,7 +253,7 @@ public class GameScreen implements Screen {
                         i.sofrerDano(p.dano);
                         p.deveSerRemovido = true; // Marca o projétil para remoção
 
-                        damageNumbers.add(new DamageNumber(String.valueOf(p.dano), i.x + 8, i.y + 16));
+                        damageNumbers.add(new DamageNumber(String.valueOf(p.dano), i.x + 8, i.y + 16, Color.YELLOW));
 
                         break; // Sai do loop de inimigos, pois o projétil já atingiu seu alvo
                     }
@@ -301,8 +314,30 @@ public class GameScreen implements Screen {
                     jogador.usarRessurreicao(); // Método que seta a flag para false e cura o jogador pela metade
                 } else {
                     game.setScreen(new GameOverScreen(game));
-                    dispose();
                     return;
+                }
+            }
+
+            // --- LÓGICA DOS RAIOS ---
+            Iterator<Raio> raioIterator = raios.iterator();
+            while (raioIterator.hasNext()) {
+                Raio r = raioIterator.next();
+                r.update(delta); // Atualiza o timer de duração do raio
+
+                // Aplica o dano em área UMA VEZ, quando o raio é criado
+                if (!r.danoJaAplicado) {
+                    for (Inimigo inimigo : inimigos) {
+                        if (new Vector2(r.x, r.y).dst2(inimigo.x, inimigo.y) < r.raioDoDano * r.raioDoDano) {
+                            inimigo.sofrerDano(r.dano);
+                            // Opcional: Adicionar um DamageNumber para o dano do raio
+                            damageNumbers.add(new DamageNumber(String.valueOf((int)r.dano), inimigo.x + 8, inimigo.y + 16, Color.YELLOW));
+                        }
+                    }
+                    r.danoJaAplicado = true;
+                }
+
+                if (r.deveSerRemovido) {
+                    raioIterator.remove();
                 }
             }
         }
@@ -387,7 +422,7 @@ public class GameScreen implements Screen {
 
     private void desenharPoderes(){
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line); // Desenha apenas a borda
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); // Raios podem ser preenchidos
 
         // Lógica para desenhar a aura de Poseidon, se ativa
         if (jogador.possuiAura()) {
@@ -401,7 +436,28 @@ public class GameScreen implements Screen {
             shapeRenderer.circle(jogador.x + 8, jogador.y + 8, 12f);
         }
 
+        // Desenha os raios
+        for (Raio r : raios) {
+            shapeRenderer.setColor(Color.YELLOW);
+            // Desenha um retângulo vertical fino para simular o raio
+            shapeRenderer.rect(r.x + 4, r.y, 8, 48);
+        }
+
         shapeRenderer.end();
+    }
+
+    public void invocarRaio() {
+        // Se não houver inimigos na tela, não faz nada
+        if (inimigos.isEmpty()) {
+            return;
+        }
+
+        // Escolhe um inimigo aleatório para ser o alvo
+        Random random = new Random();
+        Inimigo alvo = inimigos.get(random.nextInt(inimigos.size()));
+
+        // Cria um novo raio na posição do inimigo alvo
+        raios.add(new Raio(alvo.x, alvo.y));
     }
 
     @Override

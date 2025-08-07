@@ -47,6 +47,9 @@ public class Jogador {
     private float duracaoEscudo = 2f;    // Escudo dura 2 segundos
     private float cooldownEscudo = 10f;  // Recarrega por 10 segundos
     private float timerEscudo = 0f;
+    private boolean habilidadeRaioAtiva = false;
+    private float cooldownRaio = 7f; // Um raio a cada 7 segundos
+    private float timerRaio = cooldownRaio;
 
     public Jogador(float x, float y, Texture spritesheet) {
         this.x = x;
@@ -128,6 +131,14 @@ public class Jogador {
                     timerEscudo = cooldownEscudo; // Entra em cooldown
                     System.out.println("Égide em cooldown...");
                 }
+            }
+        }
+
+        if (habilidadeRaioAtiva) {
+            timerRaio -= delta;
+            if (timerRaio <= 0) {
+                GameScreen.instance.invocarRaio(); // Notifica a GameScreen para criar o raio
+                timerRaio = cooldownRaio; // Reseta o timer
             }
         }
         // --------------------------------------------------------------------------
@@ -301,6 +312,7 @@ public class Jogador {
     public float getDanoAura() { return this.danoAura; }
     public boolean isEscudoAtivo() { return this.escudoAtivo; }
     public void ativarHabilidadeEgide() { this.habilidadeEgideAtiva = true; }
+    public void ativarHabilidadeRaio() { this.habilidadeRaioAtiva = true; }
 
     public void dispose() {
     }

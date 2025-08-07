@@ -11,7 +11,7 @@ public class DamageNumber {
     private float tempoDeVida = 0.7f; // O número some após 0.7 segundos
     private float velocidadeY = 50f;  // Velocidade com que sobe
 
-    public DamageNumber(String texto, float x, float y) {
+    public DamageNumber(String texto, float x, float y, Color yellow) {
         this.texto = texto;
         this.x = x;
         this.y = y;

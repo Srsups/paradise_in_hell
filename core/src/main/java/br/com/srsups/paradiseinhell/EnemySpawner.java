@@ -50,7 +50,15 @@ public class EnemySpawner {
                 break;
         }
 
-        // 4. Cria o novo inimigo e adiciona à lista
-        return new Inimigo(spawnX, spawnY, spritesheet);
+        // --- LÓGICA DE ESCOLHA DO INIMIGO ---
+        float chance = random.nextFloat(); // Gera um número entre 0.0 e 1.0
+
+        if (chance < 0.65) { // 65% de chance de ser um inimigo normal
+            return new Inimigo(spawnX, spawnY, spritesheet);
+        } else if (chance < 0.90) { // 25% de chance de ser um inimigo rápido
+            return new InimigoRapido(spawnX, spawnY, spritesheet);
+        } else { // 10% de chance de ser um inimigo tanque
+            return new InimigoTanque(spawnX, spawnY, spritesheet);
+        }
     }
 }
