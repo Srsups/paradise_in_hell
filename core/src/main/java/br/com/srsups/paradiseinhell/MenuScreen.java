@@ -14,8 +14,8 @@ public class MenuScreen implements Screen {
     private Game game;
     private SpriteBatch batch;
     private Texture background;
-    private TextureRegion playButtonTexture, exitButtonTexture;
-    private Rectangle playButtonBounds, exitButtonBounds;
+    private TextureRegion playButtonTexture, exitButtonTexture, shopButtonTexture;
+    private Rectangle playButtonBounds, exitButtonBounds, shopButtonBounds;
     private Texture Buttonspritesheet;
 
     public MenuScreen(Game game) {
@@ -23,8 +23,9 @@ public class MenuScreen implements Screen {
         batch = new SpriteBatch();
         Buttonspritesheet = new Texture("button_spritesheet.png");
         background = new Texture("Foto_BG.jpg"); // Crie uma imagem de fundo para o menu
-        playButtonTexture = new TextureRegion(Buttonspritesheet, 433, 104, 238, 58); // Crie o sprite do botão de jogar
-        exitButtonTexture = new TextureRegion(Buttonspritesheet, 701, 367, 238, 58); // Crie o sprite do botão de sair
+        playButtonTexture = new TextureRegion(Buttonspritesheet, 433, 104, 238, 58);
+        exitButtonTexture = new TextureRegion(Buttonspritesheet, 701, 367, 238, 58);
+        shopButtonTexture = new TextureRegion(Buttonspritesheet, 433, 236, 238, 58);
 
         // Define a posição e o tamanho dos retângulos de colisão dos botões
         playButtonBounds = new Rectangle(
@@ -34,9 +35,16 @@ public class MenuScreen implements Screen {
             playButtonTexture.getRegionHeight()
         );
 
+        shopButtonBounds = new Rectangle(
+            Gdx.graphics.getWidth() / 2f - shopButtonTexture.getRegionWidth() / 2f,
+            playButtonBounds.y - 70, // 70 pixels abaixo do início do botão de jogar
+            shopButtonTexture.getRegionWidth(),
+            shopButtonTexture.getRegionHeight()
+        );
+
         exitButtonBounds = new Rectangle(
             Gdx.graphics.getWidth() / 2f - exitButtonTexture.getRegionWidth() / 2f,
-            Gdx.graphics.getHeight() / 2f - 100, // 100 pixels abaixo do botão de jogar
+            shopButtonBounds.y - 70, // 70 pixels abaixo do início do botão da loja
             exitButtonTexture.getRegionWidth(),
             exitButtonTexture.getRegionHeight()
         );
@@ -48,15 +56,22 @@ public class MenuScreen implements Screen {
     @Override
     public void render(float delta) {
         // Lógica de Input
-        if (Gdx.input.isTouched()) {
+        if (Gdx.input.justTouched()) { // Usar justTouched() é melhor para botões de menu
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+
             // Checa o clique no botão de jogar
             if (playButtonBounds.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
-                game.setScreen(new GameScreen(game)); // Inicia a tela de jogo
+                game.setScreen(new GameScreen(game));
             }
+
+            // Checa o clique no botão da loja
+            if (shopButtonBounds.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
+                game.setScreen(new LojaScreen(game)); // Transição para a nova tela da loja
+            }
+
             // Checa o clique no botão de sair
             if (exitButtonBounds.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
-                Gdx.app.exit(); // Fecha o jogo
+                Gdx.app.exit();
             }
         }
 
@@ -67,6 +82,7 @@ public class MenuScreen implements Screen {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(playButtonTexture, playButtonBounds.x, playButtonBounds.y);
+        batch.draw(shopButtonTexture, shopButtonBounds.x, shopButtonBounds.y); // <-- ADICIONE
         batch.draw(exitButtonTexture, exitButtonBounds.x, exitButtonBounds.y);
         batch.end();
     }

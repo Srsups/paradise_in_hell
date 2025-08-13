@@ -42,6 +42,10 @@ public class GameScreen implements Screen {
     public static GameScreen instance;
     private ArrayList<OrbeXP> orbes = new ArrayList<>();
     private TextureRegion texturaOrbeXP;
+    private ArrayList<Obolo> obolos = new ArrayList<>();
+    private int obolosColetadosNaRun = 0;
+    private Random randomParaDrops = new Random();
+    private TextureRegion texturaObolo;
     private BitmapFont font;
     private ArrayList<DamageNumber> damageNumbers = new ArrayList<>();
     private ArrayList<String> todasAsMelhorias;
@@ -73,6 +77,8 @@ public class GameScreen implements Screen {
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
         texturaOrbeXP = new TextureRegion(spritesheet, 9, 200, 6, 6);
+
+        texturaObolo = new TextureRegion(spritesheet, 9, 200, 6, 6);
 
         tileMap = new TileMap(spritesheet);
 
@@ -287,6 +293,16 @@ public class GameScreen implements Screen {
                 }
             }
 
+            Iterator<Obolo> oboloIterator = obolos.iterator();
+            while (oboloIterator.hasNext()) {
+                Obolo obolo = oboloIterator.next();
+                if (new Vector2(jogador.x, jogador.y).dst(obolo.x, obolo.y) < 24) { // Raio de coleta maior
+                    obolosColetadosNaRun += obolo.valor;
+                    System.out.println("Óbolos coletados na partida: " + obolosColetadosNaRun); // Para teste
+                    oboloIterator.remove();
+                }
+            }
+
             Iterator<DamageNumber> dnIterator = damageNumbers.iterator();
             while (dnIterator.hasNext()) {
                 DamageNumber dn = dnIterator.next();
@@ -303,6 +319,12 @@ public class GameScreen implements Screen {
                 if (i.estaMorto()) {
                     // Se o inimigo estiver morto, processa a morte
                     orbes.add(new OrbeXP(i.x, i.y, texturaOrbeXP));
+
+                    // Chance de 15% de dropar um Óbolo
+                    if (randomParaDrops.nextFloat() < 0.15f) {
+                        obolos.add(new Obolo(i.x, i.y, texturaObolo));
+                    }
+
                     jogador.curar(jogador.getCuraPorAbate());
                     inimigoIteratorMorte.remove(); // Remove o inimigo da lista com segurança
                 }
@@ -311,9 +333,11 @@ public class GameScreen implements Screen {
             // VERIFICA SE O JOGADOR MORREU
             if (jogador.estaMorto()) {
                 if (jogador.possuiRessurreicao()) {
-                    jogador.usarRessurreicao(); // Método que seta a flag para false e cura o jogador pela metade
+                    jogador.usarRessurreicao();
                 } else {
-                    game.setScreen(new GameOverScreen(game));
+                    // Passa o total de óbolos coletados para a próxima tela
+                    game.setScreen(new GameOverScreen(game, this.obolosColetadosNaRun));
+                    // Não precisa chamar dispose() aqui, pois o 'game' gerencia a tela atual
                     return;
                 }
             }
@@ -359,6 +383,10 @@ public class GameScreen implements Screen {
 
         for (OrbeXP orbe : orbes) {
             orbe.draw(batch);
+        }
+
+        for (Obolo obolo : obolos) {
+            obolo.draw(batch);
         }
 
         for (DamageNumber dn : damageNumbers) {
