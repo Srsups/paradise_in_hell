@@ -7,20 +7,19 @@ import com.badlogic.gdx.math.Vector2;
 public class Projetil {
     public float x, y;
     public Vector2 velocidade;
-    public int dano = 5;
+    public float dano;
     private TextureRegion textura;
     private float angulo;
     public boolean deveSerRemovido = false;
 
-    // 2. O construtor agora recebe uma TextureRegion já pronta
-    public Projetil(float x, float y, Vector2 direcao, TextureRegion texturaProjetil) {
+    // O construtor agora recebe o dano do tiro como parâmetro
+    public Projetil(float x, float y, Vector2 direcao, TextureRegion texturaProjetil, float danoDoTiro) {
         this.x = x;
         this.y = y;
-        this.textura = texturaProjetil; // Apenas guarda a referência
-        // Define a velocidade baseada na direção e em uma magnitude
-        this.velocidade = new Vector2(direcao).scl(300f); // Usamos new Vector2 para não modificar o original
-        // Subtraímos 90 graus porque a sprite original aponta para CIMA (e não para a DIREITA).
+        this.textura = texturaProjetil;
+        this.velocidade = new Vector2(direcao).scl(300f);
         this.angulo = direcao.angleDeg() - 90f;
+        this.dano = danoDoTiro;
     }
 
     public void update(float delta, TileMap tileMap) {

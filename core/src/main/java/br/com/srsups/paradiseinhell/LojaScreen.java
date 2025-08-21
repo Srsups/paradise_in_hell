@@ -22,8 +22,14 @@ public class LojaScreen implements Screen {
     private int totalObolos;
     private int nivelUpgradeVida;
     private int custoUpgradeVida;
+    private int nivelUpgradeDano;
+    private int custoUpgradeDano;
+    private int nivelUpgradeVelocidade;
+    private int custoUpgradeVelocidade;
 
     private Rectangle botaoComprarVida;
+    private Rectangle botaoComprarDano;
+    private Rectangle botaoComprarVelocidade;
     private Rectangle botaoVoltar;
 
     public LojaScreen(Game game) {
@@ -41,12 +47,19 @@ public class LojaScreen implements Screen {
         Preferences prefs = Gdx.app.getPreferences("ParadiseInHellSave");
         totalObolos = prefs.getInteger("total_moedas", 0);
         nivelUpgradeVida = prefs.getInteger("upgrade_vida_nivel", 0);
+        nivelUpgradeDano = prefs.getInteger("upgrade_dano_nivel", 0);
+        nivelUpgradeVelocidade = prefs.getInteger("upgrade_velocidade_nivel", 0);
 
         // Lógica de custo (ex: 100, 250, 500...)
         custoUpgradeVida = 100 + (nivelUpgradeVida * 150);
+        custoUpgradeDano = 100 + (nivelUpgradeDano * 150);
+        custoUpgradeVelocidade = 100 + (nivelUpgradeDano * 150);
+
 
         // Define os botões da UI
-        botaoComprarVida = new Rectangle(Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f, 300, 50);
+        botaoComprarVida = new Rectangle(Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f + 60, 300, 50);
+        botaoComprarDano = new Rectangle(Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f, 300, 50);
+        botaoComprarVelocidade = new Rectangle(Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f - 60, 300, 50);
         botaoVoltar = new Rectangle(20, 20, 100, 40);
     }
 
@@ -81,6 +94,46 @@ public class LojaScreen implements Screen {
                     System.out.println("Óbolos insuficientes!");
                 }
             }
+            if (botaoComprarDano.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
+                // Tenta comprar o upgrade
+                if (totalObolos >= custoUpgradeDano) {
+                    // Deduz o custo
+                    totalObolos -= custoUpgradeDano;
+                    nivelUpgradeDano++;
+
+                    // Salva o progresso
+                    Preferences prefs = Gdx.app.getPreferences("ParadiseInHellSave");
+                    prefs.putInteger("total_moedas", totalObolos);
+                    prefs.putInteger("upgrade_dano_nivel", nivelUpgradeDano);
+                    prefs.flush();
+
+                    // Atualiza o custo para o próximo nível
+                    custoUpgradeDano = 100 + (nivelUpgradeDano * 150);
+                    System.out.println("Upgrade comprado! Novo nível: " + nivelUpgradeDano);
+                } else {
+                    System.out.println("Óbolos insuficientes!");
+                }
+            }
+            if (botaoComprarVelocidade.contains(touchPos.x, Gdx.graphics.getHeight() - touchPos.y)) {
+                // Tenta comprar o upgrade
+                if (totalObolos >= custoUpgradeVelocidade) {
+                    // Deduz o custo
+                    totalObolos -= custoUpgradeVelocidade;
+                    nivelUpgradeVelocidade++;
+
+                    // Salva o progresso
+                    Preferences prefs = Gdx.app.getPreferences("ParadiseInHellSave");
+                    prefs.putInteger("total_moedas", totalObolos);
+                    prefs.putInteger("upgrade_velocidade_nivel", nivelUpgradeVelocidade);
+                    prefs.flush();
+
+                    // Atualiza o custo para o próximo nível
+                    custoUpgradeVelocidade = 100 + (nivelUpgradeVelocidade * 150);
+                    System.out.println("Upgrade comprado! Novo nível: " + nivelUpgradeVelocidade);
+                } else {
+                    System.out.println("Óbolos insuficientes!");
+                }
+            }
         }
 
         // Lógica de Desenho
@@ -98,12 +151,18 @@ public class LojaScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
         shapeRenderer.rect(botaoComprarVida.x, botaoComprarVida.y, botaoComprarVida.width, botaoComprarVida.height);
+        shapeRenderer.rect(botaoComprarDano.x, botaoComprarDano.y, botaoComprarDano.width, botaoComprarDano.height);
+        shapeRenderer.rect(botaoComprarVelocidade.x, botaoComprarVelocidade.y, botaoComprarVelocidade.width, botaoComprarVelocidade.height);
         shapeRenderer.rect(botaoVoltar.x, botaoVoltar.y, botaoVoltar.width, botaoVoltar.height);
         shapeRenderer.end();
 
         batch.begin();
-        String textoUpgrade = String.format("Vida Máxima Nvl %d (Custo: %d)", nivelUpgradeVida + 1, custoUpgradeVida);
-        font.draw(batch, textoUpgrade, botaoComprarVida.x + 20, botaoComprarVida.y + 35);
+        String textoUpgradeVida = String.format("Vida Máxima Nvl %d (Custo: %d)", nivelUpgradeVida + 1, custoUpgradeVida);
+        String textoUpgradeDano = String.format("Dano Máximo Nvl %d (Custo: %d)", nivelUpgradeDano + 1, custoUpgradeDano);
+        String textoUpgradeVelocidade = String.format("Velocidade Máxima Nvl %d (Custo: %d)", nivelUpgradeVelocidade + 1, custoUpgradeVelocidade);
+        font.draw(batch, textoUpgradeVida, botaoComprarVida.x + 20, botaoComprarVida.y + 35);
+        font.draw(batch, textoUpgradeDano, botaoComprarDano.x + 20, botaoComprarDano.y + 35);
+        font.draw(batch, textoUpgradeVelocidade, botaoComprarVelocidade.x + 20, botaoComprarVelocidade.y + 35);
         font.draw(batch, "Voltar", botaoVoltar.x + 20, botaoVoltar.y + 30);
         batch.end();
     }

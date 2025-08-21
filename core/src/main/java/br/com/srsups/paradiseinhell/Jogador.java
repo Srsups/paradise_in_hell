@@ -14,6 +14,7 @@ public class Jogador {
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private float stateTime;
     private float velocidade = 60f; // velocidade normal
+    private float danoBase = 5f;
     private float dashVelocidade = 200f;
     private boolean dashing = false;
     private float dashDuration = 0.15f;
@@ -37,6 +38,7 @@ public class Jogador {
     private float modDanoRecebido = 1.0f; // 1.0f = 100% do dano recebido
     private float modXpGanho = 1.0f; // 1.0f = 100% do XP ganho
     public float vidaMaxima = 100f;
+    public float velocidadeMaxima = 60f;
     private boolean temRessurreicao = false;
     private int curaPorAbate = 0;
     private boolean auraDePoseidonAtiva = false;
@@ -51,11 +53,20 @@ public class Jogador {
     private float cooldownRaio = 7f; // Um raio a cada 7 segundos
     private float timerRaio = cooldownRaio;
 
-    public Jogador(float x, float y, Texture spritesheet) {
+    public Jogador(float x, float y, Texture spritesheet, float bonusVidaInicial, float bonusDanoInicial, float bonusVelocidadeInicial) {
         this.x = x;
         this.y = y;
         this.stateTime = 0f;
         this.spritesheet = spritesheet;
+        // A vida máxima agora é o valor base + o bônus comprado na loja
+        this.vidaMaxima = 100f + bonusVidaInicial;
+        // O jogador começa com a vida cheia
+        this.vida = this.vidaMaxima;
+
+        this.velocidadeMaxima = 60f + bonusVelocidadeInicial;
+        this.velocidade = this.velocidadeMaxima;
+
+        this.danoBase = 5f + bonusDanoInicial;
 
         TextureRegion[] framesFrente = new TextureRegion[2];
         framesFrente[0] = new TextureRegion(spritesheet, 0, 11, 16, 16);
@@ -81,6 +92,10 @@ public class Jogador {
     }
 
     private Direcao direcaoAtual = Direcao.PARADO;
+
+    public float getDano() {
+        return this.danoBase;
+    }
 
 
     public void update(float delta, TileMap tileMap, OrthographicCamera camera) {
@@ -146,7 +161,7 @@ public class Jogador {
         // Lógica de Tiro
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (cooldownTiro <= 0) {
-                GameScreen.instance.criarProjetil(this.x + 8, this.y + 8, camera);
+                GameScreen.instance.criarProjetil(this, this.x + 8, this.y + 8, camera);
                 cooldownTiro = tempoEntreTiros;
             }
         }

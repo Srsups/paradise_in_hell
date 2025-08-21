@@ -82,7 +82,25 @@ public class GameScreen implements Screen {
 
         tileMap = new TileMap(spritesheet);
 
-        jogador = new Jogador(100, 100, spritesheet);
+        // 1. Carrega os dados salvos
+        Preferences prefs = Gdx.app.getPreferences("ParadiseInHellSave");
+        int nivelUpgradeVida = prefs.getInteger("upgrade_vida_nivel", 0);
+        int nivelUpgradeDano = prefs.getInteger("upgrade_dano_nivel", 0);
+        int nivelUpgradeVelocidade = prefs.getInteger("upgrade_velocidade_nivel", 0);
+
+        // 2. Calcula o bônus com base no nível do upgrade
+        float bonusDeVida = nivelUpgradeVida * 20f;
+        System.out.println("Iniciando jogo com bônus de vida: +" + bonusDeVida);
+
+        float bonusDeDano = nivelUpgradeDano * 20f;
+        System.out.println("Iniciando jogo com bônus de dano: +" + bonusDeDano);
+
+        float bonusDeVelocidade = nivelUpgradeVelocidade * 20f;
+        System.out.println("Iniciando jogo com bônus de velocidade: +" + bonusDeVelocidade);
+
+
+        // 3. Cria o jogador, passando o bônus calculado para o novo construtor
+        jogador = new Jogador(100, 100, spritesheet, bonusDeVida, bonusDeDano, bonusDeVelocidade);
 
         instance = this;
 
@@ -448,30 +466,35 @@ public class GameScreen implements Screen {
         batch.end();
     }
 
-    private void desenharPoderes(){
+    private void desenharPoderes() {
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); // Raios podem ser preenchidos
+        Gdx.gl.glEnable(GL20.GL_BLEND); // Habilita transparência para ambos
 
-        // Lógica para desenhar a aura de Poseidon, se ativa
+        // --- Bloco 1: Desenha as LINHAS (Aura e Escudo) ---
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line); // Inicia no modo LINHA
+
         if (jogador.possuiAura()) {
-            shapeRenderer.setColor(0, 0.5f, 1, 0.8f); // Azul mais visível
+            shapeRenderer.setColor(0, 0.5f, 1, 0.8f);
             shapeRenderer.circle(jogador.x + 8, jogador.y + 8, jogador.getRaioAura());
         }
-
-        // Lógica para desenhar o escudo da Égide, se ativo
         if (jogador.isEscudoAtivo()) {
-            shapeRenderer.setColor(1, 0.8f, 0, 0.9f); // Dourado mais visível
+            shapeRenderer.setColor(1, 0.8f, 0, 0.9f);
             shapeRenderer.circle(jogador.x + 8, jogador.y + 8, 12f);
         }
 
-        // Desenha os raios
+        shapeRenderer.end(); // Termina o modo LINHA
+
+        // --- Bloco 2: Desenha as formas PREENCHIDAS (Raios) ---
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); // Inicia no modo PREENCHIDO
+
         for (Raio r : raios) {
             shapeRenderer.setColor(Color.YELLOW);
-            // Desenha um retângulo vertical fino para simular o raio
             shapeRenderer.rect(r.x + 4, r.y, 8, 48);
         }
 
-        shapeRenderer.end();
+        shapeRenderer.end(); // Termina o modo PREENCHIDO
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     public void invocarRaio() {
@@ -532,14 +555,16 @@ public class GameScreen implements Screen {
 
     }
 
-    public void criarProjetil(float x, float y, OrthographicCamera camera) {
-        // ... (cálculo da direção do mouse, sem alterações) ...
+    public void criarProjetil(Jogador atirador, float x, float y, OrthographicCamera camera) {
         Vector3 mousePosTela = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         Vector3 mousePosMundo = camera.unproject(mousePosTela);
         Vector2 direcao = new Vector2(mousePosMundo.x - x, mousePosMundo.y - y).nor();
 
-        // Modificação: Passa a TextureRegion que já foi carregada e recortada
-        projeteis.add(new Projetil(x, y, direcao, texturaProjetil));
+        // Pega o dano atual do jogador
+        float danoFinal = atirador.getDano();
+
+        // Passa o dano final para o novo projétil
+        projeteis.add(new Projetil(x, y, direcao, texturaProjetil, danoFinal));
     }
 
 
