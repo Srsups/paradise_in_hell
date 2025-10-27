@@ -13,6 +13,8 @@ public class TileMap {
     private Texture spritesheet;
     private TextureRegion[] grassTiles;
     private Random random;
+    private TextureRegion tileChaoArena;
+    private TextureRegion tileParedeArena;
 
     public TileMap(Texture spritesheet) {
         tiles = new HashMap<>();
@@ -24,6 +26,9 @@ public class TileMap {
         grassTiles[0] = new TextureRegion(spritesheet, 278, 209, 16, 16);
         grassTiles[1] = new TextureRegion(spritesheet, 295, 209, 16, 16);
         grassTiles[2] = new TextureRegion(spritesheet, 244, 226, 16, 16);
+
+        tileChaoArena = new TextureRegion(spritesheet, 278, 209, 16, 16);
+        tileParedeArena = new TextureRegion(spritesheet, 281, 241, 16, 16);
     }
 
     public boolean ehSolido(float px, float py) {
@@ -87,6 +92,35 @@ public class TileMap {
                     TextureRegion tileRegion = grassTiles[random.nextInt(grassTiles.length)];
                     // Cria o tile, garantindo que o parâmetro 'solido' seja 'false'
                     tiles.put(key, new Tile(x, y, tileRegion, false)); // GARANTE QUE NÃO É SÓLIDO
+                }
+            }
+        }
+    }
+
+    /**
+     * Gera uma arena retangular fechada, com chão e paredes.
+     * @param centroX Posição X (em grade) do centro da arena.
+     * @param centroY Posição Y (em grade) do centro da arena.
+     * @param largura A largura da área interna (em número de tiles).
+     * @param altura A altura da área interna (em número de tiles).
+     */
+    public void gerarArenaFechada(int centroX, int centroY, int largura, int altura) {
+        tiles.clear(); // Limpa o mapa anterior
+
+        int xInicial = centroX - largura / 2;
+        int yInicial = centroY - altura / 2;
+        int xFinal = centroX + largura / 2;
+        int yFinal = centroY + altura / 2;
+
+        for (int x = xInicial - 1; x <= xFinal + 1; x++) {
+            for (int y = yInicial - 1; y <= yFinal + 1; y++) {
+                String key = x + "," + y;
+                // Se estivermos na borda, cria uma parede sólida
+                if (x == xInicial - 1 || x == xFinal + 1 || y == yInicial - 1 || y == yFinal + 1) {
+                    tiles.put(key, new Tile(x, y, tileParedeArena, true)); // Parede, sólida
+                } else {
+                    // Senão, cria um tile de chão passável
+                    tiles.put(key, new Tile(x, y, tileChaoArena, false)); // Chão, não sólido
                 }
             }
         }

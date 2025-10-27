@@ -8,18 +8,18 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Inimigo {
-    private float stateTime;
+    protected float stateTime;
     public float x, y;
     private Texture spritesheet;
     public float velocidade = 30f;
     public float vida = 20f;
     private int dano;
-    private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
-    private Jogador.Direcao direcaoAtual = Jogador.Direcao.PARADO;
+    protected Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
+    protected Jogador.Direcao direcaoAtual = Jogador.Direcao.PARADO;
     private float tempoFlash = 0.15f;
-    private float timerFlash = 0f;
+    protected float timerFlash = 0f;
     private float cooldownAtaque = 1f; // Inimigo pode atacar a cada 1 segundo
-    private float timerAtaque = 0f;
+    protected float timerAtaque = 0f;
 
     public Inimigo(float spawnX, float spawnY, Texture spritesheet) {
         this.x = spawnX; // Correto
@@ -132,6 +132,14 @@ public class Inimigo {
     public void sofrerDano(float quantidade) {
         this.vida -= quantidade;
         this.timerFlash = this.tempoFlash; // Ativa o flash
+    }
+
+    protected void atualizarDirecaoAnimacao(Vector2 direcao) {
+        if (Math.abs(direcao.x) > Math.abs(direcao.y)) {
+            direcaoAtual = direcao.x > 0 ? Jogador.Direcao.DIREITA : Jogador.Direcao.ESQUERDA;
+        } else {
+            direcaoAtual = direcao.y > 0 ? Jogador.Direcao.COSTAS : Jogador.Direcao.FRENTE;
+        }
     }
 
     public boolean estaMorto() {

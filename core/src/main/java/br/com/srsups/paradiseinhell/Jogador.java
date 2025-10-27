@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Jogador {
     public float x, y;
+    private Rectangle solidArea;
     private Texture spritesheet;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private float stateTime;
@@ -62,6 +64,7 @@ public class Jogador {
         this.vidaMaxima = 100f + bonusVidaInicial;
         // O jogador começa com a vida cheia
         this.vida = this.vidaMaxima;
+        this.solidArea = new Rectangle(x, y, 16, 16);
 
         this.velocidadeMaxima = 60f + bonusVelocidadeInicial;
         this.velocidade = this.velocidadeMaxima;
@@ -98,7 +101,7 @@ public class Jogador {
     }
 
 
-    public void update(float delta, TileMap tileMap, OrthographicCamera camera) {
+    public void update(float delta, TileMap tileMap, OrthographicCamera camera, WorldController world) {
         stateTime += delta;
 
         // ETAPA 1: LÓGICA BASEADA NO TEMPO (Acontece sempre)
@@ -161,7 +164,8 @@ public class Jogador {
         // Lógica de Tiro
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (cooldownTiro <= 0) {
-                GameScreen.instance.criarProjetil(this, this.x + 8, this.y + 8, camera);
+                // O jogador não sabe nem se importa qual tela é, ele só pede para o "mundo" criar um projétil.
+                world.criarProjetil(this, this.x + 8, this.y + 8, camera);
                 cooldownTiro = tempoEntreTiros;
             }
         }
@@ -206,6 +210,12 @@ public class Jogador {
         } else {
             direcaoAtual = Direcao.PARADO;
         }
+
+        solidArea.setPosition(this.x, this.y);
+    }
+
+    public Rectangle getSolidArea() {
+        return this.solidArea;
     }
 
     public float getEstaminaAtual() {

@@ -23,7 +23,7 @@ enum GameState {
     LEVEL_UP
 }
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, WorldController {
     private Game game;
     private GameState estadoAtual = GameState.JOGANDO; // O jogo começa no estado JOGANDO
     private float tempoDePreparo = 0.05f; // Meio segundo de tempo de preparo
@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
     private float spawnInterval = 3f; // Spawn de um novo inimigo a cada 3 segundos
     private TextureRegion texturaProjetil;
     private ArrayList<Projetil> projeteis = new ArrayList<>();
+    private ArrayList<ProjetilInimigo> projeteisInimigos = new ArrayList<>();
     public static GameScreen instance;
     private ArrayList<OrbeXP> orbes = new ArrayList<>();
     private TextureRegion texturaOrbeXP;
@@ -52,6 +53,10 @@ public class GameScreen implements Screen {
     private ArrayList<String> melhoriasAtuais;
     private ArrayList<Rectangle> retangulosMelhorias;
     private ArrayList<Raio> raios = new ArrayList<>();
+    private float gameTimer = 0f;
+    private float bossPortalSpawnTime = 12f; // 2 minutos
+    private Portal portal = null; // Começa como nulo
+    private TextureRegion texturaPortal; // Vamos carregar a textura no show()
 
     public GameScreen(Game game) {
         this.game = game;
@@ -105,6 +110,8 @@ public class GameScreen implements Screen {
         instance = this;
 
         tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
+
+        texturaPortal = new TextureRegion(spritesheet, /*x*/249, /*y*/270, /*w*/24, /*h*/24); // Exemplo: uma pedra mágica
 
         font = new BitmapFont();
 
@@ -227,7 +234,7 @@ public class GameScreen implements Screen {
             tempoDePreparo -= delta; // ...apenas diminui o timer.
         } else {
 
-            jogador.update(delta, tileMap, camera);
+            jogador.update(delta, tileMap, camera, this);
 
             for (Inimigo inimigo : inimigos) {
                 inimigo.update(delta, jogador, tileMap);
@@ -286,6 +293,25 @@ public class GameScreen implements Screen {
                 // Após checar contra todos os inimigos, vemos se o projétil foi marcado para remoção
                 if (p.deveSerRemovido) {
                     projetilIterator.remove();
+                }
+            }
+
+            // --- LÓGICA DOS PROJÉTEIS INIMIGOS ---
+            Iterator<ProjetilInimigo> projInimigoIterator = projeteisInimigos.iterator();
+            while (projInimigoIterator.hasNext()) {
+                ProjetilInimigo p = projInimigoIterator.next();
+                p.update(delta, tileMap); // Atualiza a posição do projétil
+
+                // Remove se colidir com uma parede
+                if (p.deveSerRemovido) {
+                    projInimigoIterator.remove();
+                    continue;
+                }
+
+                // Checa colisão com o JOGADOR
+                if (p.x < jogador.x + 16 && p.x + 8 > jogador.x && p.y < jogador.y + 16 && p.y + 8 > jogador.y) {
+                    jogador.sofrerDano(p.dano);
+                    projInimigoIterator.remove(); // Remove o projétil ao atingir o jogador
                 }
             }
 
@@ -360,6 +386,25 @@ public class GameScreen implements Screen {
                 }
             }
 
+            gameTimer += delta;
+
+            // Lógica para Spawna o portal
+            if (portal == null && gameTimer >= bossPortalSpawnTime) {
+                // Spawna o portal um pouco à direita do jogador
+                portal = new Portal(jogador.x + 100, jogador.y, texturaPortal);
+                System.out.println("O portal para a câmara do chefe apareceu!");
+            }
+
+            // Lógica de interação com o portal
+            if (portal != null) {
+                if (portal.getBounds().overlaps(jogador.getSolidArea())) {
+                    System.out.println("Entrando no portal...");
+                    // Passamos o 'game' e o 'jogador' para que a próxima tela tenha os dados atuais
+                    game.setScreen(new BossScreen(game, jogador, spritesheet));
+                    return; // Importante para parar a execução desta tela
+                }
+            }
+
             // --- LÓGICA DOS RAIOS ---
             Iterator<Raio> raioIterator = raios.iterator();
             while (raioIterator.hasNext()) {
@@ -399,6 +444,10 @@ public class GameScreen implements Screen {
             projetil.draw(batch);
         }
 
+        for (ProjetilInimigo projetil : projeteisInimigos) {
+            projetil.draw(batch);
+        }
+
         for (OrbeXP orbe : orbes) {
             orbe.draw(batch);
         }
@@ -410,6 +459,11 @@ public class GameScreen implements Screen {
         for (DamageNumber dn : damageNumbers) {
             dn.draw(batch, font); // Passa a fonte para o método de desenho
         }
+
+        if (portal != null) {
+            portal.draw(batch);
+        }
+
         batch.end();
     }
 
@@ -509,6 +563,14 @@ public class GameScreen implements Screen {
 
         // Cria um novo raio na posição do inimigo alvo
         raios.add(new Raio(alvo.x, alvo.y));
+    }
+
+    public void criarProjetilInimigo(float origemX, float origemY, float alvoX, float alvoY) {
+        // A lógica é a mesma do projétil do jogador: calcula a direção e cria o objeto.
+        Vector2 direcao = new Vector2(alvoX - origemX, alvoY - origemY).nor();
+        // Você pode querer uma textura diferente para o projétil do inimigo no futuro.
+        // Por enquanto, podemos usar a mesma do jogador.
+        projeteisInimigos.add(new ProjetilInimigo(origemX, origemY, direcao, texturaProjetil, 10f)); // Dano fixo de 10
     }
 
     @Override
