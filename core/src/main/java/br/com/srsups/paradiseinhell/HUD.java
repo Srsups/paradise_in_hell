@@ -40,34 +40,50 @@ public class HUD {
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Barra de Vida
-        float barX = 20f, barWidth = 400f, barHeight = 40f;
-        float barYVida = viewport.getWorldHeight() - 50f;
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        float vidaReal = jogador.getVida();
-        vidaExibida = MathUtils.lerp(vidaExibida, vidaReal, 0.12f); // suaviza
-        float pct = vidaExibida / jogador.getVidaMaxima();
-        shapeRenderer.rect(barX, barYVida, barWidth * pct, barHeight);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(barX, barYVida, barWidth * (jogador.getVida() / jogador.getVidaMaxima()), barHeight);
+    // Calcula tamanhos proporcionais baseados na viewport da HUD
+    float barX = viewport.getWorldWidth() * 0.02f; // 2% da largura
+    float barWidth = viewport.getWorldWidth() * 0.25f; // 25% da largura
+    float barHeight = viewport.getWorldHeight() * 0.035f; // 3.5% da altura
+    float padding = viewport.getWorldHeight() * 0.015f;
+    float barYVida = viewport.getWorldHeight() - barHeight - padding;
 
-        // Barra de Estamina
-        float barYEstamina = barYVida - 30f;
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(barX, barYEstamina, barWidth, barHeight);
-        shapeRenderer.setColor(jogador.isExausto() ? Color.FIREBRICK : Color.GREEN);
-        shapeRenderer.rect(barX, barYEstamina, barWidth * (jogador.getEstaminaAtual() / jogador.getEstaminaMaxima()), barHeight);
+    // Barra de Vida (suavizada)
+    shapeRenderer.setColor(Color.DARK_GRAY);
+    float vidaReal = jogador.getVida();
+    vidaExibida = MathUtils.lerp(vidaExibida, vidaReal, 0.12f); // suaviza
+    float pct = vidaExibida / jogador.getVidaMaxima();
 
-        shapeRenderer.end();
+    // Fundo da barra
+    shapeRenderer.setColor(Color.DARK_GRAY);
+    shapeRenderer.rect(barX, barYVida, barWidth, barHeight);
+
+    // Barra suavizada (efeito visual leve indicando mudança)
+    shapeRenderer.setColor(new Color(1f, 0.85f, 0f, 0.35f));
+    shapeRenderer.rect(barX, barYVida, barWidth * pct, barHeight);
+
+    // Barra real (vida atual)
+    shapeRenderer.setColor(Color.RED);
+    shapeRenderer.rect(barX, barYVida, barWidth * (jogador.getVida() / jogador.getVidaMaxima()), barHeight);
+
+    // Barra de Estamina (abaixo da barra de vida)
+    float barYEstamina = barYVida - barHeight - padding;
+    shapeRenderer.setColor(Color.DARK_GRAY);
+    shapeRenderer.rect(barX, barYEstamina, barWidth, barHeight);
+    shapeRenderer.setColor(jogador.isExausto() ? Color.FIREBRICK : Color.GREEN);
+    shapeRenderer.rect(barX, barYEstamina, barWidth * (jogador.getEstaminaAtual() / jogador.getEstaminaMaxima()), barHeight);
+
+    shapeRenderer.end();
 
         // --- 2. Lógica de desenhar os textos ---
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
-        float textoY = viewport.getWorldHeight() - 80f; // Posição Y inicial
-        font.draw(batch, "Nível: " + jogador.getNivel(), 25, textoY);
-        font.draw(batch, "XP: " + (int)jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel(), 25, textoY - 40); // 40 pixels abaixo
+        // Posiciona os textos próximos às barras, em unidades da viewport
+        float textoX = barX + barWidth + (viewport.getWorldWidth() * 0.02f);
+        float textoY = barYVida + (barHeight * 0.75f);
+        font.draw(batch, "Nível: " + jogador.getNivel(), textoX, textoY);
+        font.draw(batch, "XP: " + (int)jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel(), textoX, textoY - (barHeight + padding));
         batch.end();
     }
 
@@ -76,12 +92,14 @@ public class HUD {
     }
 
     public void dispose() {
-        shapeRenderer.dispose();
-        batch.dispose();
-        font.dispose();
+        // Não descartar objetos que foram passados pelo construtor (são geralmente compartilhados pelo jogo)
+        // Se HUD criar seus próprios recursos no futuro, então devem ser descartados aqui.
     }
 
     public void resize(int width, int height) {
         viewport.update(width, height, true); // O 'true' centraliza a câmera
+        // Ajusta escala da fonte para manter proporção relativa à resolução base (1920x1080)
+        float scale = viewport.getWorldWidth() / 1920f;
+        font.getData().setScale(scale);
     }
 }

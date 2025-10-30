@@ -1,9 +1,12 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.math.Vector2;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +20,9 @@ public class TileMap {
     private TextureRegion tileParedeArena;
     public float mapPixelWidth;
     public float mapPixelHeight;
+    // Coordenadas do canto inferior-esquerdo do mapa em unidades de mundo (pixels)
+    public float mapPixelLeft;
+    public float mapPixelBottom;
 
     public TileMap(Texture spritesheet) {
         tiles = new HashMap<>();
@@ -43,11 +49,54 @@ public class TileMap {
         return tile.solido;
     }
 
+    /**
+     * Busca a posição (em coordenadas de mundo) do tile não-sólido mais próximo
+     * do ponto dado. Retorna o ponto central do tile encontrado como Vector2.
+     * Se não encontrar nada dentro do raio máximo, retorna null.
+     */
+    public Vector2 findNearestFreePosition(float worldX, float worldY, int maxRadiusTiles) {
+        int centerTx = (int) Math.floor(worldX / Tile.TILE_SIZE);
+        int centerTy = (int) Math.floor(worldY / Tile.TILE_SIZE);
+
+        for (int r = 0; r <= maxRadiusTiles; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                int dy = r - Math.abs(dx);
+
+                // check +dy
+                int tx1 = centerTx + dx;
+                int ty1 = centerTy + dy;
+                float px1 = tx1 * Tile.TILE_SIZE + Tile.TILE_SIZE * 0.5f;
+                float py1 = ty1 * Tile.TILE_SIZE + Tile.TILE_SIZE * 0.5f;
+                if (!ehSolido(px1, py1)) return new Vector2(px1, py1);
+
+                // if dy == 0 we already checked same cell
+                if (dy != 0) {
+                    int tx2 = centerTx + dx;
+                    int ty2 = centerTy - dy;
+                    float px2 = tx2 * Tile.TILE_SIZE + Tile.TILE_SIZE * 0.5f;
+                    float py2 = ty2 * Tile.TILE_SIZE + Tile.TILE_SIZE * 0.5f;
+                    if (!ehSolido(px2, py2)) return new Vector2(px2, py2);
+                }
+            }
+        }
+        return null;
+    }
+
     public void update(Camera camera) {
-        int camLeft = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Tile.TILE_SIZE) - 1;
-        int camRight = (int)Math.floor((camera.position.x + camera.viewportWidth / 2) / Tile.TILE_SIZE) + 1;
-        int camBottom = (int)Math.floor((camera.position.y - camera.viewportHeight / 2) / Tile.TILE_SIZE) - 1;
-        int camTop = (int)Math.floor((camera.position.y + camera.viewportHeight / 2) / Tile.TILE_SIZE) + 1;
+    // Leva em conta o zoom da câmera: a área visível é viewportWidth*zoom
+        // Se a câmera for orthographic, considera o zoom, senão assume zoom = 1
+        float zoom = 1f;
+        if (camera instanceof OrthographicCamera) {
+            zoom = ((OrthographicCamera) camera).zoom;
+        }
+        float visibleWidth = camera.viewportWidth * zoom;
+        float visibleHeight = camera.viewportHeight * zoom;
+
+    int camLeft = (int)Math.floor((camera.position.x - visibleWidth / 2f) / Tile.TILE_SIZE) - 1;
+    // Use ceil for right/top so we include any tile partially covered at the far edges
+    int camRight = (int)Math.ceil((camera.position.x + visibleWidth / 2f) / Tile.TILE_SIZE) + 1;
+    int camBottom = (int)Math.floor((camera.position.y - visibleHeight / 2f) / Tile.TILE_SIZE) - 1;
+    int camTop = (int)Math.ceil((camera.position.y + visibleHeight / 2f) / Tile.TILE_SIZE) + 1;
 
         for (int x = camLeft; x <= camRight; x++) {
             for (int y = camBottom; y <= camTop; y++) {
@@ -111,14 +160,18 @@ public class TileMap {
 
         int xInicial = centroX - largura / 2;
         int yInicial = centroY - altura / 2;
-        int xFinal = centroX + largura / 2;
-        int yFinal = centroY + altura / 2;
+        
+        // --- LINHAS CORRIGIDAS ---
+        // Recalcula o 'final' com base no 'inicial' para garantir a largura exata.
+        int xFinal = xInicial + largura - 1;
+        int yFinal = yInicial + altura - 1;
+        // -------------------------
 
         for (int x = xInicial - 1; x <= xFinal + 1; x++) {
             for (int y = yInicial - 1; y <= yFinal + 1; y++) {
                 String key = x + "," + y;
                 // Se estivermos na borda, cria uma parede sólida
-                if (x == xInicial - 1 || x == xFinal + 1 || y == yInicial - 1 || y == yFinal + 1) {
+                if (x < xInicial || x > xFinal || y < yInicial || y > yFinal) { // Lógica de borda mais robusta
                     tiles.put(key, new Tile(x, y, tileParedeArena, true)); // Parede, sólida
                 } else {
                     // Senão, cria um tile de chão passável
@@ -127,8 +180,12 @@ public class TileMap {
             }
         }
 
+        // Define a área do mapa em pixels, e o canto inferior-esquerdo (offset)
+        // ESTES CÁLCULOS AGORA ESTARÃO CORRETOS
         this.mapPixelWidth = (largura + 2) * Tile.TILE_SIZE;
         this.mapPixelHeight = (altura + 2) * Tile.TILE_SIZE;
+        this.mapPixelLeft = (xInicial - 1) * Tile.TILE_SIZE;
+        this.mapPixelBottom = (yInicial - 1) * Tile.TILE_SIZE;
     }
 
     public void dispose() {

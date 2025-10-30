@@ -36,7 +36,7 @@ public class BossScreen implements Screen, WorldController {
     @Override
     public void show() {
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(480, 270, camera);
+        viewport = new ExtendViewport(704, 480, camera);
         viewport.apply();
         camera.position.set(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f, 0);
         camera.update();
@@ -46,20 +46,39 @@ public class BossScreen implements Screen, WorldController {
         // Cria um mapa específico para a arena do chefe
         mapaDaArena = new TileMap(spritesheet);
         // Coloca o jogador no centro da arena
-        // Converte a posição do centro da câmera para a grade de tiles
-        int centroArenaX = (int) (camera.viewportWidth / 2 / Tile.TILE_SIZE);
-        int centroArenaY = (int) (camera.viewportHeight / 2 / Tile.TILE_SIZE);
+    // Converte a posição do centro da câmera para a grade de tiles
+    int centroArenaX = (int) (viewport.getWorldWidth() / 2 / Tile.TILE_SIZE);
+    int centroArenaY = (int) (viewport.getWorldHeight() / 2 / Tile.TILE_SIZE);
 
         // Gera uma arena segura e vazia
-        // Gera uma arena fechada de 28x15 tiles internos
-        mapaDaArena.gerarArenaFechada(centroArenaX, centroArenaY, 40, 22);
+        // Gera uma arena fechada de 64x32 tiles internos
+        mapaDaArena.gerarArenaFechada(centroArenaX, centroArenaY, 64, 32);
 
-        // Coloca o jogador no centro da arena
-        jogador.x = camera.viewportWidth / 2f;
-        jogador.y = camera.viewportHeight / 2f;
+        // Coloca o jogador no centro da arena (posiciona pelo canto superior esquerdo do sprite)
+        // Usa o centro real do mapa para evitar que o jogador seja posicionado fora da arena.
+        float arenaCenterX = mapaDaArena.mapPixelLeft + mapaDaArena.mapPixelWidth * 0.5f;
+        float arenaCenterY = mapaDaArena.mapPixelBottom + mapaDaArena.mapPixelHeight * 0.5f;
 
-        // Instancia o chefe
-        chefe = new ChefeCerbero(jogador.x + 100, jogador.y, spritesheet);
+        // Tenta encontrar um tile não-sólido próximo ao centro para posicionar o jogador
+        Vector2 posJog = mapaDaArena.findNearestFreePosition(arenaCenterX, arenaCenterY, 8);
+        if (posJog != null) {
+            jogador.x = posJog.x - jogador.getWidth() / 2f;
+            jogador.y = posJog.y - jogador.getHeight() / 2f;
+        } else {
+            // fallback: centro exato
+            jogador.x = arenaCenterX - jogador.getWidth() / 2f;
+            jogador.y = arenaCenterY - jogador.getHeight() / 2f;
+        }
+
+        // Instancia o chefe próximo ao jogador mas garante o spawn em tile livre
+        float preferBossX = arenaCenterX + 100f;
+        float preferBossY = arenaCenterY;
+        Vector2 posChefe = mapaDaArena.findNearestFreePosition(preferBossX, preferBossY, 8);
+        if (posChefe != null) {
+            chefe = new ChefeCerbero(posChefe.x - 8f, posChefe.y - 8f, spritesheet); // ajusta para bottom-left (assume 16x16)
+        } else {
+            chefe = new ChefeCerbero(arenaCenterX + 100f, arenaCenterY, spritesheet);
+        }
     }
 
     public void criarProjetil(Jogador atirador, float x, float y, OrthographicCamera camera) {
@@ -93,25 +112,25 @@ public class BossScreen implements Screen, WorldController {
         }
 
         // --- LÓGICA DA CÂMERA (MODIFICADA) ---
-        // 1. Centraliza a câmera no jogador
-        camera.position.set(jogador.x, jogador.y, 0);
+    // 1. Centraliza a câmera no centro do jogador
+    camera.position.set(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0);
 
-        // 2. Calcula os limites da câmera
-        float camHalfWidth = camera.viewportWidth * 0.5f;
-        float camHalfHeight = camera.viewportHeight * 0.5f;
+    // 2. Calcula os limites efetivos da câmera (leva em conta o zoom)
+    float camHalfWidth = (camera.viewportWidth * camera.zoom) * 0.5f;
+    float camHalfHeight = (camera.viewportHeight * camera.zoom) * 0.5f;
 
-        // 3. Calcula os limites do mapa (assumindo que o mapa começa em 0,0)
-        float mapLeft = 0;
-        float mapRight = mapaDaArena.mapPixelWidth;
-        float mapBottom = 0;
-        float mapTop = mapaDaArena.mapPixelHeight;
+    // 3. Calcula os limites do mapa usando o offset real fornecido pelo TileMap
+    float mapLeft = mapaDaArena.mapPixelLeft;
+    float mapRight = mapaDaArena.mapPixelLeft + mapaDaArena.mapPixelWidth;
+    float mapBottom = mapaDaArena.mapPixelBottom;
+    float mapTop = mapaDaArena.mapPixelBottom + mapaDaArena.mapPixelHeight;
 
-        // 4. "Fixa" a posição da câmera (Clamp) para que ela não ultrapasse os limites
-        camera.position.x = Math.max(mapLeft + camHalfWidth, Math.min(mapRight - camHalfWidth, camera.position.x));
-        camera.position.y = Math.max(mapBottom + camHalfHeight, Math.min(mapTop - camHalfHeight, camera.position.y));
+    // 4. "Fixa" a posição da câmera (Clamp) para que ela não ultrapasse os limites
+    camera.position.x = Math.max(mapLeft + camHalfWidth, Math.min(mapRight - camHalfWidth, camera.position.x));
+    camera.position.y = Math.max(mapBottom + camHalfHeight, Math.min(mapTop - camHalfHeight, camera.position.y));
 
-        // 5. Atualiza a câmera APÓS todas as modificações
-        camera.update();
+    // 5. Atualiza a câmera APÓS todas as modificações
+    camera.update();
 
         // --- LÓGICA DE DANO DO CHEFE ---
         if (chefe.estaAtacando() && chefe.getSolidArea().overlaps(jogador.getSolidArea())) {

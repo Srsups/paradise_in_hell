@@ -70,11 +70,8 @@ public class GameScreen implements Screen, WorldController {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(1920, 1080, camera); // "virtual" world de 1920x1080
         viewport.apply();
-        camera.position.lerp(
-            new Vector3(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0),
-            0.1f  // suavização (10%)
-        );
-        camera.update();
+        // Note: não podemos acessar 'jogador' aqui ainda — ele é criado mais abaixo.
+        // A posição inicial da câmera será ajustada depois que o jogador for criado.
 
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
@@ -105,6 +102,10 @@ public class GameScreen implements Screen, WorldController {
         jogador = new Jogador(100, 100, spritesheet, bonusDeVida, bonusDeDano, bonusDeVelocidade);
 
         instance = this;
+
+    // Agora que o jogador foi criado, posiciona a câmera sobre ele e atualiza.
+    camera.position.set(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0);
+    camera.update();
 
         tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
 
