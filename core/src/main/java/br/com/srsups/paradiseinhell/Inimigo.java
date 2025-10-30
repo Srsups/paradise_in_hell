@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Inimigo {
     protected float stateTime;
+    private Rectangle solidArea;
     public float x, y;
+    public float width = 16, height = 16;
     private Texture spritesheet;
     public float velocidade = 30f;
     public float vida = 20f;
@@ -26,6 +29,7 @@ public class Inimigo {
         this.y = spawnY; // Correto
         this.stateTime = 0f;
         this.spritesheet = spritesheet;
+        this.solidArea = new Rectangle(x, y, 16, 16);
 
         TextureRegion[] framesFrente = new TextureRegion[2];
         framesFrente[0] = new TextureRegion(spritesheet, 0, 29, 16, 16);
@@ -83,6 +87,8 @@ public class Inimigo {
         if (timerFlash > 0) {
             timerFlash -= delta;
         }
+
+        solidArea.setPosition(this.x, this.y);
     }
 
     public boolean podeAtacar() {
@@ -132,6 +138,10 @@ public class Inimigo {
     public void sofrerDano(float quantidade) {
         this.vida -= quantidade;
         this.timerFlash = this.tempoFlash; // Ativa o flash
+    }
+
+    public Rectangle getSolidArea() {
+        return this.solidArea;
     }
 
     protected void atualizarDirecaoAnimacao(Vector2 direcao) {

@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Jogador {
     public float x, y;
+    public Vector2 velocity = new Vector2();
+    public float width = 16, height = 16;
     private Rectangle solidArea;
     private Texture spritesheet;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
@@ -172,14 +174,14 @@ public class Jogador {
 
         // ETAPA 2: LÓGICA BASEADA NO INPUT DE MOVIMENTO
 
-        Vector2 movimento = new Vector2();
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) movimento.y += 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) movimento.y -= 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) movimento.x -= 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) movimento.x += 1;
+        this.velocity.set(0, 0);
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) this.velocity.y += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) this.velocity.y -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) this.velocity.x -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) this.velocity.x += 1;
 
-        if (movimento.len() > 0) {
-            movimento.nor();
+        if (this.velocity.len() > 0) {
+            this.velocity.nor();
 
             // Dash só pode ser iniciado se houver movimento
             if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && dashCooldownTimer <= 0 && estaminaAtual >= custoDash && !exausto) {
@@ -191,8 +193,8 @@ public class Jogador {
 
             float velocidadeNormal = exausto ? (velocidade * modVelocidade) * 0.6f : (velocidade * modVelocidade);
             float velocidadeFinal = dashing ? dashVelocidade : velocidadeNormal;
-            float novaX = x + movimento.x * velocidadeFinal * delta;
-            float novaY = y + movimento.y * velocidadeFinal * delta;
+            float novaX = x + this.velocity.x * velocidadeFinal * delta;
+            float novaY = y + this.velocity.y * velocidadeFinal * delta;
 
             // Colisão (agora com a correção que sugeri anteriormente)
             boolean colideX = tileMap.ehSolido(novaX + 1, y + 1) || tileMap.ehSolido(novaX + 15, y + 1) || tileMap.ehSolido(novaX + 1, y + 15) || tileMap.ehSolido(novaX + 15, y + 15);
@@ -202,10 +204,10 @@ public class Jogador {
             if (!colideY) y = novaY;
 
             // Animação
-            if (Math.abs(movimento.x) > Math.abs(movimento.y)) {
-                direcaoAtual = movimento.x > 0 ? Direcao.DIREITA : Direcao.ESQUERDA;
+            if (Math.abs(this.velocity.x) > Math.abs(this.velocity.y)) {
+                direcaoAtual = this.velocity.x > 0 ? Direcao.DIREITA : Direcao.ESQUERDA;
             } else {
-                direcaoAtual = movimento.y > 0 ? Direcao.COSTAS : Direcao.FRENTE;
+                direcaoAtual = this.velocity.y > 0 ? Direcao.COSTAS : Direcao.FRENTE;
             }
         } else {
             direcaoAtual = Direcao.PARADO;
@@ -272,11 +274,9 @@ public class Jogador {
         this.vida -= quantidade * modDanoRecebido;
         this.timerFlash = this.tempoFlash;
     }
-
     public boolean estaMorto() {
         return this.vida <= 0;
     }
-
     public void ganharXP(int quantidade) {
         this.xpAtual += quantidade * modXpGanho;
 
@@ -285,13 +285,11 @@ public class Jogador {
             GameScreen.instance.iniciarLevelUp();
         }
     }
-
     public void subirDeNivel() {
         this.nivel++;
         this.xpAtual -= xpParaProximoNivel;
         this.xpParaProximoNivel *= 1.5;
     }
-
     public void aumentarVidaMaxima(int valor) {
         this.vidaMaxima += valor;
         this.vida += valor; // Também cura o jogador no mesmo valor
@@ -318,13 +316,24 @@ public class Jogador {
         temRessurreicao = false;
         this.vida = this.vidaMaxima / 2;
     }
+    public float getX(){
+        return this.x;
+    }
+    public float getY(){
+        return this.y;
+    }
+    public float getWidth(){
+        return this.width;
+    }
+    public float getHeight(){
+        return this.height;
+    }
     public void ativarCuraPorAbate(int valor){
         curaPorAbate = valor;
     }
     public int getCuraPorAbate(){
         return curaPorAbate;
     }
-
     // Métodos "get" para que a Main possa ler os valores para a UI
     public float getVida() { return this.vida; }
     public int getNivel() { return this.nivel; }
@@ -338,7 +347,19 @@ public class Jogador {
     public boolean isEscudoAtivo() { return this.escudoAtivo; }
     public void ativarHabilidadeEgide() { this.habilidadeEgideAtiva = true; }
     public void ativarHabilidadeRaio() { this.habilidadeRaioAtiva = true; }
-
+    public Vector2 getVelocity() {
+        return this.velocity;
+    }
+    public float getVelocidadeAtual() {
+        // Retorna a velocidade exata do jogador no momento, considerando todos os estados
+        if (dashing) {
+            return dashVelocidade;
+        }
+        if (exausto) {
+            return (velocidade * modVelocidade) * 0.6f;
+        }
+        return velocidade * modVelocidade;
+    }
     public void dispose() {
     }
 }

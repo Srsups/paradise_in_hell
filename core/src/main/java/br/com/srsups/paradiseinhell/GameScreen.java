@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,13 +24,11 @@ enum GameState {
 }
 
 public class GameScreen implements Screen, WorldController {
-    private Game game;
+    private Main game;
     private GameState estadoAtual = GameState.JOGANDO; // O jogo começa no estado JOGANDO
     private float tempoDePreparo = 0.05f; // Meio segundo de tempo de preparo
-    private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
+    private Viewport viewport;
     private OrthographicCamera camera;
-    private OrthographicCamera hudCamera;
     private Jogador jogador;
     private TileMap tileMap;
     private Texture spritesheet;
@@ -47,7 +45,6 @@ public class GameScreen implements Screen, WorldController {
     private int obolosColetadosNaRun = 0;
     private Random randomParaDrops = new Random();
     private TextureRegion texturaObolo;
-    private BitmapFont font;
     private ArrayList<DamageNumber> damageNumbers = new ArrayList<>();
     private ArrayList<String> todasAsMelhorias;
     private ArrayList<String> melhoriasAtuais;
@@ -58,7 +55,7 @@ public class GameScreen implements Screen, WorldController {
     private Portal portal = null; // Começa como nulo
     private TextureRegion texturaPortal; // Vamos carregar a textura no show()
 
-    public GameScreen(Game game) {
+    public GameScreen(Main game) {
         this.game = game;
         todasAsMelhorias = new ArrayList<>();
         melhoriasAtuais = new ArrayList<>();
@@ -67,17 +64,17 @@ public class GameScreen implements Screen, WorldController {
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
-
         spritesheet = new Texture("spritesheet.png");
 
         // Cria uma câmera com a mesma dimensão da tela
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        viewport = new ExtendViewport(1920, 1080, camera); // "virtual" world de 1920x1080
+        viewport.apply();
+        camera.position.lerp(
+            new Vector3(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0),
+            0.1f  // suavização (10%)
+        );
+        camera.update();
 
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
@@ -112,8 +109,6 @@ public class GameScreen implements Screen, WorldController {
         tileMap.gerarAreaInicialSegura(jogador.x, jogador.y, 5);
 
         texturaPortal = new TextureRegion(spritesheet, /*x*/249, /*y*/270, /*w*/24, /*h*/24); // Exemplo: uma pedra mágica
-
-        font = new BitmapFont();
 
         todasAsMelhorias.add("Saúde de Minotauro");
         todasAsMelhorias.add("Sandálias Aladas de Hermes");
@@ -204,28 +199,45 @@ public class GameScreen implements Screen, WorldController {
     }
 
     private void desenharUiLevelUp() {
-        // Usa o ShapeRenderer para desenhar um fundo semitransparente para pausar a tela
+        // A HUD já tem uma viewport, vamos usar a câmera dela para desenhar.
+        // Isso garante que a UI de Level Up escale da mesma forma que o resto da HUD.
+        OrthographicCamera uiCamera = (OrthographicCamera) game.hud.getViewport().getCamera();
+
+        // Usa o ShapeRenderer para desenhar um fundo semitransparente
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 0.5f); // Cor preta com 50% de transparência
-        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        shapeRenderer.end();
+
+        game.shapeRenderer.setProjectionMatrix(uiCamera.combined); // <-- USA A CÂMERA DA HUD
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        game.shapeRenderer.setColor(0, 0, 0, 0.7f); // Um pouco mais escuro
+        // Desenha o retângulo cobrindo a visão da viewport da HUD
+        game.shapeRenderer.rect(0, 0, game.hud.getViewport().getWorldWidth(), game.hud.getViewport().getWorldHeight());
+        game.shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
         // Usa o SpriteBatch para desenhar o texto das opções
-        batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.begin();
+        game.batch.setProjectionMatrix(uiCamera.combined); // <-- USA A CÂMERA DA HUD
+        game.batch.begin();
 
-        font.draw(batch, "SUBIU DE NÍVEL! ESCOLHA UMA MELHORIA:", Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() / 2f + 150);
+        // Posiciona o texto com base na resolução virtual da HUD (1920x1080)
+        float centerX = game.hud.getViewport().getWorldWidth() / 2f;
+        float startY = game.hud.getViewport().getWorldHeight() * 0.8f;
+
+        game.font.draw(game.batch, "SUBIU DE NÍVEL! ESCOLHA UMA MELHORIA:", centerX - 300, startY);
 
         for (int i = 0; i < melhoriasAtuais.size(); i++) {
             String texto = melhoriasAtuais.get(i);
-            Rectangle r = retangulosMelhorias.get(i);
-            font.draw(batch, texto, r.x + 10, r.y + 35);
+            // Recalcula os retângulos aqui para serem baseados na viewport
+            Rectangle r = new Rectangle(
+                centerX - 200,
+                startY - 150 - (i * 100), // Posição Y de cada opção
+                400, 80
+            );
+            retangulosMelhorias.set(i, r); // Atualiza o retângulo de clique
+            game.font.draw(game.batch, texto, r.x + 20, r.y + 55);
         }
 
-        batch.end();
+        game.batch.end();
     }
 
     private void updateJogando(float delta){
@@ -245,7 +257,10 @@ public class GameScreen implements Screen, WorldController {
             }
 
             // Atualiza a posição da câmera para seguir o jogador
-            camera.position.set(jogador.x + 8, jogador.y + 8, 0);
+            camera.position.lerp(
+                new Vector3(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0),
+                0.1f  // suavização (10%)
+            );
             camera.update();
             tileMap.update(camera); // atualiza o mapa baseado na câmera
 
@@ -432,123 +447,39 @@ public class GameScreen implements Screen, WorldController {
 
     private void desenharMundo() {
         // --- 1. DESENHA TODOS OS SPRITES DO MUNDO ---
-        batch.setProjectionMatrix(camera.combined); // Usa a câmera do mundo
-        batch.begin();
-        tileMap.draw(batch);
-        jogador.draw(batch);
+        game.batch.setProjectionMatrix(camera.combined); // Usa a câmera do mundo
+        game.batch.begin();
+        tileMap.draw(game.batch);
+        jogador.draw(game.batch);
         for (Inimigo inimigo : inimigos) {
-            inimigo.draw(batch);
+            inimigo.draw(game.batch);
         }
 
         for (Projetil projetil : projeteis) {
-            projetil.draw(batch);
+            projetil.draw(game.batch);
         }
 
         for (ProjetilInimigo projetil : projeteisInimigos) {
-            projetil.draw(batch);
+            projetil.draw(game.batch);
         }
 
         for (OrbeXP orbe : orbes) {
-            orbe.draw(batch);
+            orbe.draw(game.batch);
         }
 
         for (Obolo obolo : obolos) {
-            obolo.draw(batch);
+            obolo.draw(game.batch);
         }
 
         for (DamageNumber dn : damageNumbers) {
-            dn.draw(batch, font); // Passa a fonte para o método de desenho
+            dn.draw(game.batch, game.font); // Passa a fonte para o método de desenho
         }
 
         if (portal != null) {
-            portal.draw(batch);
+            portal.draw(game.batch);
         }
 
-        batch.end();
-    }
-
-    private void desenharUI(){
-        // Começamos com o ShapeRenderer para desenhar as barras (formas preenchidas)
-        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        shapeRenderer.setProjectionMatrix(hudCamera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // --- Barra de Vida ---
-        float barX = 10f;
-        float barY = Gdx.graphics.getHeight() - 30f;
-        float barWidth = 200f;
-        float barHeight = 20f;
-        float percentualVida = (float)jogador.getVida() / jogador.getVidaMaxima();
-
-        // Desenha o fundo da barra de vida
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(barX, barY, barWidth, barHeight);
-        // Desenha a parte da frente da barra de vida
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(barX, barY, barWidth * percentualVida, barHeight);
-
-        // --- Barra de Estamina ---
-        barY -= 30f; // Posição da barra de estamina, um pouco abaixo da de vida
-        float percentualEstamina = jogador.getEstaminaAtual() / jogador.getEstaminaMaxima();
-
-        // Desenha o fundo da barra de estamina
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(barX, barY, barWidth, barHeight);
-        // Desenha a parte da frente da barra de estamina, com cor dinâmica
-        if (jogador.isExausto()) {
-            shapeRenderer.setColor(Color.FIREBRICK); // Vermelho escuro para exaustão
-        } else {
-            shapeRenderer.setColor(Color.GREEN);
-        }
-        shapeRenderer.rect(barX, barY, barWidth * percentualEstamina, barHeight);
-
-        shapeRenderer.end(); // Termina o desenho das formas
-
-        // Desenha o texto por cima das barras
-        batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.begin();
-
-        // Desenha os textos
-        String textoNivel = "Nível: " + jogador.getNivel();
-        int nvly = Gdx.graphics.getHeight() - 80;
-        font.draw(batch, textoNivel, 10, Gdx.graphics.getHeight() - 80);
-
-        int xpy = Gdx.graphics.getHeight() - 100;
-        String textoXP = "XP: " + jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel();
-        font.draw(batch, textoXP, 10, Gdx.graphics.getHeight() - 100);
-
-        batch.end();
-    }
-
-    private void desenharPoderes() {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        Gdx.gl.glEnable(GL20.GL_BLEND); // Habilita transparência para ambos
-
-        // --- Bloco 1: Desenha as LINHAS (Aura e Escudo) ---
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line); // Inicia no modo LINHA
-
-        if (jogador.possuiAura()) {
-            shapeRenderer.setColor(0, 0.5f, 1, 0.8f);
-            shapeRenderer.circle(jogador.x + 8, jogador.y + 8, jogador.getRaioAura());
-        }
-        if (jogador.isEscudoAtivo()) {
-            shapeRenderer.setColor(1, 0.8f, 0, 0.9f);
-            shapeRenderer.circle(jogador.x + 8, jogador.y + 8, 12f);
-        }
-
-        shapeRenderer.end(); // Termina o modo LINHA
-
-        // --- Bloco 2: Desenha as formas PREENCHIDAS (Raios) ---
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); // Inicia no modo PREENCHIDO
-
-        for (Raio r : raios) {
-            shapeRenderer.setColor(Color.YELLOW);
-            shapeRenderer.rect(r.x + 4, r.y, 8, 48);
-        }
-
-        shapeRenderer.end(); // Termina o modo PREENCHIDO
-
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        game.batch.end();
     }
 
     public void invocarRaio() {
@@ -588,8 +519,7 @@ public class GameScreen implements Screen, WorldController {
         }
 
         desenharMundo();
-        desenharUI();
-        desenharPoderes();
+        game.hud.draw(jogador);
 
         // Se estivermos no estado de level up, desenha a UI de melhorias por cima
         if (estadoAtual == GameState.LEVEL_UP) {
@@ -598,8 +528,14 @@ public class GameScreen implements Screen, WorldController {
     }
 
     @Override
-    public void resize(int i, int i1) {
-
+    public void resize(int width, int height) {
+        if (viewport != null) {
+            viewport.update(width, height, true); // centraliza a câmera
+        }
+        // Atualiza também a HUD (já tem HUD.resize)
+        if (game.hud != null) {
+            game.hud.resize(width, height);
+        }
     }
 
     @Override
@@ -632,11 +568,9 @@ public class GameScreen implements Screen, WorldController {
 
     @Override
     public void dispose() {
-        batch.dispose();
-        shapeRenderer.dispose();
         tileMap.dispose();
         jogador.dispose();
         spritesheet.dispose();
-        font.dispose();
+        game.hud.dispose();
     }
 }

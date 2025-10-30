@@ -15,6 +15,8 @@ public class TileMap {
     private Random random;
     private TextureRegion tileChaoArena;
     private TextureRegion tileParedeArena;
+    public float mapPixelWidth;
+    public float mapPixelHeight;
 
     public TileMap(Texture spritesheet) {
         tiles = new HashMap<>();
@@ -124,6 +126,9 @@ public class TileMap {
                 }
             }
         }
+
+        this.mapPixelWidth = (largura + 2) * Tile.TILE_SIZE;
+        this.mapPixelHeight = (altura + 2) * Tile.TILE_SIZE;
     }
 
     public void dispose() {

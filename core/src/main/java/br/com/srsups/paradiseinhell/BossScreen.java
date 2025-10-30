@@ -1,24 +1,24 @@
 package br.com.srsups.paradiseinhell;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class BossScreen implements Screen, WorldController {
 
-    private Game game;
-    private SpriteBatch batch;
+    private Main game;
     private OrthographicCamera camera;
+    private Viewport viewport;
     private Jogador jogador;
     private Texture spritesheet;
     private ChefeCerbero chefe; // Nosso futuro chefe
@@ -27,7 +27,7 @@ public class BossScreen implements Screen, WorldController {
     private TextureRegion texturaProjetil;
 
     // Recebemos o jogador da tela anterior para manter o progresso
-    public BossScreen(Game game, Jogador jogador, Texture spritesheet) {
+    public BossScreen(Main game, Jogador jogador, Texture spritesheet) {
         this.game = game;
         this.jogador = jogador;
         this.spritesheet = spritesheet;
@@ -35,9 +35,12 @@ public class BossScreen implements Screen, WorldController {
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 480, 270); // Uma visão menor para a arena
+        viewport = new ExtendViewport(480, 270, camera);
+        viewport.apply();
+        camera.position.set(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f, 0);
+        camera.update();
+
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
         // Cria um mapa específico para a arena do chefe
@@ -49,7 +52,7 @@ public class BossScreen implements Screen, WorldController {
 
         // Gera uma arena segura e vazia
         // Gera uma arena fechada de 28x15 tiles internos
-        mapaDaArena.gerarArenaFechada(centroArenaX, centroArenaY, 28, 15);
+        mapaDaArena.gerarArenaFechada(centroArenaX, centroArenaY, 40, 22);
 
         // Coloca o jogador no centro da arena
         jogador.x = camera.viewportWidth / 2f;
@@ -89,35 +92,62 @@ public class BossScreen implements Screen, WorldController {
             }
         }
 
-        // Câmera segue o jogador
+        // --- LÓGICA DA CÂMERA (MODIFICADA) ---
+        // 1. Centraliza a câmera no jogador
         camera.position.set(jogador.x, jogador.y, 0);
+
+        // 2. Calcula os limites da câmera
+        float camHalfWidth = camera.viewportWidth * 0.5f;
+        float camHalfHeight = camera.viewportHeight * 0.5f;
+
+        // 3. Calcula os limites do mapa (assumindo que o mapa começa em 0,0)
+        float mapLeft = 0;
+        float mapRight = mapaDaArena.mapPixelWidth;
+        float mapBottom = 0;
+        float mapTop = mapaDaArena.mapPixelHeight;
+
+        // 4. "Fixa" a posição da câmera (Clamp) para que ela não ultrapasse os limites
+        camera.position.x = Math.max(mapLeft + camHalfWidth, Math.min(mapRight - camHalfWidth, camera.position.x));
+        camera.position.y = Math.max(mapBottom + camHalfHeight, Math.min(mapTop - camHalfHeight, camera.position.y));
+
+        // 5. Atualiza a câmera APÓS todas as modificações
         camera.update();
+
+        // --- LÓGICA DE DANO DO CHEFE ---
+        if (chefe.estaAtacando() && chefe.getSolidArea().overlaps(jogador.getSolidArea())) {
+            jogador.sofrerDano(chefe.getDanoAtaqueCarga());
+        }
 
         // Lógica de Desenho
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        mapaDaArena.draw(batch);
-        jogador.draw(batch);
-        chefe.draw(batch);
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
+        mapaDaArena.draw(game.batch);
+        jogador.draw(game.batch);
+        chefe.draw(game.batch);
         for (Projetil p : projeteis) {
-            p.draw(batch);
+            p.draw(game.batch);
         }
-        batch.end();
+        game.batch.end();
 
-        // Lógica para fim da batalha (placeholder)
+        // Lógica de Desenho da HUD (fora do batch do mundo)
+        game.hud.draw(jogador); // <-- HUD é desenhada aqui
+
+        // Lógica para fim da batalha
         if (chefe.estaMorto()) {
             System.out.println("CHEFE DERROTADO!");
-            // Aqui você transicionaria para a próxima fase do jogo ou de volta ao menu
             game.setScreen(new MenuScreen(game));
         }
     }
 
     @Override
-    public void resize(int i, int i1) {
-
+    public void resize(int width, int height) {
+        if (viewport != null)
+            viewport.update(width, height, true);
+        if (game.hud != null)
+            game.hud.resize(width, height);
     }
 
     @Override
