@@ -20,8 +20,9 @@ public class BossScreen implements Screen, WorldController {
     private OrthographicCamera camera;
     private Viewport viewport;
     private Jogador jogador;
+    private HUD hud;
     private Texture spritesheet;
-    private ChefeCerbero chefe; // Nosso futuro chefe
+    private ChefeCerbero chefe;
     private TileMap mapaDaArena;
     private ArrayList<Projetil> projeteis = new ArrayList<>();
     private TextureRegion texturaProjetil;
@@ -40,15 +41,16 @@ public class BossScreen implements Screen, WorldController {
         viewport.apply();
         camera.position.set(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f, 0);
         camera.update();
+        hud = new HUD();
 
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
         // Cria um mapa específico para a arena do chefe
         mapaDaArena = new TileMap(spritesheet);
         // Coloca o jogador no centro da arena
-    // Converte a posição do centro da câmera para a grade de tiles
-    int centroArenaX = (int) (viewport.getWorldWidth() / 2 / Tile.TILE_SIZE);
-    int centroArenaY = (int) (viewport.getWorldHeight() / 2 / Tile.TILE_SIZE);
+        // Converte a posição do centro da câmera para a grade de tiles
+        int centroArenaX = (int) (viewport.getWorldWidth() / 2 / Tile.TILE_SIZE);
+        int centroArenaY = (int) (viewport.getWorldHeight() / 2 / Tile.TILE_SIZE);
 
         // Gera uma arena segura e vazia
         // Gera uma arena fechada de 64x32 tiles internos
@@ -94,6 +96,8 @@ public class BossScreen implements Screen, WorldController {
         // Lógica de Update
         jogador.update(delta, mapaDaArena, camera, this);
         chefe.update(delta, jogador, mapaDaArena);
+        hud.render(jogador.getVida(), jogador.getEstaminaAtual(), jogador.getXpAtual());
+
 
         Iterator<Projetil> projetilIterator = projeteis.iterator();
         while (projetilIterator.hasNext()) {
@@ -112,25 +116,25 @@ public class BossScreen implements Screen, WorldController {
         }
 
         // --- LÓGICA DA CÂMERA (MODIFICADA) ---
-    // 1. Centraliza a câmera no centro do jogador
-    camera.position.set(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0);
+        // 1. Centraliza a câmera no centro do jogador
+        camera.position.set(jogador.getX() + jogador.getWidth() / 2f, jogador.getY() + jogador.getHeight() / 2f, 0);
 
-    // 2. Calcula os limites efetivos da câmera (leva em conta o zoom)
-    float camHalfWidth = (camera.viewportWidth * camera.zoom) * 0.5f;
-    float camHalfHeight = (camera.viewportHeight * camera.zoom) * 0.5f;
+        // 2. Calcula os limites efetivos da câmera (leva em conta o zoom)
+        float camHalfWidth = (camera.viewportWidth * camera.zoom) * 0.5f;
+        float camHalfHeight = (camera.viewportHeight * camera.zoom) * 0.5f;
 
-    // 3. Calcula os limites do mapa usando o offset real fornecido pelo TileMap
-    float mapLeft = mapaDaArena.mapPixelLeft;
-    float mapRight = mapaDaArena.mapPixelLeft + mapaDaArena.mapPixelWidth;
-    float mapBottom = mapaDaArena.mapPixelBottom;
-    float mapTop = mapaDaArena.mapPixelBottom + mapaDaArena.mapPixelHeight;
+        // 3. Calcula os limites do mapa usando o offset real fornecido pelo TileMap
+        float mapLeft = mapaDaArena.mapPixelLeft;
+        float mapRight = mapaDaArena.mapPixelLeft + mapaDaArena.mapPixelWidth;
+        float mapBottom = mapaDaArena.mapPixelBottom;
+        float mapTop = mapaDaArena.mapPixelBottom + mapaDaArena.mapPixelHeight;
 
-    // 4. "Fixa" a posição da câmera (Clamp) para que ela não ultrapasse os limites
-    camera.position.x = Math.max(mapLeft + camHalfWidth, Math.min(mapRight - camHalfWidth, camera.position.x));
-    camera.position.y = Math.max(mapBottom + camHalfHeight, Math.min(mapTop - camHalfHeight, camera.position.y));
+        // 4. "Fixa" a posição da câmera (Clamp) para que ela não ultrapasse os limites
+        camera.position.x = Math.max(mapLeft + camHalfWidth, Math.min(mapRight - camHalfWidth, camera.position.x));
+        camera.position.y = Math.max(mapBottom + camHalfHeight, Math.min(mapTop - camHalfHeight, camera.position.y));
 
-    // 5. Atualiza a câmera APÓS todas as modificações
-    camera.update();
+        // 5. Atualiza a câmera APÓS todas as modificações
+        camera.update();
 
         // --- LÓGICA DE DANO DO CHEFE ---
         if (chefe.estaAtacando() && chefe.getSolidArea().overlaps(jogador.getSolidArea())) {
@@ -151,9 +155,6 @@ public class BossScreen implements Screen, WorldController {
         }
         game.batch.end();
 
-        // Lógica de Desenho da HUD (fora do batch do mundo)
-        game.hud.draw(jogador); // <-- HUD é desenhada aqui
-
         // Lógica para fim da batalha
         if (chefe.estaMorto()) {
             System.out.println("CHEFE DERROTADO!");
@@ -165,8 +166,9 @@ public class BossScreen implements Screen, WorldController {
     public void resize(int width, int height) {
         if (viewport != null)
             viewport.update(width, height, true);
-        if (game.hud != null)
-            game.hud.resize(width, height);
+
+        hud.resize(width, height);
+
     }
 
     @Override
@@ -186,6 +188,6 @@ public class BossScreen implements Screen, WorldController {
 
     @Override
     public void dispose() {
-
+        hud.dispose();
     }
 }

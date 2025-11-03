@@ -28,6 +28,7 @@ public class GameScreen implements Screen, WorldController {
     private GameState estadoAtual = GameState.JOGANDO; // O jogo começa no estado JOGANDO
     private float tempoDePreparo = 0.05f; // Meio segundo de tempo de preparo
     private Viewport viewport;
+    private HUD hud;
     private OrthographicCamera camera;
     private Jogador jogador;
     private TileMap tileMap;
@@ -72,6 +73,7 @@ public class GameScreen implements Screen, WorldController {
         viewport.apply();
         // Note: não podemos acessar 'jogador' aqui ainda — ele é criado mais abaixo.
         // A posição inicial da câmera será ajustada depois que o jogador for criado.
+        hud = new HUD();
 
         texturaProjetil = new TextureRegion(spritesheet, 178, 209, 5, 16);
 
@@ -520,7 +522,7 @@ public class GameScreen implements Screen, WorldController {
         }
 
         desenharMundo();
-        game.hud.draw(jogador);
+        hud.render(jogador.getVida(), jogador.getEstaminaAtual(), jogador.getXpAtual());
 
         // Se estivermos no estado de level up, desenha a UI de melhorias por cima
         if (estadoAtual == GameState.LEVEL_UP) {
@@ -533,10 +535,7 @@ public class GameScreen implements Screen, WorldController {
         if (viewport != null) {
             viewport.update(width, height, true); // centraliza a câmera
         }
-        // Atualiza também a HUD (já tem HUD.resize)
-        if (game.hud != null) {
-            game.hud.resize(width, height);
-        }
+        hud.resize(width, height);
     }
 
     @Override
@@ -572,6 +571,6 @@ public class GameScreen implements Screen, WorldController {
         tileMap.dispose();
         jogador.dispose();
         spritesheet.dispose();
-        game.hud.dispose();
+        hud.dispose();
     }
 }

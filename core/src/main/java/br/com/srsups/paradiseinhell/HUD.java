@@ -3,103 +3,116 @@ package br.com.srsups.paradiseinhell;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HUD {
-    private Viewport viewport;
-    private ShapeRenderer shapeRenderer;
-    private SpriteBatch batch;
-    private BitmapFont font;
-    private float vidaExibida;
+    private final ShapeRenderer shapeRenderer;
+    private final OrthographicCamera hudCamera;
+    private final Viewport hudViewport;
+    private float time = 0f;
 
-    public HUD(SpriteBatch batch, ShapeRenderer shapeRenderer, BitmapFont font) {
-        // Defina a resolução "ideal" ou "virtual" para a sua HUD.
-        // Todos os seus desenhos serão baseados nessas dimensões.
-        float hudWidth = 1920;
-        float hudHeight = 1080;
-
-        // A FitViewport vai escalar essa resolução para caber na tela
-        // sem distorcer, adicionando barras pretas se necessário.
-        viewport = new FitViewport(hudWidth, hudHeight, new OrthographicCamera());
-
-        this.shapeRenderer = shapeRenderer;
-        this.batch = batch;
-        this.font = font;
-    }
-
-    // O método draw agora recebe o Jogador para saber o que desenhar
-    public void draw(Jogador jogador) {
-        // --- 1. Lógica de desenhar as barras (antigo desenharUI) ---
-        // Aplica a viewport. Isso ajusta a câmera para o tamanho da tela atual.
-        viewport.apply();
-        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-
-    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-    // Calcula tamanhos proporcionais baseados na viewport da HUD
-    float barX = viewport.getWorldWidth() * 0.02f; // 2% da largura
-    float barWidth = viewport.getWorldWidth() * 0.25f; // 25% da largura
-    float barHeight = viewport.getWorldHeight() * 0.035f; // 3.5% da altura
-    float padding = viewport.getWorldHeight() * 0.015f;
-    float barYVida = viewport.getWorldHeight() - barHeight - padding;
-
-    // Barra de Vida (suavizada)
-    shapeRenderer.setColor(Color.DARK_GRAY);
-    float vidaReal = jogador.getVida();
-    vidaExibida = MathUtils.lerp(vidaExibida, vidaReal, 0.12f); // suaviza
-    float pct = vidaExibida / jogador.getVidaMaxima();
-
-    // Fundo da barra
-    shapeRenderer.setColor(Color.DARK_GRAY);
-    shapeRenderer.rect(barX, barYVida, barWidth, barHeight);
-
-    // Barra suavizada (efeito visual leve indicando mudança)
-    shapeRenderer.setColor(new Color(1f, 0.85f, 0f, 0.35f));
-    shapeRenderer.rect(barX, barYVida, barWidth * pct, barHeight);
-
-    // Barra real (vida atual)
-    shapeRenderer.setColor(Color.RED);
-    shapeRenderer.rect(barX, barYVida, barWidth * (jogador.getVida() / jogador.getVidaMaxima()), barHeight);
-
-    // Barra de Estamina (abaixo da barra de vida)
-    float barYEstamina = barYVida - barHeight - padding;
-    shapeRenderer.setColor(Color.DARK_GRAY);
-    shapeRenderer.rect(barX, barYEstamina, barWidth, barHeight);
-    shapeRenderer.setColor(jogador.isExausto() ? Color.FIREBRICK : Color.GREEN);
-    shapeRenderer.rect(barX, barYEstamina, barWidth * (jogador.getEstaminaAtual() / jogador.getEstaminaMaxima()), barHeight);
-
-    shapeRenderer.end();
-
-        // --- 2. Lógica de desenhar os textos ---
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-        batch.begin();
-        // Posiciona os textos próximos às barras, em unidades da viewport
-        float textoX = barX + barWidth + (viewport.getWorldWidth() * 0.02f);
-        float textoY = barYVida + (barHeight * 0.75f);
-        font.draw(batch, "Nível: " + jogador.getNivel(), textoX, textoY);
-        font.draw(batch, "XP: " + (int)jogador.getXpAtual() + " / " + jogador.getXpParaProximoNivel(), textoX, textoY - (barHeight + padding));
-        batch.end();
-    }
-
-    public Viewport getViewport() {
-        return this.viewport;
-    }
-
-    public void dispose() {
-        // Não descartar objetos que foram passados pelo construtor (são geralmente compartilhados pelo jogo)
-        // Se HUD criar seus próprios recursos no futuro, então devem ser descartados aqui.
+    public HUD() {
+        shapeRenderer = new ShapeRenderer();
+        hudCamera = new OrthographicCamera();
+        // ScreenViewport faz world units = pixels da tela por padrão (útil para GUI)
+        hudViewport = new ScreenViewport(hudCamera);
+        // Inicializa o viewport e configure a câmera HUD para unidades em pixels
+        float startW = Gdx.graphics.getWidth();
+        float startH = Gdx.graphics.getHeight();
+        // Atualiza o viewport para as dimensões atuais (define worldWidth/worldHeight)
+        hudViewport.update((int) startW, (int) startH, true);
+        // Garanta que a câmera ortográfica cubra exatamente a área em pixels
+        hudCamera.setToOrtho(false, startW, startH);
+        hudCamera.update();
     }
 
     public void resize(int width, int height) {
-        viewport.update(width, height, true); // O 'true' centraliza a câmera
-        // Ajusta escala da fonte para manter proporção relativa à resolução base (1920x1080)
-        float scale = viewport.getWorldWidth() / 1920f;
-        font.getData().setScale(scale);
+        // atualiza viewport do HUD para o novo tamanho da janela/tela
+        hudViewport.update(width, height, true);
+        // ajuste a câmera ortográfica para corresponder a pixels
+        hudCamera.setToOrtho(false, width, height);
+        hudCamera.update();
+    }
+
+    /**
+     * hpFill e staminaFill variam entre 0..1
+     */
+    public void render(float hpFill, float staminaFill, float xpLevel) {
+        time += Gdx.graphics.getDeltaTime();
+
+        // 1) aplica a viewport do HUD (muito importante)
+        hudViewport.apply();
+
+        // 2) usa a câmera do HUD (hudCamera) — aqui usamos as dimensões reais da tela (pixels)
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        shapeRenderer.setProjectionMatrix(hudCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Cores
+        Color gold = new Color(0.92f, 0.78f, 0.45f, 0.9f);
+        Color whiteTrans = new Color(1f, 1f, 1f, 0.25f);
+        Color whiteFull = new Color(1f, 1f, 1f, 0.9f);
+        Color staminaColor = new Color(0.75f, 0.75f, 1f, 0.8f);
+
+        // Margens e tamanhos proporcionais à tela vista (agora corretos)
+        float marginX = w * 0.04f; // 4% da largura
+        float marginY = h * 0.04f; // 4% da altura
+        float barWidth = w * 0.20f; // 20% da largura da área visível
+        float barHeight = h * 0.02f; // 2% da altura
+        float spacing = h * 0.012f; // espaçamento
+
+        // Posicionar o círculo NO CANTO SUPERIOR ESQUERDO
+        float circleRadius = h * 0.045f;
+        float circleX = marginX + circleRadius;           // distância da borda esquerda
+        float circleY = h - marginY - circleRadius;       // distância da borda superior
+
+        // contorno dourado e interior
+        shapeRenderer.setColor(gold);
+        shapeRenderer.circle(circleX, circleY, circleRadius);
+        shapeRenderer.setColor(whiteFull);
+        shapeRenderer.circle(circleX, circleY, circleRadius * 0.75f);
+
+        // Barras ao lado do círculo
+        float barX = circleX + circleRadius + (w * 0.02f);
+        float hpBarY = circleY - (barHeight * 0.5f); // alinhamento mais natural
+        float staminaBarY = hpBarY - (barHeight + spacing);
+
+        // HP
+        shapeRenderer.setColor(whiteTrans);
+        shapeRenderer.rect(barX, hpBarY, barWidth, barHeight);
+        shapeRenderer.setColor(gold);
+        shapeRenderer.rect(barX, hpBarY, barWidth * hpFill, barHeight);
+
+        // Stamina
+        shapeRenderer.setColor(whiteTrans);
+        shapeRenderer.rect(barX, staminaBarY, barWidth, barHeight);
+        shapeRenderer.setColor(staminaColor);
+        shapeRenderer.rect(barX, staminaBarY, barWidth * staminaFill, barHeight);
+
+        // Orbe de XP no canto inferior direito (pulsante)
+        float xpRadius = h * 0.035f;
+        float xpX = w - marginX - xpRadius;
+        float xpY = marginY + xpRadius;
+        float pulse = 1f + 0.05f * MathUtils.sin(time * 2.5f);
+
+        shapeRenderer.setColor(whiteTrans);
+        shapeRenderer.circle(xpX, xpY, xpRadius * pulse);
+        shapeRenderer.setColor(gold);
+        shapeRenderer.circle(xpX, xpY, xpRadius * 0.75f * pulse);
+
+        shapeRenderer.end();
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
+    }
+
+    public Viewport getViewport() {
+        return hudViewport;
     }
 }
