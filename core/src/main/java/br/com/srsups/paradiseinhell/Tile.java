@@ -18,6 +18,6 @@ public class Tile {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(tileRegion, gridX * TILE_SIZE, gridY * TILE_SIZE);
+        batch.draw(tileRegion, gridX * TILE_SIZE, gridY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 }

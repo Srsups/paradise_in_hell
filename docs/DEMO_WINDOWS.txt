@@ -1,0 +1,129 @@
+PARADISE IN HELL - DEMO 0.1.0 E PROTOTIPO DA CAMPANHA
+
+Extraia o ZIP inteiro e abra paradise-in-hell-gdx.exe.
+Mantenha o executavel, o JAR e as pastas app e runtime juntos.
+Nao e necessario instalar Java.
+
+No menu:
+Enter ou clique em Demo: sobreviver por cinco minutos.
+C ou clique em Campanha: refugio, hordas, caminhos e chefe.
+
+Escolha um dos 4 saves com clique ou 1, 2, 3, 4.
+Um save vazio cria um personagem. O narrador pergunta sua profissao uma vez:
+1 - Cacador: arco e flecha.
+2 - Ferreiro: espada, golpe em area na direcao do mouse.
+3 - Vigilante: pistola, tiros rapidos de dano menor.
+4 - Apostador: apenas socos em um alvo proximo; sorte 4x.
+A profissao fica fixa no save; outra exige outro personagem em um save vazio.
+Cacador: 100 de vida, 60 de velocidade e 5 de dano base.
+Ferreiro: 130 de vida, 54 de velocidade e 8 de dano base.
+Vigilante: 85 de vida, 66 de velocidade e 2 de dano base.
+Apostador: 110 de vida, 62 de velocidade e 4 de dano; um soco a cada 0,30 s.
+Sorte favorece material, encontro com ferreiro e categorias superiores de dadivas.
+Profissoes, nomes, arte e valores ainda sao provisorios.
+
+NO REFUGIO
+C: conversar com Caronte. Ele reconhece mortes e a vitoria contra o Guardiao.
+L: comprar atributos no altar.
+P: escolher save. A profissao do personagem nao muda.
+Enter: iniciar uma tentativa.
+Tambem pode mover-se e usar E perto de Caronte, altar ou passagem.
+A primeira conversa completa com Caronte entrega 5 Obolos, uma unica vez por save.
+As confirmacoes de conversa e compra desaparecem apos 3,5 segundos.
+
+Obolos sao a moeda provisoria do prototipo.
+Cada 10 abates dao 1 Obolo, ate 10 por tentativa.
+Vencer o chefe concede mais 10. Alguns baus dao 3.
+Esses ganhos sao guardados ao retornar, inclusive por morte ou abandono.
+O altar vende ate 5 niveis de vida maxima (+10%), dano (+5%) e velocidade (+3%).
+Os bonus se somam sobre as bases da profissao, preservando dano fracionario.
+Custos por nivel: 5, 9, 13, 17, 21 Obolos.
+Compras permanentes continuam; dadivas, XP, nivel e recargas reiniciam.
+
+NA TRAVESSIA
+Na primeira fase, derrote 40 comuns, 30 rapidos E 8 tanks.
+Cada meta deve ser cumprida; outro tipo nao a substitui.
+XP por inimigo: comum 1, rapido 2, tank 5.
+Hordas misturam tipos ou reunem inimigos iguais e continuam chegando.
+Nao ha prazo para concluir nem quantidade total fixa de inimigos.
+Nao e preciso eliminar todos os inimigos fora da tela.
+Vida e dano crescem linearmente com o tempo total e a dificuldade da sala.
+A escala e definida quando cada inimigo nasce; no chefe, ao entrar na sala.
+
+Dadivas de forca (+20%), vida (+20%), velocidade (+10%) e cadencia (+12%)
+usam as bases da profissao. Seus bonus se somam.
+Colheita de Demeter: ima de XP, com ate 3 niveis de alcance e atracao.
+O ima reinicia junto com as outras dadivas na proxima tentativa.
+Dadivas: Comum, Rara, Epica e Mitologica conforme a forca do efeito.
+Chances base: 70%, 23%, 6%, 1%; Apostador: aprox. 21,7%, 28,6%, 29,8%, 19,9%.
+Valores do primeiro sorteio com todas as categorias disponiveis. Opcoes sao unicas;
+categorias esgotadas saem do sorteio. Raridade e nivel de repeticao sao separados.
+
+Baus surgem aleatoriamente em locais alcancaveis.
+Aproxime-se e use F: vida (+30), XP (+12), estamina (+40) ou Obolos (+3).
+Vida/estamina ja cheias convertem o premio em XP.
+A demo tem baus de suprimentos, mas nao moeda ou atributos da campanha.
+
+MINI-BOSS E FERREIRO (CAMPANHA)
+Um Carrasco aparece por sala de combate apos 45 segundos, entre as hordas.
+Persegue normalmente e para para avisar um giro de espada ou lancar 5 pedras.
+Nao tem investida. Vida base 180, com escala de sala/tempo; derrota concede 20 XP.
+Nao substitui as metas e nao e obrigatorio derrota-lo para sair.
+
+Chance base de Fragmento de Forja: 1,5% por derrota; Apostador: 6%.
+Limite: uma unidade por regiao por save, considerando todas as tentativas.
+Depois do primeiro drop, morrer, gastar ou trocar de sala nao permite outro.
+Outra regiao tera seu proprio limite. O prototipo atual tem apenas o Submundo.
+Material e regiao premiada sao salvos imediatamente e permanecem entre tentativas.
+Ferreiro Errante: 3% base por tentativa; Apostador: 12%. Sorteado uma vez.
+Se sorteado, aparece em seguranca depois da primeira sala concluida.
+1 ou E: gastar 1 fragmento para transformar a arma Comum em Rara.
+Rara: +25% de dano base e +10% de cadencia.
+Arco perfura mais um alvo; pistola ricocheteia uma vez; espada tem maior alcance.
+Socos raros passam de alcance 24 para 34, mantendo um alvo e sem projeteis.
+2, Enter ou Esc: continuar. O encontro nao avanca o tempo de partida.
+Raridade dura a tentativa; material restante fica no save.
+Se a compra nao puder ser salva, o material e preservado.
+A demo de sobrevivencia nao tem mini-boss, material ou ferreiro.
+
+Quando cumprir as metas, E ou Enter escolhe o destino.
+Inimigos vivos nao bloqueiam a passagem.
+XP no chao e recolhido; resolva todas as escolhas de dadivas.
+Siga ao chefe ou faca outro combate antes.
+O Guardiao do Tartaro usa marcas no chao, investida e projeteis.
+Abaixo de metade da vida, fica mais agressivo.
+Sua arma, dadivas, aura, escudo e ressurreicao continuam funcionando.
+Derrotar o chefe encerra o trecho jogavel; Enter nao permite pular a luta.
+Vida, nivel, arma, poderes e recargas continuam entre arenas da mesma tentativa.
+
+WASD ou setas: mover
+Shift em movimento: dash
+Mouse: mirar
+Segure o botao esquerdo: atacar
+Clique ou 1, 2, 3, 4: escolher save ou profissao
+Clique ou 1, 2, 3: escolher dadiva, destino ou compra
+F: abrir bau proximo
+E ou Enter apos cumprir metas: sair da arena
+Esc: pausar ou continuar
+M durante a pausa: abandonar (refugio na campanha; menu na demo)
+Enter no resultado: refugio na campanha; repetir na demo
+Esc ou clique no resultado: menu
+
+PERFIL SALVO
+No Windows: %LOCALAPPDATA%\ParadiseInHell\
+Save 1: profile.json (preserva o perfil anterior).
+Save 2: profile-2.json. Save 3: profile-3.json. Save 4: profile-4.json.
+Saldo, compras, profissao, eventos, fragmentos e regioes ja premiadas sao independentes,
+com uma copia .bak por save. Saves anteriores continuam funcionando.
+Fechar no meio da tentativa descarta dadivas e ganhos ainda nao guardados.
+Nao ha retomada de uma tentativa. S no refugio repete um autosave que falhou.
+Uma compra so desconta moedas se puder ser salva.
+Falha de leitura preserva os arquivos; a campanha continua apenas na sessao.
+
+O tempo para durante pausa e escolhas.
+Ainda faltam audio, outros encontros, inventario geral, proximas regioes e controles.
+O atlas foi gerado com IA. Refugio, Caronte e baus usam arte provisoria.
+Nome da moeda, custos e recompensas precisam de playtests.
+
+Para relatar um problema, informe seu Windows, placa de video,
+o que estava acontecendo e os passos para repetir o problema.

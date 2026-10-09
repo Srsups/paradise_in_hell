@@ -1,9 +1,17 @@
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 eclipse.project.name = appName + '-core'
+sourceSets.main.resources.srcDirs = ['assets']
+// Preserve the old placeholders locally, but do not ship them in the demo.
+sourceSets.main.resources.exclude('spritesheet.png', 'button_spritesheet.png', 'Foto_BG.jpg')
+
+test {
+  useJUnitPlatform()
+}
 
 dependencies {
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  sourceSets.main.resources.srcDirs = [ 'assets' ]
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 
   if(enableGraalNative == 'true') {

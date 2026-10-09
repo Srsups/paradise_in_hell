@@ -1,97 +1,66 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class TileMap {
-    private Map<String, Tile> tiles;
-    private Texture spritesheet;
-    private TextureRegion[] grassTiles;
-    private Random random;
+    private final Map<String, Tile> tiles = new HashMap<>();
+    private final TextureRegion[] floors;
+    private final TextureRegion obstacle;
+    private final long seed = new Random().nextLong();
+    private int safeX, safeY, safeRadius;
+    private int left, right, bottom, top;
+    private Rectangle bounds;
 
-    public TileMap(Texture spritesheet) {
-        tiles = new HashMap<>();
-        random = new Random();
-        this.spritesheet = spritesheet;
-
-        // Cria os 3 tipos de grama
-        grassTiles = new TextureRegion[3];
-        grassTiles[0] = new TextureRegion(spritesheet, 278, 209, 16, 16);
-        grassTiles[1] = new TextureRegion(spritesheet, 295, 209, 16, 16);
-        grassTiles[2] = new TextureRegion(spritesheet, 244, 226, 16, 16);
+    public TileMap(Texture atlas) {
+        floors = new TextureRegion[] { Art.cell(atlas, 0, 2), Art.cell(atlas, 1, 2), Art.cell(atlas, 2, 2) };
+        obstacle = Art.cell(atlas, 3, 2);
     }
-
-    public boolean ehSolido(float px, float py) {
-        int tx = (int)Math.floor(px / Tile.TILE_SIZE);
-        int ty = (int)Math.floor(py / Tile.TILE_SIZE);
-        String key = tx + "," + ty;
-
-        Tile tile = tiles.get(key);
-        if (tile == null) return false; // Se ainda não foi gerado, assume que é passável
-        return tile.solido;
+    private Tile tileAt(int x, int y) {
+        String key = x + "," + y;
+        return tiles.computeIfAbsent(key, ignored -> {
+            // Coordinate-based randomness preserves scenery after eviction from the cache.
+            Random random = new Random(seed ^ (x * 73856093L) ^ (y * 19349663L));
+            TextureRegion floor = floors[random.nextInt(floors.length)];
+            boolean safe = Math.abs((long) x - safeX) <= safeRadius && Math.abs((long) y - safeY) <= safeRadius;
+            boolean solid = !safe && random.nextFloat() < 0.012f;
+            return new Tile(x, y, solid ? obstacle : floor, solid);
+        });
     }
-
+    public boolean ehSolido(float x, float y) {
+        if (bounds != null && !bounds.contains(x, y)) return true;
+        return tileAt((int) Math.floor(x / Tile.TILE_SIZE), (int) Math.floor(y / Tile.TILE_SIZE)).solido;
+    }
+    public void setBounds(float x, float y, float width, float height) {
+        bounds = new Rectangle(x, y, width, height);
+    }
     public void update(Camera camera) {
-        int camLeft = (int)Math.floor((camera.position.x - camera.viewportWidth / 2) / Tile.TILE_SIZE) - 1;
-        int camRight = (int)Math.floor((camera.position.x + camera.viewportWidth / 2) / Tile.TILE_SIZE) + 1;
-        int camBottom = (int)Math.floor((camera.position.y - camera.viewportHeight / 2) / Tile.TILE_SIZE) - 1;
-        int camTop = (int)Math.floor((camera.position.y + camera.viewportHeight / 2) / Tile.TILE_SIZE) + 1;
-
-        for (int x = camLeft; x <= camRight; x++) {
-            for (int y = camBottom; y <= camTop; y++) {
-                String key = x + "," + y;
-                if (!tiles.containsKey(key)) {
-                    // Sorteia um dos 3 tipos de tile
-                    TextureRegion tile = grassTiles[random.nextInt(grassTiles.length)];
-                    boolean solido = false;
-
-                    // Simula a chance de ser um obstáculo
-                    if (random.nextFloat() < 0.005f) {
-                        tile = new TextureRegion(spritesheet, 281, 241, 16, 16); // exemplo: tile de pedra
-                        solido = true;
-                    }
-
-                    tiles.put(key, new Tile(x, y, tile, solido));
-
-                }
-            }
-        }
+        left = (int) Math.floor((camera.position.x - camera.viewportWidth / 2) / Tile.TILE_SIZE) - 2;
+        right = (int) Math.floor((camera.position.x + camera.viewportWidth / 2) / Tile.TILE_SIZE) + 2;
+        bottom = (int) Math.floor((camera.position.y - camera.viewportHeight / 2) / Tile.TILE_SIZE) - 2;
+        top = (int) Math.floor((camera.position.y + camera.viewportHeight / 2) / Tile.TILE_SIZE) + 2;
+        tiles.values().removeIf(tile -> tile.gridX < left - 8 || tile.gridX > right + 8 || tile.gridY < bottom - 8 || tile.gridY > top + 8);
+        for (int x = left; x <= right; x++) for (int y = bottom; y <= top; y++) tileAt(x, y);
     }
-
     public void draw(SpriteBatch batch) {
-        for (Tile tile : tiles.values()) {
+        for (int x = left; x <= right; x++) for (int y = bottom; y <= top; y++) {
+            // Obstacles sit over a floor tile so their transparent corners are filled.
+            Tile tile = tileAt(x, y);
+            if (tile.solido) batch.draw(floors[0], x * Tile.TILE_SIZE, y * Tile.TILE_SIZE, Tile.TILE_SIZE, Tile.TILE_SIZE);
             tile.draw(batch);
         }
     }
-
-    //Pré-gera uma área quadrada ao redor de um ponto específico para garantir que não haja obstáculos sólidos no início do jogo.
-    public void gerarAreaInicialSegura(float spawnX, float spawnY, int raio) {
-        // Converte a posição do mundo (em pixels) para a grade de tiles
-        int tileXCentral = (int)Math.floor(spawnX / Tile.TILE_SIZE);
-        int tileYCentral = (int)Math.floor(spawnY / Tile.TILE_SIZE);
-
-        System.out.println("Gerando area segura ao redor do tile: " + tileXCentral + "," + tileYCentral);
-
-        // Itera em um quadrado de tiles ao redor do ponto central
-        for (int x = tileXCentral - raio; x <= tileXCentral + raio; x++) {
-            for (int y = tileYCentral - raio; y <= tileYCentral + raio; y++) {
-                String key = x + "," + y;
-                // Se o tile ainda não existe no mapa, vamos criá-lo de forma segura.
-                if (!tiles.containsKey(key)) {
-                    // Sorteia um tile de grama normal
-                    TextureRegion tileRegion = grassTiles[random.nextInt(grassTiles.length)];
-                    // Cria o tile, garantindo que o parâmetro 'solido' seja 'false'
-                    tiles.put(key, new Tile(x, y, tileRegion, false)); // GARANTE QUE NÃO É SÓLIDO
-                }
-            }
-        }
+    public void gerarAreaInicialSegura(float x, float y, int radius) {
+        safeX = (int) Math.floor(x / Tile.TILE_SIZE);
+        safeY = (int) Math.floor(y / Tile.TILE_SIZE);
+        safeRadius = radius;
+        tiles.clear();
     }
-
-    public void dispose() {
-    }
+    public void dispose() { tiles.clear(); }
 }

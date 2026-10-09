@@ -1,0 +1,63 @@
+{
+  "id": "submundo-prototype",
+  "title": "Submundo — protótipo",
+  "start": "estige",
+  "arenas": [
+    {
+      "id": "estige",
+      "title": "Margem do Estige",
+      "description": "Cumpra as três metas de abates para liberar a sala do chefe.",
+      "difficultySeconds": 0,
+      "exits": [
+        "portoes",
+        "cinzas",
+        "sombras"
+      ],
+      "kind": "COMBAT",
+      "killGoals": {
+        "COMMON": 40,
+        "FAST": 30,
+        "TANK": 8
+      }
+    },
+    {
+      "id": "cinzas",
+      "title": "Caminho das Cinzas",
+      "description": "Combate opcional: metas menores e mais oportunidades de XP antes do chefe.",
+      "difficultySeconds": 60,
+      "exits": [
+        "portoes"
+      ],
+      "kind": "COMBAT",
+      "killGoals": {
+        "COMMON": 24,
+        "FAST": 16,
+        "TANK": 4
+      }
+    },
+    {
+      "id": "sombras",
+      "title": "Pátio das Sombras",
+      "description": "Combate opcional: hordas mais intensas para fortalecer seus poderes.",
+      "difficultySeconds": 120,
+      "exits": [
+        "portoes"
+      ],
+      "kind": "COMBAT",
+      "killGoals": {
+        "COMMON": 40,
+        "FAST": 30,
+        "TANK": 8
+      }
+    },
+    {
+      "id": "portoes",
+      "title": "Sala do chefe: Tártaro",
+      "description": "Enfrente o Guardião do Tártaro. Desvie dos avisos e derrote-o para concluir a travessia.",
+      "difficultySeconds": 140,
+      "exits": [],
+      "kind": "BOSS_ROOM",
+      "killGoals": {}
+    }
+  ]
+}

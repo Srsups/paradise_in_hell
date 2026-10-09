@@ -117,19 +117,19 @@ construo {
     // name of the executable
     name.set(appName)
     // human-readable name, used for example in the `.app` name for macOS
-    humanName.set(appName)
+    humanName.set('Paradise in Hell Demo')
     // Optional, defaults to project version property
     version.set("$projectVersion")
 
     targets.configure {
       register("linuxX64", Target.Linux) {
         architecture.set(Target.Architecture.X86_64)
-        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_x64_linux_hotspot_17.0.15_6.tar.gz")
+        jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12%2B8/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12_8.tar.gz")
         // Linux does not currently have a way to set the icon on the executable
       }
       register("macM1", Target.MacOs) {
         architecture.set(Target.Architecture.AARCH64)
-        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.15_6.tar.gz")
+        jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12%2B8/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.12_8.tar.gz")
         // macOS needs an identifier
         identifier.set("br.com.srsups.paradiseinhell." + appName)
         // Optional: icon for macOS, as an ICNS file
@@ -137,7 +137,7 @@ construo {
       }
       register("macX64", Target.MacOs) {
         architecture.set(Target.Architecture.X86_64)
-        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_x64_mac_hotspot_17.0.15_6.tar.gz")
+        jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12%2B8/OpenJDK21U-jdk_x64_mac_hotspot_21.0.12_8.tar.gz")
         // macOS needs an identifier
         identifier.set("br.com.srsups.paradiseinhell." + appName)
         // Optional: icon for macOS, as an ICNS file
@@ -147,7 +147,7 @@ construo {
         architecture.set(Target.Architecture.X86_64)
         // Optional: icon for Windows, as a PNG
         icon.set(project.file("icons/logo.png"))
-        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_x64_windows_hotspot_17.0.15_6.zip")
+        jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12%2B8/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12_8.zip")
         // Uncomment the next line to show a console when the game runs, to print messages.
         //useConsole.set(true)
       }
@@ -178,4 +178,26 @@ startScripts.classpath = project.tasks.jar.outputs.files
 
 if(enableGraalNative == 'true') {
   apply from: file("nativeimage.gradle")
+}
+
+tasks.register('smokeTest', JavaExec) {
+  group = 'verification'
+  description = 'Checks the demo using real OpenGL in an invisible window (requires a display).'
+  dependsOn testClasses
+  classpath = sourceSets.test.runtimeClasspath
+  mainClass = 'br.com.srsups.paradiseinhell.lwjgl3.DemoSmokeTest'
+  workingDir = rootProject.projectDir
+  if (os.contains('mac')) jvmArgs '-XstartOnFirstThread'
+}
+
+tasks.named('packageWinX64') {
+  inputs.file(rootProject.file('docs/DEMO_WINDOWS.txt'))
+  doFirst {
+    def packageDirectory = getFrom().get().asFile
+    project.copy {
+      from(rootProject.file('docs/DEMO_WINDOWS.txt'))
+      into(packageDirectory)
+      rename { 'LEIA-ME.txt' }
+    }
+  }
 }

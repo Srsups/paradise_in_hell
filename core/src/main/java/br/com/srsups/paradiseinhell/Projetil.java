@@ -1,61 +1,59 @@
 package br.com.srsups.paradiseinhell;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion; // MUDOU de Texture para TextureRegion
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Projetil {
     public float x, y;
-    public Vector2 velocidade;
-    public int dano = 5;
-    private TextureRegion textura;
+    public final Vector2 velocidade;
+    public float dano = 5;
+    private final TextureRegion textura;
     private float angulo;
-    public boolean deveSerRemovido = false;
-
-    // 2. O construtor agora recebe uma TextureRegion já pronta
-    public Projetil(float x, float y, Vector2 direcao, TextureRegion texturaProjetil) {
-        this.x = x;
-        this.y = y;
-        this.textura = texturaProjetil; // Apenas guarda a referência
-        // Define a velocidade baseada na direção e em uma magnitude
-        this.velocidade = new Vector2(direcao).scl(300f); // Usamos new Vector2 para não modificar o original
-        // Subtraímos 90 graus porque a sprite original aponta para CIMA (e não para a DIREITA).
-        this.angulo = direcao.angleDeg() - 90f;
+    private final float width, height;
+    private Object firstHit, secondHit;
+    private int hitCount, maxHits = 1;
+    private boolean ricochet;
+    private float remainingLife = 3;
+    public boolean deveSerRemovido;
+    public Projetil(float x, float y, Vector2 direction, TextureRegion texture) {
+        this(x, y, direction, texture, WeaponType.BOW);
     }
-
-    public void update(float delta, TileMap tileMap) {
-        x += velocidade.x * delta;
-        y += velocidade.y * delta;
-
-        // Checa se a posição ATUAL do projétil está dentro de um tile sólido.
-        // Usamos o centro do projétil para a checagem (supondo que o projétil tenha 8x8 de tamanho visual)
-        if (tileMap.ehSolido(this.x + 4, this.y + 4)) {
-            this.deveSerRemovido = true; // "Levanta a bandeira" para ser removido
+    public Projetil(float x, float y, Vector2 direction, TextureRegion texture, WeaponType weapon) {
+        this.x = x; this.y = y; textura = texture;
+        velocidade = new Vector2(direction).scl(weapon.projectileSpeed);
+        angulo = direction.angleDeg() - 90;
+        width = weapon.projectileWidth; height = weapon.projectileHeight;
+    }
+    public void configure(PlayerState player) {
+        dano = player.getDano();
+        if (player.getWeaponRarity() == WeaponRarity.RARE) { maxHits = 2; ricochet = player.getWeapon() == WeaponType.PISTOL; }
+    }
+    public boolean canHit(Object target) { return target != firstHit && target != secondHit; }
+    public void hit(Object target) {
+        if (!canHit(target) || deveSerRemovido) return;
+        if (hitCount++ == 0) firstHit = target; else secondHit = target;
+        if (hitCount >= maxHits) deveSerRemovido = true;
+    }
+    public boolean needsRicochet() { return ricochet && hitCount == 1 && !deveSerRemovido; }
+    public void redirect(float targetX, float targetY) {
+        float speed = velocidade.len();
+        velocidade.set(targetX - x, targetY - y).nor().scl(speed);
+        angulo = velocidade.angleDeg() - 90;
+    }
+    public void update(float delta, TileMap map) {
+        remainingLife -= delta;
+        if (remainingLife <= 0) { deveSerRemovido = true; return; }
+        // Sample the full movement so faster bullets cannot jump across a wall.
+        int steps = Math.max(1, (int) Math.ceil(velocidade.len() * delta / 4));
+        for (int step = 0; step < steps; step++) {
+            x += velocidade.x * delta / steps;
+            y += velocidade.y * delta / steps;
+            if (map.ehSolido(x, y)) { deveSerRemovido = true; return; }
         }
     }
-
     public void draw(SpriteBatch batch) {
-        // Definimos as dimensões da nossa sprite
-        float largura = textura.getRegionWidth();   // 5 pixels
-        float altura = textura.getRegionHeight();  // 16 pixels
-
-        // O ponto de origem da rotação (o "pivô").
-        // Queremos que a flecha gire em torno de seu próprio centro.
-        float origemX = largura / 2f;
-        float origemY = altura / 2f;
-
-        // Usamos o método draw avançado:
-        batch.draw(
-            textura,      // A TextureRegion a ser desenhada
-            x,            // Posição X no mundo
-            y,            // Posição Y no mundo
-            origemX,      // O ponto X do pivô de rotação, relativo ao sprite
-            origemY,      // O ponto Y do pivô de rotação, relativo ao sprite
-            largura,      // Largura do sprite
-            altura,       // Altura do sprite
-            1f,           // Escala no eixo X (1f = 100%)
-            1f,           // Escala no eixo Y (1f = 100%)
-            this.angulo   // O ângulo de rotação calculado
-        );
+        batch.draw(textura, x - width / 2, y - height / 2, width / 2, height / 2,
+            width, height, 1, 1, angulo);
     }
 }
