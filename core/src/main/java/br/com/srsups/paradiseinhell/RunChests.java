@@ -50,9 +50,16 @@ public final class RunChests {
         String message;
         switch (reward) {
             case HEALTH -> { player.curar(30); message = "+30 de vida"; }
-            case EXPERIENCE -> { player.ganharXP(12); message = "+12 XP"; }
+            case EXPERIENCE -> {
+                float gained = player.xpGain(12);
+                player.ganharXP(12);
+                message = "+" + CombatNumbers.format(gained) + " XP";
+            }
             case STAMINA -> { player.recuperarEstamina(40); message = "+40 de estamina"; }
-            case OBOLS -> { session.addChestObols(3); message = "+3 óbolos"; }
+            case OBOLS -> {
+                int gained = session.previewChestObols(3);
+                session.addChestObols(3); message = "+" + gained + " óbolos";
+            }
             default -> throw new IllegalStateException();
         }
         chests.remove(chest); return message;

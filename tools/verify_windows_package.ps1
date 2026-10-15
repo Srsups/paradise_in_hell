@@ -14,26 +14,30 @@ $executable = $executables[0]
 if (-not (Test-Path -LiteralPath (Join-Path $executable.DirectoryName 'LEIA-ME.txt'))) {
     throw 'Player instructions are missing from the package.'
 }
-$start = New-Object System.Diagnostics.ProcessStartInfo
-$start.FileName = $executable.FullName
-$start.Arguments = '--smoke-test'
-# Test a working directory outside the package to catch filesystem-only asset loads.
-$start.WorkingDirectory = $projectRoot
-$start.UseShellExecute = $false
-$start.CreateNoWindow = $true
-$start.RedirectStandardOutput = $true
-$start.RedirectStandardError = $true
-$start.EnvironmentVariables.Remove('JAVA_HOME')
-$start.EnvironmentVariables['PATH'] = Join-Path $env:SystemRoot 'System32'
-$process = New-Object System.Diagnostics.Process
-$process.StartInfo = $start
-$process.Start() | Out-Null
-$stdout = $process.StandardOutput.ReadToEndAsync()
-$stderr = $process.StandardError.ReadToEndAsync()
-if (-not $process.WaitForExit(20000)) {
-    $process.Kill()
-    throw 'Packaged game did not finish its invisible startup check within 20 seconds.'
+foreach ($diagnostic in @('--smoke-test', '--audio-smoke-test')) {
+    $start = New-Object System.Diagnostics.ProcessStartInfo
+    $start.FileName = $executable.FullName
+    $start.Arguments = $diagnostic
+    $start.WorkingDirectory = $projectRoot
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $start.RedirectStandardOutput = $true
+    $start.RedirectStandardError = $true
+    $start.EnvironmentVariables.Remove('JAVA_HOME')
+    $start.EnvironmentVariables['PATH'] = Join-Path $env:SystemRoot 'System32'
+    # OpenAL Soft's null device decodes/mixes natively without playing through the user's speakers.
+    $start.EnvironmentVariables['ALSOFT_DRIVERS'] = 'null'
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $start
+    $process.Start() | Out-Null
+    $stdout = $process.StandardOutput.ReadToEndAsync()
+    $stderr = $process.StandardError.ReadToEndAsync()
+    if (-not $process.WaitForExit(20000)) {
+        $process.Kill()
+        throw "Packaged game did not finish $diagnostic within 20 seconds."
+    }
+    $output = $stdout.Result + $stderr.Result
+    if ($process.ExitCode -ne 0) { throw "Packaged game failed ($diagnostic): $output" }
+    $process.Dispose()
 }
-$output = $stdout.Result + $stderr.Result
-if ($process.ExitCode -ne 0) { throw "Packaged game failed: $output" }
-Write-Output 'WINDOWS_PACKAGE_OK: executable, bundled Java, menu/demo/campaign/boss/refuge assets, external working directory'
+Write-Output 'WINDOWS_PACKAGE_OK: bundled Java, gameplay/menu/report/audio assets, 24 native effects, streaming music via OpenAL null device, external working directory'

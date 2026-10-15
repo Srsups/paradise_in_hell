@@ -8,30 +8,97 @@ No menu:
 Enter ou clique em Demo: sobreviver por cinco minutos.
 C ou clique em Campanha: refugio, hordas, caminhos e chefe.
 
-Escolha um dos 4 saves com clique ou 1, 2, 3, 4.
+Escolha um dos 8 saves em duas paginas. Setas ou Anterior/Proxima trocam a pagina.
+Clique ou 1, 2, 3, 4 escolhem o cartao da pagina atual; profissoes tambem tem 2 paginas.
 Um save vazio cria um personagem. O narrador pergunta sua profissao uma vez:
 1 - Cacador: arco e flecha.
 2 - Ferreiro: espada, golpe em area na direcao do mouse.
 3 - Vigilante: pistola, tiros rapidos de dano menor.
 4 - Apostador: apenas socos em um alvo proximo; sorte 4x.
-A profissao fica fixa no save; outra exige outro personagem em um save vazio.
+Na segunda pagina:
+1 - Feiticeira: varinha e feiticos com explosao.
+2 - Sacerdote: maldicao em area causa dano por 3 segundos.
+3 - Necromante (lendaria): reviver inimigos como aliados; exige desbloqueio.
+4 - Guerreiro: espada e escudo; segure o botao direito para defesa frontal.
+Os cartoes de profissao mostram nomes sem prefixos numericos.
+Depois da profissao, escolha a dificuldade e confirme em Criar personagem/ENTER.
+Voltar/ESC descarta as escolhas sem criar o save. Falha de gravacao permite tentar novamente.
+Profissao e dificuldade ficam fixas no save; outra escolha exige outro personagem.
+Facil: vida dos inimigos x0,85, dano x0,75 e moedas da tentativa x0,85.
+Media: vida, dano e moedas x1. Saves antigos sem dificuldade usam Media.
+Dificil: vida x1,25, dano x1,20 e moedas x1,25.
+Os ganhos fracionarios se somam ate o retorno; o restante fracionario final e descartado.
+Caronte continua dando 5 Obolos uma vez; custos do altar/Necromante nao mudam.
+XP, sorte, probabilidades e avisos de ataques mantem as regras existentes.
+A demo segue a dificuldade do save, mas concede zero moedas.
+O cartao do save e o resumo mostram a dificuldade; o HUD continua compacto.
+Na selecao de saves, Excluir abre uma confirmacao para esvaziar aquele slot.
+Cancelar ou ESC preserva o personagem; Excluir personagem ou ENTER confirma.
+DEL alterna o modo de exclusao por teclado; 1-4 escolhem o slot da pagina atual.
+Excluir reseta profissao, Obolos, arma, compras, eventos, material e estatisticas.
+Almas e acesso ao Necromante permanecem compartilhados.
+Apos confirmar, o slot permite criar outro personagem. R mostra apenas seu historico.
+Falha de gravacao preserva o personagem; backups antigos nao recuperam saves excluidos.
 Cacador: 100 de vida, 60 de velocidade e 5 de dano base.
 Ferreiro: 130 de vida, 54 de velocidade e 8 de dano base.
 Vigilante: 85 de vida, 66 de velocidade e 2 de dano base.
 Apostador: 110 de vida, 62 de velocidade e 4 de dano; um soco a cada 0,30 s.
 Sorte favorece material, encontro com ferreiro e categorias superiores de dadivas.
+Os cartoes mostram ataques por segundo no lugar da velocidade de movimento.
+TAB e refugio mostram ataques/s atuais, incluindo dadivas e arma forjada.
+Movimento ainda pode ser melhorado, com atributos proprios.
 Profissoes, nomes, arte e valores ainda sao provisorios.
+
+AUDIO E EFEITOS
+O abre audio no menu, refugio e arenas.
+Nas arenas, congela combate, efeitos e timers, preservando pausa/dadiva anterior.
+Clique/arraste efeitos e musica de 0 a 100%; setas tambem ajustam.
+M: silenciar/restaurar. T: testar som. S: repetir gravacao pendente.
+ESC/O ou Voltar fecha. Volumes continuam salvos ao reiniciar e excluir saves.
+Valores iniciais: efeitos 75%, musica 30%, silenciar desligado.
+Arquivo compartilhado: %LOCALAPPDATA%\ParadiseInHell\audio-settings.json, com .bak.
+Falha de gravacao aplica na sessao e mostra como tentar novamente.
+24 sons sintetizados para o projeto e 2 trilhas instrumentais provisorias.
+Mira/perigos mantem seus marcadores visuais, mesmo com audio silenciado.
+Ataques e impactos usam cores da arma; dash/XP geram pulsos curtos.
+DEFESA indica bloqueio; PROTEGIDO indica dano absorvido por protecao.
+Borda vermelha curta indica perda real de vida. Revide liga jogador e alvo.
+O mixer limita sons simultaneos e prioriza avisos importantes.
+A musica continua durante pausa, escolhas e configuracoes.
 
 NO REFUGIO
 C: conversar com Caronte. Ele reconhece mortes e a vitoria contra o Guardiao.
 L: comprar atributos no altar.
+No altar, N ou clique: desbloquear Necromante por 1.000 Almas compartilhadas.
+O personagem atual mantem sua profissao. Obolos nao sao gastos nessa compra. O desbloqueio permite criar novos Necromantes.
+Falha ao salvar nao gasta moedas; compra repetida nao gasta novamente.
+R: resumo da ultima tentativa deste personagem; setas consultam paginas e historico.
 P: escolher save. A profissao do personagem nao muda.
 Enter: iniciar uma tentativa.
 Tambem pode mover-se e usar E perto de Caronte, altar ou passagem.
 A primeira conversa completa com Caronte entrega 5 Obolos, uma unica vez por save.
 As confirmacoes de conversa e compra desaparecem apos 3,5 segundos.
 
-Obolos sao a moeda provisoria do prototipo.
+ALMAS COMPARTILHADAS
+Um unico saldo de Almas e compartilhado pelos oito saves.
+Por derrota: comum 1, arqueiro 3, rapido 2, tank 5, mini-boss 20 e Guardiao 100.
+Ganhos sao guardados ao encerrar por morte, vitoria ou abandono.
+Furia reduz o ganho por farming, com minimo 1 por inimigo; chefe mantem 100.
+Sorte nao multiplica esse valor. A demo registra resumos, mas nao concede moedas.
+Necromante custa 1.000 Almas uma vez; desbloqueios antigos continuam funcionando.
+Se a compra nao puder ser salva, as Almas sao preservadas.
+
+RESUMO DAS TENTATIVAS
+R no resultado/refugio: tempo por sala, abates, vida, dadivas, dano por origem,
+causa da morte, ressurreicoes e moedas. Esquerda/direita trocam paginas.
+Acima/baixo consultam tentativas anteriores do mesmo personagem; R/ESC volta.
+O historico conserva as 20 ultimas tentativas de todos os saves, incluindo demo.
+Bloqueios, invulnerabilidade e dano excedente nao entram nos totais.
+Consultar um resumo nao concede recompensas novamente.
+Salas de chefe agora tem pagina de tempo nas fases, DPS e contagem de ataques iniciados.
+Relatorios anteriores sem essa medicao continuam funcionando.
+
+Obolos sao a moeda pessoal provisoria do prototipo.
 Cada 10 abates dao 1 Obolo, ate 10 por tentativa.
 Vencer o chefe concede mais 10. Alguns baus dao 3.
 Esses ganhos sao guardados ao retornar, inclusive por morte ou abandono.
@@ -40,27 +107,74 @@ Os bonus se somam sobre as bases da profissao, preservando dano fracionario.
 Custos por nivel: 5, 9, 13, 17, 21 Obolos.
 Compras permanentes continuam; dadivas, XP, nivel e recargas reiniciam.
 
+HUD E DETALHES
+Vida, folego/estamina e XP sao barras, com nivel e disponibilidade do dash.
+Metas ficam no canto direito e viram o acesso E/ENTER quando concluidas.
+Um marcador dourado mostra a passagem; E/ENTER funciona em qualquer posicao.
+O cronometro permanece na demo de cinco minutos.
+TAB mostra dano, ataques/s, movimento, sorte, vida/estamina, XP, moedas e dadivas.
+Instrucoes iniciais desaparecem apos oito segundos. Recompensas/perigos sao contextuais.
+O Carrasco so inicia aviso sonoro quando seu corpo aparece na tela.
+Sair da visao encerra somente sua voz; voltar nao repete um aviso antigo.
+
 NA TRAVESSIA
 Na primeira fase, derrote 40 comuns, 30 rapidos E 8 tanks.
 Cada meta deve ser cumprida; outro tipo nao a substitui.
-XP por inimigo: comum 1, rapido 2, tank 5.
+XP por inimigo: comum 1, arqueiro 3, rapido 2, tank 5.
 Hordas misturam tipos ou reunem inimigos iguais e continuam chegando.
+Rapidos: 1 s de arrancada a 70, depois 1 s de recuperacao a 24 unidades/s.
+Ciclos defasados entre inimigos; ciano na arrancada, verde-azulado na recuperacao.
+A recuperacao permite reposicionar sem depender de dadivas de velocidade.
+Ate 2 rapidos por onda e 24 ativos; excedentes viram comuns/tanks.
+O limite simultaneo nao muda a meta nem limita o total de inimigos da fase.
 Nao ha prazo para concluir nem quantidade total fixa de inimigos.
 Nao e preciso eliminar todos os inimigos fora da tela.
 Vida e dano crescem linearmente com o tempo total e a dificuldade da sala.
 A escala e definida quando cada inimigo nasce; no chefe, ao entrar na sala.
 
+ARQUEIRO DO ESTIGE
+Conta na meta de comuns, mas concede 3 XP e 3 Almas na campanha.
+Para e marca uma posicao por 1 segundo; a mira nao acompanha seu movimento.
+Saia do circulo e evite a linha da flecha. Paredes e escudo frontal bloqueiam.
+Na campanha pode aparecer apos 15 s; na demo, apos 60 s.
+Chance: 20% dos comuns elegiveis, ate 2 por onda e 6 ativos.
+Nao prepara disparos fora da tela. Ao morrer, suas flechas desaparecem.
+Vida e dano acompanham a escala da sala/tempo; Furia reduz XP/Almas.
+
+Cada escolha de dadiva espera 1,5 s. Solte o botao de ataque apos a espera:
+um novo clique escolhe a opcao. A espera reinicia para cada nivel pendente.
+Celeridade mostra os ataques/s atuais e o valor depois da escolha.
+TAB consulta os atributos completos e as dadivas adquiridas: raridade, nivel e descricao.
+Setas trocam as paginas da lista. TAB ou ESC fecham, mantendo a tela anterior.
+A consulta pausa combate, dificuldade, furia, efeitos e duracao dos aliados.
+Funciona nas hordas, no chefe e nas recompensas de rota.
+
+Maldicao do Sacerdote: raio 32 ao redor do inimigo acertado, respeitando paredes.
+Cada alvo recebe 60% do DPS direto por segundo, por 3 s (5 s com arma Rara).
+Dano e cadencia aumentam o efeito; reaplicar renova sem acumular copias.
+O circulo roxo marca a area do impacto e os alvos amaldicoados.
+
+O contato usa pixels visiveis do quadro atual, acompanhando tamanho e animacao.
+Margens transparentes nao causam dano. Ataques em area mantem seus avisos.
+
 Dadivas de forca (+20%), vida (+20%), velocidade (+10%) e cadencia (+12%)
 usam as bases da profissao. Seus bonus se somam.
+Sabedoria de Atena: Epica, +150% de XP coletada (2,5x), uma vez por tentativa.
+Vale para cristais e baus recebidos apos a escolha; XP ja acumulada nao aumenta.
+Favorece escolhas no inicio da run. Nao multiplica Obolos ou Almas.
+Um comum rende 2,5 XP; um bau de 12 XP base concede e anuncia 30 XP.
+A barra representa as fracoes, conservadas no estado e consultadas em TAB. O bonus permanece entre salas e reinicia na nova tentativa.
 Colheita de Demeter: ima de XP, com ate 3 niveis de alcance e atracao.
 O ima reinicia junto com as outras dadivas na proxima tentativa.
+15 dadivas: agora incluem choque em cadeia, queimadura e empurrao, com recargas proprias.
+Choque causa dano extra em alvos queimando/amaldicoados; aura reforca empurrao.
 Dadivas: Comum, Rara, Epica e Mitologica conforme a forca do efeito.
 Chances base: 70%, 23%, 6%, 1%; Apostador: aprox. 21,7%, 28,6%, 29,8%, 19,9%.
 Valores do primeiro sorteio com todas as categorias disponiveis. Opcoes sao unicas;
 categorias esgotadas saem do sorteio. Raridade e nivel de repeticao sao separados.
 
 Baus surgem aleatoriamente em locais alcancaveis.
-Aproxime-se e use F: vida (+30), XP (+12), estamina (+40) ou Obolos (+3).
+Aproxime-se e use F: vida (+30), XP (12 base), estamina (+40) ou Obolos (+3).
 Vida/estamina ja cheias convertem o premio em XP.
 A demo tem baus de suprimentos, mas nao moeda ou atributos da campanha.
 
@@ -81,18 +195,55 @@ Se sorteado, aparece em seguranca depois da primeira sala concluida.
 Rara: +25% de dano base e +10% de cadencia.
 Arco perfura mais um alvo; pistola ricocheteia uma vez; espada tem maior alcance.
 Socos raros passam de alcance 24 para 34, mantendo um alvo e sem projeteis.
+Varinha rara: maior explosao; maldicao rara: 5 s; cajado raro: chance/duracao maiores.
+Escudo raro: 35% de chance de revidar ataques bloqueados.
+Defesa gasta estamina, bloqueia a frente e nao bloqueia marcas no chao.
+Guerreiro pode segurar ambos os botoes: direito defende, esquerdo ataca.
+Dano/cadencia continuam normais. Defesa ainda reduz caminhada e bloqueia o dash;
+solte o botao direito para usar Shift. Atacar nao acrescenta custo de estamina.
+Necromante: ate 6 aliados por 60/75 s, mantendo-os entre salas e contra o chefe.
+Chance de reviver diminui com a forca do inimigo. Guardioes nunca sao revividos.
+Aliados somem no fim da tentativa e nao dao recompensas por desaparecer.
 2, Enter ou Esc: continuar. O encontro nao avanca o tempo de partida.
-Raridade dura a tentativa; material restante fica no save.
+Forja PERMANENTE: raridade, bonus e poder continuam apos morte e entre runs.
+O prototipo oferece uma melhoria por personagem: Comum para Rara.
+Dadivas, XP e nivel continuam reiniciando. Material restante fica no save.
 Se a compra nao puder ser salva, o material e preservado.
 A demo de sobrevivencia nao tem mini-boss, material ou ferreiro.
 
 Quando cumprir as metas, E ou Enter escolhe o destino.
 Inimigos vivos nao bloqueiam a passagem.
+Continuar farmando apos liberar a saida atrai a Furia dos Deuses:
+20 s de tolerancia, depois 15 s de aviso antes das penalidades.
+Hordas novas ganham vida/dano, chegam mais rapido e XP diminui (minimo 1).
+Builds fortes aceleram a escalada apos o aviso. Avancar limpa a pressao.
+Pausa, escolhas, ferreiro, rotas e recompensas congelam o tempo da furia.
 XP no chao e recolhido; resolva todas as escolhas de dadivas.
 Siga ao chefe ou faca outro combate antes.
-O Guardiao do Tartaro usa marcas no chao, investida e projeteis.
-Abaixo de metade da vida, fica mais agressivo.
-Sua arma, dadivas, aura, escudo e ressurreicao continuam funcionando.
+Cinzas: menos hordas; bau garantido ao concluir. Escolha ate 40 de vida ou 5 Obolos.
+Na recompensa segura, F/Enter abre com recuperacao; 1, 2 ou clique escolhe.
+Vida cheia converte a recuperacao em 5 Obolos.
+Sombras: mais hordas; dadiva extra Rara ou superior ao concluir.
+Resolva os niveis de XP primeiro, depois escolha a recompensa com 1, 2, 3 ou clique.
+Se todas as dadivas superiores estiverem no limite, receba 8 Obolos.
+Cada recompensa e concedida uma vez por sala e volta a estar disponivel na nova run.
+Eventos de hordas: tipos equilibrados, mais rapidos ou mais tanks.
+O evento e sorteado uma vez por sala/tentativa e anunciado na escolha de caminho.
+O Guardiao do Tartaro usa marcas no chao, investida, projeteis e Queda do Tartaro.
+Vida base 500; recuperacao 0,95/0,65 s nas fases 1/2.
+Primeiro ciclo ensina os quatro ataques; depois a ordem varia, sem repetir consecutivos.
+Rajada: 5/9 projeteis, velocidade 115/150, dano base 12/14 nas fases 1/2.
+Investida: 200/275 unidades/s. Dano/vida ainda seguem a escala da sala/tempo.
+A nova rajada substitui a anterior; a queda limpa projeteis, mantendo a esquiva.
+Na queda, salta para fora da tela por 3 s e fica fora do alcance dos ataques.
+Um circulo acompanha o jogador sem se teletransportar com o dash, crescendo
+ate 1,5x o tamanho do chefe. No ultimo segundo, fica vermelho e para de seguir.
+O chefe cai no centro marcado e causa grande dano em area uma unica vez.
+Abaixo de metade da vida, fica mais agressivo: o circulo persegue mais rapido.
+Na fase 2, a caminhada diminui durante o vermelho; o dash mantem sua velocidade.
+Use Shift + direcao assim que ficar vermelho. Guerreiro: solte a defesa primeiro.
+A caminhada volta ao normal na queda. Marcas e impacto atravessam o escudo.
+Sua arma, dadivas, aura, escudo e ressurreicao continuam na tentativa.
 Derrotar o chefe encerra o trecho jogavel; Enter nao permite pular a luta.
 Vida, nivel, arma, poderes e recargas continuam entre arenas da mesma tentativa.
 
@@ -100,11 +251,14 @@ WASD ou setas: mover
 Shift em movimento: dash
 Mouse: mirar
 Segure o botao esquerdo: atacar
-Clique ou 1, 2, 3, 4: escolher save ou profissao
+Botao direito com Guerreiro: defender mirando para o ataque
+Setas / PageUp / PageDown / Anterior / Proxima: trocar pagina dos menus
+Clique ou 1, 2, 3, 4: escolher save ou profissao na pagina atual
 Clique ou 1, 2, 3: escolher dadiva, destino ou compra
 F: abrir bau proximo
 E ou Enter apos cumprir metas: sair da arena
-Esc: pausar ou continuar
+TAB: consultar/fechar as dadivas da tentativa (setas: paginas)
+Esc: fechar a consulta, pausar ou continuar
 M durante a pausa: abandonar (refugio na campanha; menu na demo)
 Enter no resultado: refugio na campanha; repetir na demo
 Esc ou clique no resultado: menu
@@ -112,16 +266,20 @@ Esc ou clique no resultado: menu
 PERFIL SALVO
 No Windows: %LOCALAPPDATA%\ParadiseInHell\
 Save 1: profile.json (preserva o perfil anterior).
-Save 2: profile-2.json. Save 3: profile-3.json. Save 4: profile-4.json.
-Saldo, compras, profissao, eventos, fragmentos e regioes ja premiadas sao independentes,
-com uma copia .bak por save. Saves anteriores continuam funcionando.
+Saves 2 a 8: profile-2.json ate profile-8.json.
+Saldo, compras, profissao, raridade da arma, eventos, fragmentos e regioes ja premiadas
+sao independentes. Almas, desbloqueio do Necromante e historico ficam em shared-progress.json.
+Esse arquivo e compartilhado e tem sua propria copia .bak.
+Desbloqueio de Necromante permite novos personagens em outros saves.
+Cada arquivo tem uma copia .bak por save. Saves anteriores continuam funcionando.
 Fechar no meio da tentativa descarta dadivas e ganhos ainda nao guardados.
-Nao ha retomada de uma tentativa. S no refugio repete um autosave que falhou.
+Nao ha retomada de uma tentativa. S no refugio repete autosaves pendentes do personagem e do arquivo compartilhado.
 Uma compra so desconta moedas se puder ser salva.
 Falha de leitura preserva os arquivos; a campanha continua apenas na sessao.
 
 O tempo para durante pausa e escolhas.
-Ainda faltam audio, outros encontros, inventario geral, proximas regioes e controles.
+Audio/efeitos sao provisorios. Ainda faltam revisao sonora/artistica, outros encontros,
+inventario geral, proximas regioes e controles.
 O atlas foi gerado com IA. Refugio, Caronte e baus usam arte provisoria.
 Nome da moeda, custos e recompensas precisam de playtests.
 

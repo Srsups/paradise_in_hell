@@ -52,6 +52,22 @@ class RunChestsTest {
             assertNotEquals(RunChests.Reward.OBOLS, spawn(chests, openMap(), false).reward());
         }
     }
+    @Test void xpAndConvertedRewardsShowTheActualAthenaBonusAndCannotBeClaimedTwice() {
+        var seen = java.util.EnumSet.noneOf(RunChests.Reward.class);
+        for (int seed = 0; seed < 300 && seen.size() < 3; seed++) {
+            RunChests chests = new RunChests(new Random(seed));
+            RunChests.Chest chest = spawn(chests, openMap(), true);
+            if (chest.reward() == RunChests.Reward.OBOLS) continue;
+            RunSession run = RunSession.campaign(CampaignProfileTest.region());
+            run.applyUpgrade(Upgrade.INTELIGENCIA);
+            assertEquals("+30 XP", chests.open(chest, run));
+            assertEquals(30, run.player().getXpAtual());
+            assertEquals("", chests.open(chest, run));
+            assertEquals(30, run.player().getXpAtual());
+            seen.add(chest.reward());
+        }
+        assertEquals(3, seen.size(), "XP and both full-status conversions must receive the boon");
+    }
     @Test void fullHealthOrStaminaConvertsToXpAndDistantChestsAreEvicted() {
         boolean checked = false;
         for (int seed = 0; seed < 100 && !checked; seed++) {

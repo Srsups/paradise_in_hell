@@ -6,7 +6,7 @@ permanentes e baús aleatórios. Óbolos, fontes, custos e números são provis�
 
 ## Refúgio e Caronte
 
-Escolha um dos quatro saves antes de começar. Em um save vazio, o narrador pergunta
+Escolha um dos oito saves (duas páginas, com setas ou Anterior/Próxima) antes de começar. Em um save vazio, o narrador pergunta
 a profissão e abre o Refúgio do Estige. A profissão fica fixa: outra exige um
 personagem em outro save vazio. O perfil anterior é preservado no Save 1.
 C conversa, L abre o altar, P abre os saves e Enter parte. E interage perto dos
@@ -31,12 +31,17 @@ campanha. Sua escolha inicial de profissão também fica salva.
 
 | Estado | Próxima arena na mesma tentativa | Nova tentativa |
 | --- | --- | --- |
-| Dádivas, aura, Égide e ressurreição | Mantidos, incluindo consumo/recargas | Apagados |
+| Dádivas, efeitos elementais, aura, Égide e ressurreição | Mantidos, incluindo consumo/recargas | Apagados |
 | Nível, XP, vida e estamina | Mantidos | Nível 1, zero XP, vida e estamina cheias |
 | Atributos comprados | Mantidos | Aplicados aos atributos iniciais |
 | Profissão | Mantida | Mantida, fixa para o save |
-| Baús | Locais à arena | Novos sorteios |
-| Raridade da arma | Mantida | Comum |
+| Aliados do Necromante | Mantidos; duração congelada em menus | Apagados |
+| Fúria por farming | Limpa ao avançar | Limpa |
+| Desbloqueio lendário | Registro permanente no save pagante | Disponível para novos personagens |
+| Baús aleatórios | Locais à arena | Novos sorteios |
+| Recompensa da rota | Uma por sala concluída | Novamente disponível; dádiva/cura são temporárias |
+| Evento de hordas | Fixo para cada sala da tentativa | Novo sorteio |
+| Raridade da arma forjada | Mantida | Mantida permanentemente no save |
 | Fragmentos de Forja | Guardados imediatamente no perfil | Mantidos no save |
 | Região que já concedeu fragmento | Registrada no perfil | Continua bloqueada mesmo após gastar |
 | Óbolos da travessia | Acumulados | Guardados no perfil ao retornar |
@@ -52,12 +57,50 @@ compras; não mistura esses níveis com os limites das dádivas.
 Uma compra só é aplicada após a gravação do perfil. Falhar ao salvar não consome
 moedas nem sobe o nível. A interface informa saldo, nível atual, preço e resultado.
 
-## Economia provisória
+No altar, N ou clique no texto do Necromante gasta **1.000 Almas compartilhadas**
+para desbloquear a classe em novos personagens. O personagem atual continua
+com sua profissão; Óbolos não são gastos. Saldo e acesso ficam em um arquivo
+compartilhado, com compra confirmada por gravação. Desbloqueios antigos são preservados.
+R no refúgio consulta o resumo da última tentativa e o histórico recente do personagem.
+Almas, relatório e migração: [ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).
+Regras e valores das classes:
+[CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md).
+
+Almas por derrota: 1 comum, 2 rápido, 5 tank, 20 mini-boss e 100 Guardião.
+São guardadas no retorno por morte/vitória/abandono e podem ser usadas por qualquer
+save. Farming sob Fúria reduz o ganho de inimigos. O resumo mostra o valor obtido.
+A demo registra métricas, mas não ganha moedas.
+
+## Ampliação planejada do altar e das conversas
+
+O M3 do [roteiro](ROTEIRO_DE_MELHORIAS.md) cria a conversa piloto de Caronte
+com retrato, nome, caixa de diálogo e comandos consistentes; o M6 aplica o
+padrão ao Ferreiro e ao NPC de desafio. Textos/condições ficam em dados,
+consultando os eventos salvos sem conceder prêmios duas vezes.
+
+O M4 amplia as três compras atuais com propostas de reserva de estamina,
+regeneração e alcance inicial de coleta. Custos/limites serão definidos com
+personagens novos e evoluídos; regeneração não funciona durante defesa e o
+alcance permanente não deve substituir a dádiva de Deméter. Compras continuam
+pessoais, em Óbolos, confirmadas por gravação.
+
+A dificuldade já é fixa ao criar o save, confirmada com a profissão no M2.
+O desafio que libera Fazendeiro vem de NPC sorteado por run; progresso e
+recompensa precisam de persistência explícita, com retorno ao refúgio.
+Chance/identidade/objetivos e alcance do desbloqueio ainda são propostas.
+As conversas novas, compras extras e missão do Fazendeiro continuam planejadas.
+
+## Economia provisória em Óbolos
 
 - 5 Óbolos ao concluir a primeira conversa com Caronte, uma vez por perfil.
 - 1 por 10 abates, até 10 por tentativa; o limite não afeta a geração de inimigos.
 - Mais 10 ao derrotar o Guardião.
 - 3 em um baú com esse prêmio.
+
+A tabela descreve as bases de Média. Fácil aplica ×0,85 e Difícil ×1,25 aos
+ganhos da tentativa, somando bases antes da conversão para inteiros. Caronte
+continua em 5; saldo existente e preços não mudam. Recompensas de Cinzas/Sombras
+também são elegíveis. Detalhes: [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
 
 Os ganhos da travessia são guardados ao retornar, mesmo por morte ou abandono.
 Morrer imediatamente sem abates ou baús não concede moeda. Fechar durante a
@@ -71,18 +114,19 @@ a cada 25–40 segundos. Há até três baús simultâneos por arena. Posições
 sorteadas perto do jogador e precisam ser livres e conectadas ao seu caminho.
 Baús distantes são retirados e não bloqueiam movimentos.
 
-Use F dentro de 24 unidades para abrir uma vez. Prêmios: 30 de vida, 12 XP,
-40 de estamina ou 3 Óbolos, com chances iguais na campanha. A demo usa os três
+Use F dentro de 24 unidades para abrir uma vez. Prêmios: 30 de vida, 12 XP base,
+40 de estamina ou 3 Óbolos, com chances iguais na campanha. Atena multiplica a
+XP para 30 e a mensagem mostra o ganho efetivo. A demo usa os três
 suprimentos. Vida/estamina cheias convertem o prêmio em XP. Recompensas não
 ultrapassam os máximos de vida/estamina; XP abre as escolhas normais de dádivas.
 Pausa e escolha de dádiva congelam o relógio dos baús. Não há baús na sala do chefe.
 
 ## Arquivo e verificação
 
-No Windows, os quatro arquivos ficam em `%LOCALAPPDATA%\ParadiseInHell\`:
-`profile.json`, `profile-2.json`, `profile-3.json` e `profile-4.json`. Cada um guarda versão,
+No Windows, os oito arquivos ficam em `%LOCALAPPDATA%\ParadiseInHell\`:
+`profile.json` e `profile-2.json` até `profile-8.json`. Cada um guarda versão,
 saldo, profissão, níveis permanentes, retornos, mortes, vitórias, eventos e
-Fragmentos de Forja e regiões já premiadas próprios. Saves anteriores sem
+Fragmentos de Forja e regiões já premiadas próprios, além da raridade permanente da arma e do desbloqueio lendário pago neste save. Saves anteriores sem
 forgeMaterials leem zero; a migração do limite regional está em
 [FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md).
 Não guarda a tentativa em andamento. A cópia anterior válida usa o sufixo `.bak`
@@ -104,7 +148,9 @@ e abre um baú real. Tabelas de atributos e ímã:
 partidas completas ainda precisam validar ritmo e economia.
 
 O segundo NPC implementado é o Ferreiro Errante, encontro raro e seguro entre
-salas. Fragmentos de Forja persistem; raridade/poder da arma não. Confira
-[FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md). Outros encontros,
-inventário geral e recompensas exclusivas de rota continuam pendentes. A primeira região completa ainda precisa desse
+salas. Fragmentos, limite regional e raridade/poder da arma persistem no save. Confira
+[FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md). Cinzas tem baú garantido;
+Sombras oferece dádiva extra Rara ou superior, em uma etapa segura:
+[ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md). Outros encontros e inventário geral
+continuam pendentes. A primeira região completa ainda precisa desse
 conteúdo, áudio, arte e playtests.

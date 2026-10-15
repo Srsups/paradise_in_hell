@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /** Navigation is normal pursuit; attacks are stationary and telegraphed. No charge. */
-public final class MiniBossEncounter extends EnemyNavigation.Body {
+public final class MiniBossEncounter extends EnemyNavigation.Body implements CombatTarget {
     public static final String NAME = "Carrasco das Sombras";
     public static final float BASE_HEALTH = 180, SPEED = 24, BODY_RADIUS = 12, SPIN_RADIUS = 42;
     public static final int XP = 20;
@@ -30,6 +30,13 @@ public final class MiniBossEncounter extends EnemyNavigation.Body {
         health = maxHealth = BASE_HEALTH * difficulty.healthMultiplier();
         damageMultiplier = difficulty.damageMultiplier();
     }
+    public float strength() { return 18 * (float) Math.sqrt(maxHealth / BASE_HEALTH); }
+    private final List<CombatHit> hits = new ArrayList<>();
+    public List<CombatHit> hits() { return java.util.List.copyOf(hits); }
+    private void hit(float amount, float sx, float sy, CombatHit.Kind kind) {
+        String cause=kind==CombatHit.Kind.PROJECTILE?"Pedras":state==State.RECOVERY?"Contato":"Giro de espada";
+        hits.add(new CombatHit(amount * damageMultiplier, sx, sy, kind,NAME+" / "+cause));
+    }
     public float health() { return health; }
     public float maxHealth() { return maxHealth; }
     public float centerX() { return x + 8; }
@@ -47,16 +54,20 @@ public final class MiniBossEncounter extends EnemyNavigation.Body {
         if (health == 0) { state = State.DEFEATED; stones.clear(); }
     }
     public float update(float delta, float playerX, float playerY, EnemyNavigation navigation) {
+        return update(delta, playerX, playerY, navigation, true);
+    }
+    public float update(float delta, float playerX, float playerY, EnemyNavigation navigation, boolean bodyContact) {
         if (!Float.isFinite(delta) || delta < 0) throw new IllegalArgumentException("Invalid delta");
+        hits.clear();
         float damage = 0;
         while (delta > 0 && !defeated()) {
             float step = Math.min(delta, 0.02f);
-            damage = Math.max(damage, step(step, playerX, playerY, navigation));
+            damage = Math.max(damage, step(step, playerX, playerY, navigation, bodyContact));
             delta -= step;
         }
         return damage * damageMultiplier;
     }
-    private float step(float delta, float playerX, float playerY, EnemyNavigation navigation) {
+    private float step(float delta, float playerX, float playerY, EnemyNavigation navigation, boolean bodyContact) {
         flashTimer = Math.max(0, flashTimer - delta);
         contactCooldown = Math.max(0, contactCooldown - delta);
         float damage = updateStones(delta, playerX, playerY, navigation);
@@ -81,13 +92,15 @@ public final class MiniBossEncounter extends EnemyNavigation.Body {
                 && distanceSquared(playerX, playerY, centerX(), centerY()) <= (SPIN_RADIUS + 8) * (SPIN_RADIUS + 8)
                 && navigation.clearLine(centerX(), centerY(), playerX, playerY)) {
                 hitResolved = true; damage = Math.max(damage, 28);
+                hit(28, centerX(), centerY(), CombatHit.Kind.CONTACT);
             }
             if (timer <= 0) { state = State.RECOVERY; timer = 2.2f; }
         }
-        if (state == State.RECOVERY && contactCooldown == 0
+        if (bodyContact && state == State.RECOVERY && contactCooldown == 0
             && distanceSquared(playerX, playerY, centerX(), centerY()) <= (BODY_RADIUS + 8) * (BODY_RADIUS + 8)
             && navigation.clearLine(centerX(), centerY(), playerX, playerY)) {
             contactCooldown = 1; damage = Math.max(damage, 20);
+            hit(20, centerX(), centerY(), CombatHit.Kind.CONTACT);
         }
         return damage;
     }
@@ -101,7 +114,7 @@ public final class MiniBossEncounter extends EnemyNavigation.Body {
             // Test the wall before the player: stones cannot hurt through structures.
             if (stone.life <= 0 || !navigation.clearLine(beforeX, beforeY, stone.x, stone.y)) iterator.remove();
             else if (CombatGeometry.sweptCircleHits(beforeX, beforeY, stone.x, stone.y, playerX, playerY, 11)) {
-                damage = 20; iterator.remove();
+                damage = 20; hit(20, beforeX, beforeY, CombatHit.Kind.PROJECTILE); iterator.remove();
             }
         }
         return damage;

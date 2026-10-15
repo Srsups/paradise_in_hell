@@ -9,14 +9,18 @@ import java.util.random.RandomGenerator;
 public final class UpgradeChoices {
     private UpgradeChoices() {}
     public static List<Upgrade> draw(RunSession session, int count, RandomGenerator random) {
+        return draw(session, count, random, BoonRarity.COMMON);
+    }
+    public static List<Upgrade> draw(RunSession session, int count, RandomGenerator random, BoonRarity minimum) {
+        java.util.Objects.requireNonNull(minimum);
         if (count < 1 || count > 3) throw new IllegalArgumentException("Invalid choice count");
         EnumMap<BoonRarity, List<Upgrade>> pool = new EnumMap<>(BoonRarity.class);
         for (Upgrade boon : Upgrade.values()) {
-            if (session.rank(boon) >= boon.maxRank) continue;
+            if (boon.rarity.ordinal() < minimum.ordinal() || session.rank(boon) >= boon.maxRank) continue;
             if (boon == Upgrade.CURA && session.player().getVida() >= session.player().getVidaMaxima()) continue;
             pool.computeIfAbsent(boon.rarity, key -> new ArrayList<>()).add(boon);
         }
-        if (pool.isEmpty()) return List.of(Upgrade.CURA);
+        if (pool.isEmpty()) return minimum == BoonRarity.COMMON ? List.of(Upgrade.CURA) : List.of();
         List<Upgrade> result = new ArrayList<>();
         while (result.size() < count && !pool.isEmpty()) {
             float sum = 0, luck = session.player().getLuckMultiplier();

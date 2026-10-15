@@ -29,7 +29,7 @@ public final class RegionDefinition {
         for (ArenaDefinition arena : definitions) {
             if (byId.putIfAbsent(arena.id(), arena) != null) throw new IllegalArgumentException("Duplicate arena: " + arena.id());
         }
-        arenas = Map.copyOf(byId);
+        arenas = java.util.Collections.unmodifiableMap(new LinkedHashMap<>(byId));
         arena(start);
         for (ArenaDefinition arena : definitions) for (String exit : arena.exits()) arena(exit);
         Set<String> visited = new HashSet<>();
@@ -51,7 +51,8 @@ public final class RegionDefinition {
             for (JsonValue goal : arena.require("killGoals")) goals.put(EnemyType.valueOf(goal.name()), goal.asInt());
             definitions.add(new ArenaDefinition(arena.getString("id"), arena.getString("title"),
                 arena.getString("description"), ArenaDefinition.Kind.valueOf(arena.getString("kind")),
-                arena.getFloat("difficultySeconds"), goals, List.of(arena.require("exits").asStringArray())));
+                arena.getFloat("difficultySeconds"), goals, List.of(arena.require("exits").asStringArray()),
+                ArenaReward.valueOf(arena.getString("reward", "NONE")), arena.getFloat("waveIntervalMultiplier", 1)));
         }
         return new RegionDefinition(root.getString("id"), root.getString("title"), root.getString("start"), definitions);
     }
@@ -60,6 +61,7 @@ public final class RegionDefinition {
         if (arena == null) throw new IllegalArgumentException("Unknown arena: " + arenaId);
         return arena;
     }
+    public List<ArenaDefinition> arenas() { return List.copyOf(arenas.values()); }
     public String id() { return id; }
     public String title() { return title; }
     public String start() { return start; }

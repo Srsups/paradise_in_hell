@@ -1,0 +1,10 @@
+PARADISE IN HELL - AUDIO PROVISORIO
+
+24 efeitos e 2 loops instrumentais sintetizados por codigo para este projeto.
+PCM16 mono, 22050 Hz. Nenhuma gravacao, sample ou musica externa foi incorporada.
+Gerador deterministico: tools/generate_audio.py (biblioteca padrao de Python).
+
+Arquivos sao uma base provisoria para testes de gameplay.
+Timbres, composicao, mixagem e fadiga auditiva precisam de avaliacao com jogadores.
+Documentacao: docs/AUDIO_E_FEEDBACK.md.
+

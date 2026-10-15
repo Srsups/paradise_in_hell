@@ -34,6 +34,10 @@ public class GameOverScreen extends ScreenAdapter {
     @Override public void render(float delta) {
         inputDelay -= delta;
         if (inputDelay <= 0) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                game.setScreen(new RunReportScreen(game,session.report(victory?RunOutcome.VICTORY:RunOutcome.DEATH,game.activeSlot()),
+                    ()->new GameOverScreen(game,victory,session))); return;
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 game.setScreen(session.isDemo() ? new GameScreen(game, session.newAttempt()) : new RefugeScreen(game));
                 return;
@@ -52,9 +56,10 @@ public class GameOverScreen extends ScreenAdapter {
         line(victory ? (session.isDemo() ? "A travessia da demo está completa."
             : "Você venceu o chefe do submundo. A jornada continua em desenvolvimento.")
             : "Cada tentativa é uma nova travessia.", 225, 1.2f, Color.LIGHT_GRAY);
-        if (!session.isDemo()) line("Óbolos obtidos: " + session.earnedObols() + "   |   Saldo: " + game.profiles().profile().obols(), 185, 1.1f, Color.WHITE);
+        if (!session.isDemo()) line("Óbolos: +" + session.earnedObols() + " | Almas: +" + session.earnedSouls() + " | Almas compartilhadas: " + game.shared().progress().souls(), 185, 1.1f, Color.WHITE);
         line(session.isDemo() ? "ENTER: jogar de novo   |   ESC ou clique: menu"
             : "ENTER: retornar ao refúgio   |   ESC ou clique: menu", 145, 1.2f, Color.GOLD);
+        line("R: resumo detalhado da tentativa", 105, 1, Color.CYAN);
         batch.end();
     }
     private void line(String text, float y, float scale, Color color) {

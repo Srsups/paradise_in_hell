@@ -32,7 +32,7 @@ public final class RouteScreen extends ScreenAdapter {
         if (!session.arenaComplete() || exits.isEmpty()) throw new IllegalStateException("No route available");
         cards = new Rectangle[exits.size()];
         float width = (890f - 20 * (exits.size() - 1)) / exits.size();
-        for (int index = 0; index < cards.length; index++) cards[index] = new Rectangle(35 + index * (width + 20), 175, width, 210);
+        for (int index = 0; index < cards.length; index++) cards[index] = new Rectangle(35 + index * (width + 20), 150, width, 285);
     }
     @Override public void show() { Gdx.input.setInputProcessor(null); }
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
@@ -72,8 +72,14 @@ public final class RouteScreen extends ScreenAdapter {
         for (int index = 0; index < exits.size(); index++) {
             ArenaDefinition arena = session.region().arena(exits.get(index));
             Rectangle card = cards[index];
-            font.draw(batch, "[" + (index + 1) + "] " + arena.title(), card.x + 18, card.y + 180, card.width - 36, 8, true);
-            font.draw(batch, arena.description(), card.x + 18, card.y + 130, card.width - 36, 8, true);
+            font.draw(batch, "[" + (index + 1) + "] " + arena.title(), card.x + 18, card.y + 262, card.width - 36, 8, true);
+            font.draw(batch, arena.description(), card.x + 18, card.y + 216, card.width - 36, 8, true);
+            font.setColor(Color.CYAN);
+            font.draw(batch, arena.kind() == ArenaDefinition.Kind.COMBAT
+                ? "Evento: " + session.variation(arena.id()).label + "\n" + session.variation(arena.id()).description : "Chefe da região", card.x + 18, card.y + 148, card.width - 36, 8, true);
+            font.setColor(Color.GOLD);
+            font.draw(batch, arena.reward().description, card.x + 18, card.y + 112, card.width - 36, 8, true);
+            font.setColor(Color.WHITE);
             font.draw(batch, arena.goalDescription(), card.x + 18, card.y + 65, card.width - 36, 8, true);
         }
         font.draw(batch, "Vida: " + CombatNumbers.format(session.player().getVida()) + "   |   Nível: " + session.player().getNivel()

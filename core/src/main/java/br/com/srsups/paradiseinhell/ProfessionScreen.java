@@ -16,6 +16,7 @@ public final class ProfessionScreen extends ScreenAdapter {
     private final Main game;
     private final RegionDefinition region;
     private String notice = "";
+    private final MenuPages pages = new MenuPages();
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
@@ -34,13 +35,16 @@ public final class ProfessionScreen extends ScreenAdapter {
         }
         Vector2 pointer = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         Profession[] professions = Profession.values();
-        for (int index = 0; index < professions.length; index++) {
+        pages.input(pointer);
+        for (int index = 0; index < cards.length; index++) {
             boolean key = Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + index)
                 || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1 + index);
             if (key || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cards[index].contains(pointer)) {
-                if (!game.profiles().chooseProfession(professions[index])) { notice = "Este save já tem uma profissão."; break; }
-                if (region == null) game.startDemo();
-                else game.setScreen(new RefugeScreen(game));
+                Profession profession = professions[pages.index(index)];
+                if (profession == Profession.NECROMANTE && !game.necromancerUnlocked()) {
+                    notice = "Necromante bloqueado: compre o acesso no altar do refúgio."; break;
+                }
+                game.setScreen(new DifficultyScreen(game, profession, region));
                 return;
             }
         }
@@ -61,26 +65,35 @@ public final class ProfessionScreen extends ScreenAdapter {
         font.getData().setScale(1.2f); font.setColor(Color.WHITE);
         font.draw(batch, "Antes de toda essa confusão, qual era sua profissão?", 205, 450);
         font.getData().setScale(1);
-        for (int index = 0; index < professions.length; index++) {
-            Profession profession = professions[index];
+        for (int index = 0; index < cards.length; index++) {
+            Profession profession = professions[pages.index(index)];
+            boolean locked = profession == Profession.NECROMANTE && !game.necromancerUnlocked();
             Rectangle card = cards[index];
-            font.setColor(Color.GOLD);
-            font.draw(batch, "[" + (index + 1) + "] " + profession.title, card.x + 18, card.y + 130);
+            font.setColor(locked ? Color.SALMON : Color.GOLD);
+            font.draw(batch, profession.title + (profession == Profession.NECROMANTE ? "  [LENDÁRIA]" : ""), card.x + 18, card.y + 130);
             font.setColor(Color.WHITE);
             font.draw(batch, profession.weapon.label, card.x + 18, card.y + 105);
-            font.draw(batch, "Vida: " + (int) profession.baseHealth + " | Vel.: " + (int) profession.baseSpeed
+            font.draw(batch, "Vida: " + (int) profession.baseHealth + " | Atq/s: " + CombatNumbers.formatRate(1 / profession.weapon.interval)
                 + " | Dano: " + profession.weapon.damage + " | Sorte: " + CombatNumbers.format(profession.luckMultiplier) + "x", card.x + 18, card.y + 85);
             font.draw(batch, profession.description, card.x + 18, card.y + 65, card.width - 36, 8, true);
-            String attack = profession.weapon == WeaponType.FISTS ? "Socos em um alvo próximo; sorte maior em drops e dádivas."
-                : profession.weapon == WeaponType.SWORD ? "Golpe em área, na direção do mouse."
-                : profession.weapon == WeaponType.PISTOL ? "Tiros rápidos, com dano menor." : "Flechas de longo alcance.";
+            String attack = locked ? "Lendária: desbloqueio global por "+SharedProgress.necromancerCostText()+"." : switch (profession.weapon) {
+                case FISTS -> "Um alvo próximo; sorte 4x em drops e dádivas.";
+                case SWORD -> "Golpe em área, na direção do mouse.";
+                case PISTOL -> "Tiros rápidos, com dano menor.";
+                case BOW -> "Flechas de longo alcance.";
+                case WAND -> "Feitiços explodem ao acertar um inimigo.";
+                case CURSE -> "Maldição em área, com dano contínuo por 3s.";
+                case SOUL -> "Inimigos abatidos podem voltar como aliados.";
+                case SHIELD -> "Direito: defender. Esquerdo: atacar, mesmo defendendo.";
+            };
             font.draw(batch, attack, card.x + 18, card.y + 22, card.width - 36, 8, true);
         }
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "Clique ou use 1, 2, 3, 4.   |   ESC: voltar", 285, 80);
-        font.draw(batch, "Mouse: mirar   |   Segure o botão esquerdo: atacar", 255, 53);
+        pages.draw(batch, font);
+        font.draw(batch, "Clique para escolher sua profissão. ESC: voltar", 235, 53);
+
         font.draw(batch, "A profissão pertence ao save. Para escolher outra, crie outro save.", 205, 25);
-        if (!notice.isEmpty()) { font.setColor(Color.SALMON); font.draw(batch, notice, 35, 30); }
+        if (!notice.isEmpty()) { font.setColor(Color.SALMON); font.draw(batch, notice, 35, 435); }
         batch.end();
     }
     @Override public void dispose() { batch.dispose(); shapes.dispose(); font.dispose(); }

@@ -57,7 +57,7 @@ class ForgeProgressTest {
         assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"forgeMaterials\": 0", "\"forgeMaterials\": -1")));
         assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"forgeMaterials\": 0", "\"forgeMaterials\": 1.5")));
     }
-    @Test void forgeConsumesOneMaterialOnlyAfterSavingAndWeaponResetsOnNextRun() {
+    @Test void forgeConsumesOneMaterialOnlyAfterSavingAndWeaponPersistsOnNextRun() {
         ProfileStore store = ProfileStore.memory(); ProfileService service = new ProfileService(store);
         RunSession run = run(0, 0); defeatMini(run); service.collectForgeMaterials(run);
         assertFalse(service.forgeWeapon(run), "The encounter must be open");
@@ -65,7 +65,8 @@ class ForgeProgressTest {
         assertTrue(service.forgeWeapon(run)); assertFalse(service.forgeWeapon(run));
         assertEquals(0, new ProfileService(store).profile().forgeMaterials());
         assertEquals(WeaponRarity.RARE, run.player().getWeaponRarity());
-        assertEquals(WeaponRarity.COMMON, run.newAttempt().player().getWeaponRarity());
+        assertEquals(WeaponRarity.RARE, run.newAttempt().player().getWeaponRarity());
+        assertEquals(WeaponRarity.RARE, new ProfileService(store).profile().weaponRarity());
     }
     @Test void saveFailurePreservesMaterialAndWeaponWhileDropAutosaveCanBeRetried() {
         ProfileStore memory = ProfileStore.memory();

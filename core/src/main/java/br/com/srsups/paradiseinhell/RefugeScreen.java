@@ -22,6 +22,7 @@ public final class RefugeScreen extends ScreenAdapter {
     private final Rectangle[] shopCards = {
         new Rectangle(35, 145, 280, 225), new Rectangle(340, 145, 280, 225), new Rectangle(645, 145, 280, 225)
     };
+    private final Rectangle legendaryButton = new Rectangle(35, 375, 890, 28);
     private final Rectangle talkButton = new Rectangle(25, 42, 215, 45), shopButton = new Rectangle(255, 42, 215, 45),
         savesButton = new Rectangle(485, 42, 215, 45), startButton = new Rectangle(715, 42, 220, 45);
     private SpriteBatch batch;
@@ -53,6 +54,7 @@ public final class RefugeScreen extends ScreenAdapter {
     private void refreshPlayer() {
         stats = new PlayerState(game.profiles().profile().profession());
         game.profiles().profile().bonuses().apply(stats);
+        if (game.profiles().profile().weaponRarity() == WeaponRarity.RARE) stats.forgeWeapon();
         if (player != null) player = new Jogador(player.x, player.y, atlas, stats, (x, y) -> {});
     }
     @Override public void resize(int width, int height) {
@@ -62,11 +64,17 @@ public final class RefugeScreen extends ScreenAdapter {
     }
     @Override public void render(float delta) {
         if (disposed) return;
+        if(state==State.WALKING && Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            game.setScreen(new AudioSettingsScreen(game,()->new RefugeScreen(game)));return;
+        }
         noticeTimer = Math.max(0, noticeTimer - delta);
         if (noticeTimer == 0) notice = "";
         Vector2 pointer = hud.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         boolean clicked = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S) && !game.profiles().error().isEmpty()) game.profiles().retrySave();
+        if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            if(!game.profiles().error().isEmpty()) game.profiles().retrySave();
+            if(!game.shared().error().isEmpty()) game.shared().retrySave();
+        }
         switch (state) {
             case DIALOGUE -> {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) state = State.WALKING;
@@ -80,11 +88,16 @@ public final class RefugeScreen extends ScreenAdapter {
             }
             case SHOP -> {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.L)) state = State.WALKING;
+                else if (Gdx.input.isKeyJustPressed(Input.Keys.N) || clicked && legendaryButton.contains(pointer)) unlockLegendary();
                 else for (int index = 0; index < shopCards.length; index++) {
                     if (numberPressed(index) || clicked && shopCards[index].contains(pointer)) buy(PermanentAttribute.values()[index]);
                 }
             }
             case WALKING -> {
+                if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                    if(game.latestReport()==null) notify("Nenhuma tentativa recente deste personagem.");
+                    else { game.openLastReport(); return; }
+                }
                 player.update(Math.min(delta, 0.05f), map);
                 boolean interact = Gdx.input.isKeyJustPressed(Input.Keys.E);
                 if (Gdx.input.isKeyJustPressed(Input.Keys.C) || clicked && talkButton.contains(pointer)
@@ -106,6 +119,12 @@ public final class RefugeScreen extends ScreenAdapter {
     private boolean near(float x, float y) { return Vector2.dst2(player.x + 8, player.y + 8, x, y) < 38 * 38; }
     private void notify(String text) { notice = text; noticeTimer = 3.5f; }
     private void talk() { notice = ""; noticeTimer = 0; conversation = CaronteDialogue.select(game.profiles().profile()); line = 0; state = State.DIALOGUE; }
+    private void unlockLegendary() {
+        if (game.necromancerUnlocked()) { notify("Necromante já disponível para novos personagens."); return; }
+        if (!game.shared().progress().canUnlockNecromancer()) { notify("Você precisa de "+SharedProgress.necromancerCostText()+" compartilhadas."); return; }
+        if (game.unlockNecromancer()) notify("Necromante desbloqueado! Crie um novo save para escolhê-lo.");
+        else notify("Desbloqueio não concluído. Suas Almas foram preservadas.");
+    }
     private void buy(PermanentAttribute attribute) {
         CampaignProfile profile = game.profiles().profile();
         if (profile.rank(attribute) >= PermanentAttribute.MAX_RANK) notify("Atributo no nível máximo.");
@@ -148,17 +167,17 @@ public final class RefugeScreen extends ScreenAdapter {
         batch.setProjectionMatrix(hud.getCamera().combined); batch.begin();
         text("REFÚGIO DO ESTIGE", 25, 520, 1.6f, Color.GOLD);
         text("Óbolos: " + profile.obols() + "   |   Retornos: " + profile.attempts() + "   |   Guardião vencido: " + profile.victories(), 480, 520, 1, Color.WHITE);
-        text(profile.profession().title + "   |   Vida inicial: " + CombatNumbers.format(stats.getVidaMaxima()) + "   |   Dano: " + CombatNumbers.format(stats.getDano()), 25, 484, 1, Color.WHITE);
-        text("Dádivas e raridade reiniciam. Compras permanecem.", 25, 459, 1, Color.LIGHT_GRAY);
-        text("Fragmentos de Forja: " + profile.forgeMaterials(), 650, 459, 1, Color.GOLD);
+        text(profile.profession().title + "   |   Vida inicial: " + CombatNumbers.format(stats.getVidaMaxima()) + "   |   Dano: " + CombatNumbers.format(stats.getDano()) + "   |   Ataques/s: " + CombatNumbers.formatRate(stats.attacksPerSecond()), 25, 484, 1, Color.WHITE);
+        text("Arma " + profile.weaponRarity().label + ": permanente. Dádivas reiniciam.", 25, 459, 1, Color.LIGHT_GRAY);
+        text("Almas compartilhadas: " + game.shared().progress().souls() + " | Fragmentos: " + profile.forgeMaterials(), 540, 459, 1, Color.GOLD);
         text("C: conversar", 62, 71, 1, Color.WHITE); text("L: altar", 321, 71, 1, Color.WHITE);
         text("P: saves", 536, 71, 1, Color.WHITE); text("ENTER: partir", 755, 71, 1, Color.GOLD);
-        text("WASD/setas: mover   |   E: interagir   |   ESC: menu", 25, 25, 1, Color.LIGHT_GRAY);
+        text("WASD/setas: mover | E: interagir | R: tentativa | O: áudio | ESC: menu", 25, 25, 1, Color.LIGHT_GRAY);
         batch.end();
         if (state != State.WALKING) drawOverlay();
         batch.begin();
-        String message = game.profiles().error().isEmpty() ? notice : game.profiles().error();
-        if (!message.isEmpty()) text(message, 30, state == State.WALKING ? 119 : 109, 0.95f, game.profiles().error().isEmpty() ? Color.GOLD : Color.SALMON);
+        String message = !game.shared().error().isEmpty()?game.shared().error():game.profiles().error().isEmpty()?notice:game.profiles().error();
+        if (!message.isEmpty()) text(message, 30, state == State.WALKING ? 119 : 109, 0.95f, game.profiles().error().isEmpty() && game.shared().error().isEmpty() ? Color.GOLD : Color.SALMON);
         batch.end();
     }
     private void drawOverlay() {
@@ -174,7 +193,9 @@ public final class RefugeScreen extends ScreenAdapter {
             font.draw(batch, current.text(), 70, 312, 820, 8, true);
             text("ENTER / E / clique: continuar   |   ESC: fechar", 240, 165, 1, Color.LIGHT_GRAY);
         } else {
-            text("ALTAR: ATRIBUTOS PERMANENTES", 210, 415, 1.4f, Color.GOLD);
+            text("ALTAR: ATRIBUTOS PERMANENTES", 210, 425, 1.4f, Color.GOLD);
+            text(game.necromancerUnlocked() ? "Necromante lendário disponível para novos personagens."
+                : "[N / clique] Desbloquear Necromante: "+SharedProgress.necromancerCostText()+" (saldo compartilhado)", 65, 395, 1, Color.MAGENTA);
             CampaignProfile profile = game.profiles().profile();
             for (int index = 0; index < shopCards.length; index++) {
                 PermanentAttribute attribute = PermanentAttribute.values()[index];

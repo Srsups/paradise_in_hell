@@ -1,7 +1,13 @@
 # Plano de conclusão e lançamento
 
-Avaliação do repositório em 07/10/2026. Primeiro marco escolhido: **demo para Windows**,
-mantendo mira e tiro pelo mouse. Os sprites anteriores eram placeholders de terceiros.
+Avaliação inicial em 07/10/2026; prioridades revisadas em **13/10/2026** após os
+playtests do autor. Primeiro marco escolhido: **demo para Windows**, mantendo mira
+e tiro pelo mouse. Os sprites anteriores eram placeholders de terceiros.
+
+O plano atual de incrementos está em [ROTEIRO_DE_MELHORIAS.md](ROTEIRO_DE_MELHORIAS.md).
+Dificuldade fica fixa ao criar o save; Fazendeiro Épico será liberado por desafio
+de um NPC sorteado por run. Este documento conserva o histórico implementado
+e os critérios de publicação; o roteiro detalha as novas entregas planejadas.
 
 O marco seguinte é a primeira região da campanha. O autor escolheu tentativas
 completas de aproximadamente 30–40 minutos, com história e desbloqueios persistentes
@@ -43,34 +49,51 @@ arte final deve melhorar a leitura e distinguir comportamentos.
 
 ### Verificação desta entrega
 
-- Build Gradle concluído e 80 testes de regressão aprovados.
+- Marco 1 verificado em 14/10/2026: 211 testes de regressão aprovados, incluindo HUD, áudio por emissor, padrões do chefe, métricas e histórico antigo.
 - Verificação com OpenGL real em janela invisível aprovada: menu, escolhas,
-  profissões, quatro armas, XP por tipo, metas de abate, geração contínua,
+  profissões, oito armas, XP por tipo, metas de abate, geração contínua,
   pausa, redimensionamento, vitória da demo, morte, reinício, caminhos,
-  coleta do XP restante, três padrões do chefe, segunda fase, dano de todas as
+  coleta do XP restante, quatro padrões do chefe, salto com perseguição contínua e dash de esquiva, segunda fase, dano de todas as
   armas, aura, ressurreição, vitória do chefe, refúgio, diálogos, compras,
   perfil recarregado, reset das dádivas, baús, saves independentes, profissão fixa,
   expiração da mensagem de Caronte, ímã de XP, bônus percentuais, escala linear
   dos inimigos, mini-boss sem investida, material persistente, ferreiro, poderes
   das armas raras, quarto save, socos em um alvo, limite regional após gasto e
-  nova run, distribuição das raridades e descarte das telas.
+  nova run, distribuição das raridades, forja permanente após morte/vitória/recarga,
+  recompensas de rotas, variação anunciada de hordas, oito saves, compra de classe lendária,
+  explosões, maldições em área, aliados, defesa/revide, sinergias, Fúria dos Deuses,
+  contato por silhueta, ataques/s, espera e liberação do ataque nas escolhas,
+  consulta paginada por Tab, Almas compartilhadas, débito lendário de 1.000,
+  relatórios/causa da morte/dano por origem, histórico e recarga sem crédito duplicado, arqueiros com as oito armas,
+  mira travada/flechas/escudo/revide, XP/Almas próprios, ataque com defesa simultânea,
+  exclusão/cancelamento/reutilização nas duas páginas, identidade dos relatórios,
+  backup sem restaurar personagem excluído, ritmo/limites dos rápidos, volumes/mute,
+  painel de áudio congelando as arenas, oito sons de arma, sinais de defesa/proteção/dano,
+  avisos sem repetição e descarte das telas.
 - ZIP Windows gerado em lwjgl3/build/construo/dist/paradise-in-hell-gdx-winX64.zip.
-- Executável extraído iniciou menu, demo, campanha, chefe, refúgio, seleção de saves e ferreiro com PATH sem Java e diretório de
+- Executável extraído iniciou menu, demo, campanha, chefe, refúgio, seleção de saves, ferreiro e recompensas de rotas com PATH sem Java e diretório de
   trabalho fora do pacote, usando seu runtime incluído; código de saída zero.
-- Atlas novo e instruções presentes no pacote; três placeholders antigos ausentes.
+- Áudio nativo: 24 efeitos e música em streaming verificados com OpenAL Soft em dispositivo nulo, sem reprodução pelos alto-falantes.
+- Atlas novo, WAVs originais e instruções presentes no pacote; três placeholders antigos ausentes.
 - Capturas de interface em build/smoke foram revisadas.
 
 O teste de PATH não equivale à homologação em outra máquina ou em uma instalação
 limpa do Windows. O teste acelera o relógio da demo, as metas da campanha e a vida
-do chefe para verificar resultados. Partidas completas e balanceamento continuam
-pendentes.
+do chefe para verificar resultados. O autor já realizou partidas práticas e
+relatou chefe fácil, HUD carregado e necessidade de variedade/acabamento.
+A matriz completa de profissões, dificuldades e progressão continua pendente;
+o feedback recebido orienta o [roteiro atualizado](ROTEIRO_DE_MELHORIAS.md).
 
 ## Critério para divulgar a demo publicamente
 
-- [ ] Jogar partidas completas e ajustar o começo, meio e fim da curva de dificuldade.
-- [ ] Validar se as doze dádivas geram escolhas interessantes e evitar combinações dominantes.
-- [ ] Acrescentar efeitos de tiro, impacto, XP, dash, dano e vitória/morte.
-- [ ] Acrescentar música e controles de volume, com preferências salvas.
+- [x] Recolher o primeiro parecer do autor em partidas práticas e registrar prioridades.
+- [x] Aplicar M1: HUD essencial/barra de XP, som do Carrasco somente visível e revisão do Guardião.
+- [ ] Validar o ritmo do Guardião revisado em partidas completas com perfis novos/evoluídos.
+- [ ] Aplicar/validar os modos Fácil, Média e Difícil fixos na criação do save.
+- [ ] Jogar a matriz de profissões/rotas e ajustar começo, meio e fim da curva.
+- [ ] Validar o catálogo ampliado e a dádiva regional, evitando combinações dominantes.
+- [x] Acrescentar sons/efeitos provisórios de tiro, impacto, XP, dash, dano e vitória/morte; revisão com jogadores pendente.
+- [x] Acrescentar duas trilhas provisórias e controles de volume/mute com preferências salvas; composição e mixagem finais pendentes.
 - [ ] Revisar animação, alinhamento, contraste do personagem, ícone e identidade do menu.
 - [ ] Testar em máquina sem Java instalado e com uma GPU diferente.
 - [ ] Testar sessões repetidas, Alt+Tab, minimizar, diferentes resoluções e escalas do Windows.
@@ -84,22 +107,36 @@ das escolhas e vontade de tentar novamente. Registrar tempo até a morte, nível
 dádivas escolhidas e trechos de dificuldade excessiva. Esses dados devem orientar
 o próximo ajuste; não há avaliação de balanceamento apenas por compilação.
 
-## Próximo incremento de conteúdo
+## Próximos incrementos após os playtests
 
-Implementar a primeira região como uma travessia com arenas, caminhos, NPCs,
-recompensas e um chefe. A sequência de implementação e os critérios de conclusão
-estão no [design da campanha](DESIGN_DO_JOGO.md#próximo-marco-uma-região-completa).
+Concluir e apresentar bem a primeira região, começando pelos problemas percebidos
+na travessia atual. O [roteiro detalhado](ROTEIRO_DE_MELHORIAS.md) é a referência
+de ordem, propostas e critérios de aceite.
 
-| Prioridade | Entrega | Evidência de conclusão |
+| Ordem | Incremento planejado | Resultado esperado |
 | --- | --- | --- |
-| Alta | Inimigo com ataque à distância e sinalização | O jogador entende e consegue evitar o ataque |
-| Implementado no protótipo | Chefe do submundo | Três padrões sinalizados, segunda fase e resultado por derrota do chefe; balanceamento pendente |
-| Alta | Sinergias entre dádivas | Pelo menos três construções viáveis em playtests |
-| Implementado no protótipo | Quatro profissões/armas | Arco, espada, pistola e socos com ataques próprios; Apostador tem sorte elevada; arte e valores pendentes |
+| M1 — implementado; playtests pendentes | HUD, áudio visível do Carrasco e Guardião | Barras/Tab, máscaras/culling, 500 de vida, rajada reforçada, recuperações menores e novas métricas |
+| M2 — implementado; playtests pendentes | Dificuldades fixas e economia | 222 testes/OpenGL, três modos, migração, frações e crédito único verificados |
+| M3 | Base visual e diálogo de Caronte | Fontes, atlas/animação, molduras e conversa piloto reutilizáveis |
+| M4 | Dádivas e altar | Mais escolhas, poder regional e três novas compras candidatas |
+| M5 | NPC de desafio e Fazendeiro Épico | Desbloqueio narrativo e troca ancinho/foice com funções distintas |
+| M6 | Arte/animação em todo o conteúdo | Profissões/inimigos próprios, efeitos por sprites e conversas polidas |
+| M7 | Submundo completo, variedade e expansão | Região testada e pipeline pronto para Ascensão/Olimpo |
+
+### Situação do protótipo anterior à revisão
+
+| Situação | Entrega | Evidência de conclusão |
+| --- | --- | --- |
+| Implementado no protótipo; playtests pendentes | Arqueiro do Estige | Mira fixa de 1 s, flechas bloqueáveis, metas/recompensas e oito armas verificadas; validar leitura e equilíbrio em partidas |
+| Implementado no protótipo | Chefe do submundo | Quatro padrões sinalizados, queda com trava vermelha e pressão na caminhada da fase 2, segunda fase e resultado por derrota do chefe; balanceamento pendente |
+| Protótipo implementado; playtests pendentes | Sinergias entre dádivas | Choque, queimadura, impacto, maldição e aura combinam; três construções candidatas a validar |
+| Implementado no protótipo | Oito profissões/armas | Quatro novas classes, Necromante lendário por 1.000 Almas compartilhadas e Guerreiro com defesa/revide; arte e valores pendentes |
+| Implementado no protótipo | Fúria dos Deuses | Farming após saída liberada gera tolerância, aviso e penalidades graduais; avanço limpa pressão |
 | Implementado no protótipo | Categorias das dádivas | Comum/Rara/Épica/Mitológica com probabilidades ponderadas pela sorte; equilíbrio pendente |
-| Média | Melhorias de VFX e feedback | Dano, invulnerabilidade e alcance são claros |
+| Implementado no protótipo | Rotas com recompensas e variação | Cinzas: baú; Sombras: dádiva Rara ou superior; eventos fixos e anunciados na rota |
+| Base implementada; revisão artística/auditiva pendente | Áudio e feedback | 24 sons, duas trilhas, volumes persistentes; sinais de dano, defesa, proteção e armas distintos |
 | Implementado no protótipo | Perfil e atributos permanentes | Óbolos, profissão, compras e eventos de Caronte sobrevivem ao retorno e à recarga do perfil |
-| Depois | Classes e catálogo amplo de melhorias permanentes | Ampliar após validar a travessia da primeira região |
+| Planejado nos M4/M5 | Fazendeiro Épico, dádivas regionais e mais melhorias permanentes | Novos pedidos incorporados; valores e desbloqueio em elaboração |
 
 A base inicial da campanha foi implementada: estado da tentativa separado das telas,
 atributos em PlayerState, arenas/região definidas em JSON e escolha entre duas rotas.
@@ -119,16 +156,41 @@ escala linear de vida/dano dos inimigos e expiração da confirmação de Caront
 O perfil anterior é preservado no primeiro save.
 
 O segundo NPC é o Ferreiro Errante: 3% base por tentativa, material persistente com
-1,5% base por mini-boss e forja temporária com efeitos por arma. O limite corrigido
+1,5% base por mini-boss e forja permanente com efeitos por arma. O limite corrigido
 é uma unidade por região por save, sem rearmar após gasto ou nova run. O Apostador
 usa socos e sorte 4×; material/encontro ficam em 6%/12%, com dádivas superiores
 mais frequentes. Tabelas: [SORTE_E_RARIDADE.md](SORTE_E_RARIDADE.md). O Carrasco usa giro
-e pedras, entre hordas, sem investida. O próximo incremento são recompensas
-próprias nas rotas, após playtests do mini-boss e da forja. Modificadores e novas
-sinergias permanecem planejados. Consulte [FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md).
+e pedras, entre hordas, sem investida. Cinzas e Sombras agora oferecem recompensas
+próprias em etapas seguras, e cada sala sorteia um evento que altera a composição
+das hordas, anunciado na rota. Travessias completas orientam os ajustes de risco,
+recompensa e dificuldade do roteiro atual. Choque, queimadura e impacto, quatro novas
+classes e Fúria dos Deuses já têm protótipos funcionais: validar três combinações,
+a duração do desbloqueio lendário por Almas e o tempo até a fúria antes de expandir regiões.
+Regras: [CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md). Consulte [ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md). Consulte [FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md).
 Consulte [CHEFE_DO_SUBMUNDO.md](CHEFE_DO_SUBMUNDO.md),
 [CAMPANHA_TECNICA.md](CAMPANHA_TECNICA.md) e a
 [avaliação da tecnologia](DECISAO_DE_TECNOLOGIA.md).
+
+O resumo das tentativas está disponível com R no resultado/refúgio. O histórico
+guarda as 20 últimas runs; permite comparar salas, dádivas, dano por origem e
+causas de morte. O Necromante agora custa 1.000 Almas compartilhadas, com ganhos
+de abates/mini-boss/chefe e migração dos acessos antigos. Valores e regras:
+[ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).
+A próxima avaliação deve usar esses dados em partidas completas; o inimigo
+com ataque à distância foi implementado: [ARQUEIRO_DO_ESTIGE.md](ARQUEIRO_DO_ESTIGE.md).
+Foi aplicado o primeiro ajuste com base no relato de rápidos acumulando:
+limites por onda/arena e ciclos de arrancada/recuperação, sem exigir bônus de
+velocidade para reposicionar em caminho livre. Guerreiro ataca com a defesa ativa;
+slots podem ser excluídos com confirmação e profissões perderam prefixos numéricos.
+Áudio/feedback também ganharam base funcional: [AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
+Atena recebeu +150% de XP, categoria Épica e limite de uma escolha, com testes
+de retorno da escolha e preservação de relatórios antigos. O feedback seguinte
+motivou o M1, implementado em 14/10/2026. O M2 também foi implementado:
+[dificuldade fixa por save e economia](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
+O próximo incremento é M3, base visual e conversa piloto. A matriz de partidas
+continua medindo rotas, builds e progresso do altar, agora também por dificuldade.
+O Fazendeiro amplia a matriz quando implementado; a arte e narrativa seguem
+os mesmos critérios de travessia e produção de conteúdo.
 
 ## Preparação da versão comercial
 

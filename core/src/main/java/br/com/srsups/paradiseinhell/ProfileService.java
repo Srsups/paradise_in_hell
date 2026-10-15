@@ -30,11 +30,19 @@ public final class ProfileService {
         try { store.save(candidate); profile = candidate; error = ""; return true; }
         catch (IOException failure) { error = "Não foi possível salvar. A alteração não foi aplicada."; return false; }
     }
+    public boolean reset() {
+        CampaignProfile empty = new CampaignProfile();
+        try { store.reset(empty); profile = empty; writable = true; error = ""; return true; }
+        catch (IOException failure) { error = "Não foi possível excluir o personagem. Tente novamente."; return false; }
+    }
     public boolean buy(PermanentAttribute attribute) {
         return profile.canBuy(attribute) && commit(candidate -> candidate.buy(attribute));
     }
     public void prepareRun(RunSession session) {
-        if (!session.isDemo() && !profile.canClaimForgeMaterial(session.region().id())) session.encounters().blockRegionMaterial();
+        session.bindCharacter(profile.characterId());
+        if (session.isDemo()) return;
+        if (!profile.canClaimForgeMaterial(session.region().id())) session.encounters().blockRegionMaterial();
+        if (profile.weaponRarity() == WeaponRarity.RARE && session.player().canForgeWeapon()) session.player().forgeWeapon();
     }
     public int collectForgeMaterials(RunSession session) {
         if (session.isDemo()) return 0;
@@ -46,13 +54,21 @@ public final class ProfileService {
         return claimed ? 1 : 0;
     }
     public boolean forgeWeapon(RunSession session) {
-        if (!session.canForgeWeapon() || profile.forgeMaterials() == 0) return false;
-        if (!commit(CampaignProfile::spendForgeMaterial)) return false;
+        if (!session.canForgeWeapon() || !profile.canForgeWeapon()) return false;
+        if (!commit(CampaignProfile::forgeWeapon)) return false;
         session.player().forgeWeapon(); return true;
     }
-    public boolean chooseProfession(Profession profession) {
+    public boolean chooseProfession(Profession profession) { return chooseProfession(profession, profile.necromancerUnlocked()); }
+    public boolean chooseProfession(Profession profession, boolean legendaryUnlocked) {
+        if (profession == Profession.NECROMANTE && !legendaryUnlocked) return false;
         if (profile.professionChosen()) return false;
         profile.chooseProfession(profession); retrySave(); return true;
+    }
+    /** Save both choices together, before exposing the new character to the game. */
+    public boolean createCharacter(Profession profession, GameDifficulty difficulty, boolean legendaryUnlocked) {
+        java.util.Objects.requireNonNull(profession); java.util.Objects.requireNonNull(difficulty);
+        if (profile.professionChosen() || profession == Profession.NECROMANTE && !legendaryUnlocked) return false;
+        return commit(candidate -> candidate.createCharacter(profession, difficulty));
     }
     public boolean finishConversation(CampaignProfile.Event event) {
         if (event == null || profile.has(event)) return true;

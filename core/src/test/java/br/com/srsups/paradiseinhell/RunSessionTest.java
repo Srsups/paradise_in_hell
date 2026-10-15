@@ -17,6 +17,20 @@ class RunSessionTest {
     private static void meetGoals(RunSession run) {
         for (var goal : run.arena().killGoals().entrySet()) for (int i = 0; i < goal.getValue(); i++) run.recordKill(goal.getKey());
     }
+    @Test void archerRewardsCountAsCommonWithoutReplacingFastOrTankGoals() {
+        RunSession run=RunSession.campaign(region());
+        run.recordKill(EnemyType.COMMON,ArcherAttack.SOULS);
+        run.recordKill(EnemyType.COMMON,ArcherAttack.SOULS);
+        assertEquals(2,run.kills(EnemyType.COMMON)); assertEquals(6,run.earnedSouls());
+        assertFalse(run.arenaComplete());
+        run.recordKill(EnemyType.FAST); assertFalse(run.arenaComplete());
+        run.recordKill(EnemyType.TANK); assertTrue(run.arenaComplete());
+        assertEquals(13,run.earnedSouls());
+        RunSession demo=RunSession.demo(); demo.recordKill(EnemyType.COMMON,ArcherAttack.SOULS);
+        assertEquals(0,demo.earnedSouls()); assertEquals(1,demo.progress().kills());
+        assertThrows(IllegalArgumentException.class,()->run.recordKill(EnemyType.COMMON,0));
+        assertEquals(4,run.progress().kills());
+    }
     @Test void allThreeGoalsMustBeMetAndTimeCannotUnlockTheBoss() {
         RunSession run = RunSession.campaign(region());
         run.advance(1000);

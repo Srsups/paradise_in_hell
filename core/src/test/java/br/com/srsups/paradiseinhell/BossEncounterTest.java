@@ -54,10 +54,10 @@ class BossEncounterTest {
         assertEquals(2, powered.marks().size());
         until(normal, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE, 120, 80);
         until(powered, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE, 120, 80);
-        assertEquals(5, normal.shots().size()); assertEquals(7, powered.shots().size());
+        assertEquals(5, normal.shots().size()); assertEquals(9, powered.shots().size());
         for (int frame = 0; frame < 600; frame++) {
             normal.update(0.02f, 120, 80);
-            assertTrue(normal.shots().size() <= 7, "No unbounded accumulation of projectiles");
+            assertTrue(normal.shots().size() <= 9, "No unbounded accumulation of projectiles");
         }
     }
     @Test void defeatClearsHazardsStopsAttacksAndDoesNotReviveBoss() {

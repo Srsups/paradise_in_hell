@@ -7,8 +7,8 @@ A correção do limite persiste mesmo após gastar o material ou começar outra 
 
 O Apostador recebe sorte 4×: 12% para o encontro e 6% para o drop. Frequência de
 mini-boss, custos, atributos da arma rara e efeitos são valores iniciais para playtests.
-Recompensas próprias de Cinzas/Sombras continuam propostas, sem alteração neste
-incremento.
+Cinzas e Sombras agora têm recompensas próprias e eventos de hordas:
+[ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md).
 
 ## Mini-boss entre as hordas
 
@@ -20,7 +20,7 @@ durante recuperação; fica parado durante os avisos e ataques.
 
 | Atributo | Valor base |
 | --- | --- |
-| Vida | 180, contra 30 do tank e 420 do chefe |
+| Vida | 180, contra 30 do tank e 500 do chefe |
 | Velocidade de perseguição | 24 unidades/s |
 | Contato durante recuperação | 20, com intervalo de 1 s |
 | Giro de espada | 28 de dano, raio 42, um acerto por giro |
@@ -38,8 +38,12 @@ Gera um cristal de 20 XP e encerra seus perigos. Pausa e dádivas congelam o
 encontro. A saída permanece dependente somente das metas existentes; não obriga
 caçar um mini-boss fora da tela. Sair descarta o encontro.
 
-Sprite ampliado/tingido e formas dos ataques são provisórios; não foi criada
-arte final ou áudio neste incremento.
+Sprite ampliado/tingido e formas dos ataques são provisórios; áudio foi
+acrescentado em um incremento posterior. O playtest de 13/10/2026 identificou
+avisos do Carrasco fora da tela. A correção de visibilidade sonora foi implementada
+no M1 em 14/10/2026; sprite/animação de giro/pedras próprios entram nos M3/M6.
+Regras e critérios: [ROTEIRO_DE_MELHORIAS.md](ROTEIRO_DE_MELHORIAS.md) e
+[AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
 
 ## Fragmento de Forja
 
@@ -85,7 +89,7 @@ A interface mostra profissão, arma, raridade, material, custo e benefício.
 
 O encontro não avança tempo/dificuldade nem restaura vida automaticamente.
 
-## Arma rara durante a tentativa
+## Arma rara permanente
 
 A primeira forja transforma **Comum → Rara**, com:
 
@@ -103,13 +107,22 @@ das melhorias não muda o resultado; frações são mantidas. Um projétil não 
 o mesmo alvo duas vezes. O bônus de dano/cadência e alcance também funcionam
 na sala do chefe; perfuração/ricochete dependem de outros alvos.
 
-O custo é gravado antes de aplicar a raridade. Falha de gravação preserva material
-e arma. Repetir o botão não gasta novamente. Nesta versão há um nível de raridade
-e uma compra por tentativa. A profissão não muda.
+O custo e a raridade são gravados juntos antes de aplicar a melhoria ao jogador.
+Falha de gravação preserva material e arma. Repetir o botão não gasta novamente.
+Nesta versão há uma melhoria **permanente por personagem**, Comum → Rara.
+O ferreiro ainda pode aparecer depois dela, mas informa que a melhoria disponível
+já foi obtida e permite continuar sem gasto. A profissão não muda.
 
-Raridade e poder continuam nas salas seguintes; morte, vitória ou abandono
-encerram o benefício. A próxima tentativa começa Comum, com os atributos
-permanentes e materiais restantes do save.
+Raridade, bônus e poder continuam nas salas seguintes e após morte, vitória,
+abandono e fechamento. Cada nova tentativa da campanha começa com a raridade
+salva, enquanto dádivas, XP e recargas reiniciam. O refúgio e a seleção de saves
+mostram a raridade. A demo isolada mantém seus atributos iniciais.
+
+O campo opcional `weaponRarity` guarda a melhoria no perfil versão 1. Saves antigos
+que registraram mais regiões premiadas do que fragmentos em estoque permitem
+identificar um gasto na forja e recuperar automaticamente a arma Rara.
+Saves sem esse histórico começam Comum; compras antigas não identificáveis não
+podem ser reconstruídas. Estoque, região premiada, moedas e outros dados são preservados.
 
 ## Verificação e playtests
 
@@ -122,8 +135,14 @@ paredes, escala e limpeza após derrota.
 A verificação OpenGL força resultados aleatórios em fixtures em memória, sem
 mudar probabilidades do jogo ou o perfil real. Exercita mini-boss junto a inimigos,
 pausa, derrota por tiro, drop salvo, interface/forja, quatro efeitos reais, arma
-rara contra o chefe e reset. Capturas ficam em `build/smoke/`.
+rara contra o chefe e preservação na tentativa seguinte. Também confirma a
+raridade gravada no perfil, sem repetir o gasto. Capturas ficam em `build/smoke/`.
 
-Jogar salas completas com as quatro profissões deve validar a leitura dos ataques
+Jogar salas completas com as oito profissões deve validar a leitura dos ataques
 em meio à horda. Medir frequência dos materiais/encontro em sessões longas,
 valor da arma rara e duração do duelo antes de ampliar raridades ou mini-bosses.
+
+Os poderes Raros das novas armas incluem explosão ampliada, maldição prolongada,
+necromancia melhorada e revide do escudo. O Carrasco pode ser revivido como aliado
+com chance muito menor que um inimigo comum; isso não repete XP ou drop de material.
+O guardião do andar fica excluído. Valores: [CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md).

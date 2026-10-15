@@ -2,23 +2,30 @@ package br.com.srsups.paradiseinhell;
 
 import java.nio.file.Path;
 
-/** Four independent profiles. Slot one preserves the original profile.json. */
+/** Eight independent profiles. Existing slots keep their original paths. */
 public final class SaveSlots {
-    public static final int COUNT = 4;
+    public static final int COUNT = 8;
     private final ProfileStore[] stores;
-    public SaveSlots(ProfileStore... stores) {
-        if (stores.length != COUNT) throw new IllegalArgumentException("Expected four saves");
-        this.stores = stores.clone();
-        for (ProfileStore store : this.stores) java.util.Objects.requireNonNull(store);
+    private final SharedProgressStore shared;
+    public SaveSlots(ProfileStore... supplied) { this(SharedProgressStore.memory(), supplied); }
+    public SaveSlots(SharedProgressStore shared, ProfileStore... supplied) {
+        this.shared=java.util.Objects.requireNonNull(shared);
+        if (supplied.length != COUNT && supplied.length != 4 && supplied.length != 1)
+            throw new IllegalArgumentException("Expected one, four or eight save stores");
+        stores = new ProfileStore[COUNT];
+        for (int i = 0; i < COUNT; i++) stores[i] = i < supplied.length
+            ? java.util.Objects.requireNonNull(supplied[i]) : ProfileStore.memory();
     }
+    public SharedProgressStore sharedStore() { return shared; }
     public ProfileStore store(int index) {
         if (index < 0 || index >= COUNT) throw new IllegalArgumentException("Invalid slot");
         return stores[index];
     }
     public static SaveSlots files(Path original) {
-        return new SaveSlots(new FileProfileStore(original),
-            new FileProfileStore(original.resolveSibling("profile-2.json")), new FileProfileStore(original.resolveSibling("profile-3.json")),
-            new FileProfileStore(original.resolveSibling("profile-4.json")));
+        ProfileStore[] stores = new ProfileStore[COUNT];
+        for (int i = 0; i < COUNT; i++) stores[i] = new FileProfileStore(i == 0 ? original
+            : original.resolveSibling("profile-" + (i + 1) + ".json"));
+        return new SaveSlots(new FileSharedProgressStore(original.resolveSibling("shared-progress.json")),stores);
     }
-    public static SaveSlots memory() { return new SaveSlots(ProfileStore.memory(), ProfileStore.memory(), ProfileStore.memory(), ProfileStore.memory()); }
+    public static SaveSlots memory() { return new SaveSlots(ProfileStore.memory()); }
 }

@@ -26,7 +26,7 @@ public final class DemoSmokeTest {
         new Lwjgl3Application(new Main(TEST_SAVES) {
             @Override public void startCampaign() {
                 CampaignProfile p = profiles().profile();
-                setScreen(new GameScreen(this, RunSession.campaign(campaignRegion(), p.profession(), p.bonuses(), new Rolls(0.5f))));
+                setScreen(new GameScreen(this, RunSession.campaign(campaignRegion(), p.profession(), p.bonuses(), p.difficulty(), new Rolls(0.5f))));
             }
             @Override public void render() {
                 try {
@@ -36,7 +36,7 @@ public final class DemoSmokeTest {
             }
         }, config);
         if (failure != null) throw new AssertionError("Demo integration check failed", failure);
-        System.out.println("DEMO_SMOKE_OK: menu, upgrades, pause, resize, victory, defeat, retry, professions, weapons, XP by type, kill goals, continuous waves, boss access, boss attacks, phase two, boss weapons, resurrection, refuge, dialogue, permanent purchases, reset, profile reload, chests, save slots, locked profession, timed notice, magnet pickup, percentage bonuses, enemy scaling, mini-boss spin/stones, persistent material, blacksmith forging, rare weapon powers, fourth save, fists, weighted boon rarities, permanent region material cap, cleanup");
+        System.out.println("DEMO_SMOKE_OK: menu, upgrades, pause, resize, victory, defeat, retry, professions, weapons, XP by type, kill goals, continuous waves, boss access, boss attacks, phase two, boss weapons, resurrection, refuge, dialogue, permanent purchases, reset, profile reload, chests, save slots, locked profession, timed notice, magnet pickup, percentage bonuses, enemy scaling, mini-boss spin/stones, persistent material, blacksmith forging, rare weapon powers, fourth save, fists, weighted boon rarities, permanent region material cap, permanent forged weapons, route rewards, fixed arena variations, eight save slots, second profession page, legendary unlock, spell splash, curses, resurrected allies, shield guard and retaliation, elemental synergies, divine fury, boss leap, continuous tracking circle, red lock, airborne immunity, phase-two walking pressure, timed dash escape, visible sprite contact, attacks per second, protected boon input, paged Tab boon list, area curses, shared Souls, 1000-Soul legendary unlock, run reports, damage origins, report history browsing, report persistence, Stygian archers, fixed aim, arrow walls, shield arrow retaliation, archer rewards, archer weapons for all eight professions, simultaneous guard and attacks in hordes and boss, confirmed save reset, cancelled reset, slot reuse, reset on second page, shared progress preserved, character history isolation, fast burst recovery and crowd caps, audio controls and persistence, mute and live gain, audio panel freezes both arenas and choice input, weapon sounds and hit effects, actual block/hurt/invulnerability cues, boss warning once, cleanup, fixed difficulty creation and cancellation, reward fractions, difficulty persistence and reports");
     }
 
     private static void verify(Main game) throws Exception {
@@ -50,6 +50,7 @@ public final class DemoSmokeTest {
         game.getScreen().render(0);
         screenshot("professions");
         press(game.getScreen(), Input.Keys.NUM_1);
+        confirmCharacter(game);
         GameScreen screen = (GameScreen) game.getScreen();
         PlayerState player = (PlayerState) field(screen, "stats");
         RunProgress run = (RunProgress) field(screen, "progress");
@@ -111,6 +112,14 @@ public final class DemoSmokeTest {
         check(game.getScreen() instanceof MenuScreen, "Escape must return to menu");
         game.getScreen().render(1f / 60);
         verifyCampaign(game);
+        verifyCombatReadability(game);
+        verifyAthenaExperience(game);
+        verifySharedSoulsAndReports(game);
+        verifyArchers(game);
+        verifyRequestedChanges();
+        verifyAudioAndFeedback();
+        verifyMilestoneOne();
+        verifyMilestoneTwo();
     }
     @SuppressWarnings("unchecked")
     private static void verifyCampaign(Main game) throws Exception {
@@ -119,6 +128,7 @@ public final class DemoSmokeTest {
         press(game.getScreen(), Input.Keys.NUM_2);
         check(game.getScreen() instanceof ProfessionScreen, "An empty save must ask the profession");
         press(game.getScreen(), Input.Keys.NUM_3);
+        confirmCharacter(game);
         check(game.getScreen() instanceof RefugeScreen, "Campaign profession must lead to the refuge");
         game.getScreen().render(0); screenshot("refuge");
         press(game.getScreen(), Input.Keys.C);
@@ -182,6 +192,10 @@ public final class DemoSmokeTest {
         screen.render(0); screenshot("campaign-next");
         meetGoals(session);
         press(screen, Input.Keys.E);
+        check(game.getScreen() instanceof ArenaRewardScreen, "Sombras must grant its rare boon before the route");
+        game.getScreen().render(0.3f);
+        press(game.getScreen(), Input.Keys.NUM_1);
+        check(game.getScreen() instanceof RouteScreen, "Claiming the extra boon must resume route selection");
         game.getScreen().render(0.3f);
         press(game.getScreen(), Input.Keys.NUM_1);
         check(game.getScreen() instanceof BossRoomScreen, "Completed goals must allow entering the boss room");
@@ -210,6 +224,9 @@ public final class DemoSmokeTest {
         verifyMiniBossAndForge(game);
         verifyRareWeapons(game);
         verifyLuckyFistsAndRegionCap(game);
+        verifyArenaRewards(game);
+        verifyNewProfessionsAndCombat(game);
+        verifyBossLeap(game);
     }
 
     private static void verifyBossBattle(Main game, RunSession session) throws Exception {
@@ -244,20 +261,27 @@ public final class DemoSmokeTest {
         renderUntil(game, room, boss, BossEncounter.Attack.VOLLEY, BossEncounter.State.TELEGRAPH);
         screenshot("boss-phase-two");
         renderUntil(game, room, boss, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE);
-        check(boss.shots().size() == 7, "The second phase must emit seven real projectiles");
+        check(boss.shots().size() == 9, "The second phase must emit nine real projectiles");
         room.render(0); screenshot("boss-volley");
 
         actor.x = boss.x() + 38 - 8; actor.y = boss.y() - 8;
+        // Randomly selected elemental boons may also proc from the aura: isolate its own damage here.
+        int shockRank = (int) field(stats, "shockRank"), burnRank = (int) field(stats, "burnRank");
+        set(stats, "shockRank", 0); set(stats, "burnRank", 0);
+        ((CombatEffects) field(room, "effects")).clear();
         float beforeAura = boss.health();
-        room.render(0.05f);
-        check(Math.abs(beforeAura - boss.health() - stats.getDanoAura() * 0.05f) < 0.01f,
-            "The carried aura must damage the boss in range");
+        try {
+            room.render(0.05f);
+            check(Math.abs(beforeAura - boss.health() - stats.getDanoAura() * 0.05f) < 0.01f,
+                "The carried aura must damage the boss in range");
+        } finally { set(stats, "shockRank", shockRank); set(stats, "burnRank", burnRank); }
         set(stats, "auraDePoseidonAtiva", false); // Isolate the lethal weapon hit from aura damage.
         actor.x = boss.x() + 40 - 8; actor.y = boss.y() - 8;
         set(stats, "cooldownTiro", 0f);
         boss.hurt(boss.health() - 1);
         int killsBefore = session.progress().kills();
         fireAtBoss(room, boss);
+        for (int frame = 0; frame < 5 && !boss.defeated(); frame++) room.render(.02f);
         check(game.getScreen() instanceof GameOverScreen && (boolean) field(game.getScreen(), "victory"),
             "A real weapon hit must defeat the boss and show victory");
         check(session.bossDefeated() && session.progress().kills() == killsBefore + 1,
@@ -272,6 +296,75 @@ public final class DemoSmokeTest {
         RunSession session = RunSession.campaign(region, profession);
         meetGoals(session); session.enterArena("portoes");
         return session;
+    }
+
+
+    private static void verifyBossLeap(Main game) throws Exception {
+        for (int scenario = 0; scenario < 3; scenario++) {
+            boolean powered = scenario > 0, dash = scenario == 2;
+            RunSession session = bossSession(powered ? Profession.GUERREIRO : Profession.CACADOR);
+            BossRoomScreen room = new BossRoomScreen(game, session); game.setScreen(room);
+            BossEncounter boss = (BossEncounter) field(room, "boss");
+            Jogador actor = (Jogador) field(room, "player");
+            actor.x = 172; actor.y = 92;
+            if (powered) boss.hurt(boss.maxHealth() / 2);
+            for (int frame = 0; frame < 3000 && !boss.airborne(); frame++)
+                boss.update(.01f, actor.x + 8, actor.y + 8);
+            check(boss.airborne(), "The fourth pattern must be the leap");
+            for (int frame = 0; frame < 6; frame++) room.render(.05f);
+            check(!boss.spriteVisible(), "Boss sprite must leave the arena during the leap");
+            float health = boss.health();
+            // A real projectile and aura must not damage the old, empty position.
+            actor.x = boss.x() - 8; actor.y = boss.y() - 8;
+            session.player().ativarAuraDePoseidon();
+            fireAtBoss(room, boss);
+            check(boss.health() == health && !boss.targetable(), "Airborne boss must be unreachable by weapons and aura");
+            set(session.player(), "auraDePoseidonAtiva", false);
+
+            float markerX = boss.leapX(), markerY = boss.leapY();
+            actor.x = 392; actor.y = 172;
+            room.render(.05f);
+            check(Math.hypot(boss.leapX() - markerX, boss.leapY() - markerY) <= boss.leapTrackSpeed() * .05f + .001f,
+                "Tracking marker must not teleport to the player's new position");
+            screenshot(powered ? "boss-leap-phase-two-tracking" : "boss-leap-tracking");
+            press(room, Input.Keys.ESCAPE);
+            markerX = boss.leapX(); markerY = boss.leapY();
+            float radius = boss.leapRadius(), remaining = boss.leapSecondsRemaining();
+            room.render(.05f); room.resize(800,600); room.render(.05f); room.resize(960,540);
+            check(boss.leapX() == markerX && boss.leapY() == markerY && boss.leapRadius() == radius
+                && boss.leapSecondsRemaining() == remaining, "Pause and resize must preserve the entire leap warning");
+            screenshot("boss-leap-paused");
+            actor.x = 172; actor.y = 92; press(room, Input.Keys.ESCAPE);
+            for (int frame = 0; frame < 300 && !boss.leapLocked(); frame++) room.render(.01f);
+            check(boss.leapLocked() && boss.airborne() && boss.leapSecondsRemaining() <= 1.00001f
+                && boss.leapSecondsRemaining() >= .989f, "The marker must turn red one second before landing");
+            check(Math.abs(boss.leapX() - 180) < .01f && Math.abs(boss.leapY() - 100) < .01f, "The marker must catch a stationary player before locking");
+            check(powered ? session.player().movementSpeed() <= BossEncounter.LEAP_WALKING_LIMIT
+                : session.player().movementSpeed() == Profession.CACADOR.baseSpeed, "Only phase-two red warning must slow walking");
+            screenshot(powered ? "boss-leap-phase-two-red" : "boss-leap-red");
+            markerX = boss.leapX(); markerY = boss.leapY();
+            float before = session.player().getVida();
+            Input actual = Gdx.input;
+            for (int frame = 0; frame < 25 && boss.airborne(); frame++) {
+                boolean first = frame == 0;
+                Gdx.input = (Input) Proxy.newProxyInstance(Input.class.getClassLoader(), new Class<?>[]{Input.class},
+                    (proxy, method, args) -> {
+                        if (method.getName().equals("isKeyPressed")) return (int) args[0] == Input.Keys.D;
+                        if (method.getName().equals("isKeyJustPressed")) return dash && first && (int) args[0] == Input.Keys.SHIFT_LEFT;
+                        if (method.getName().equals("isButtonPressed") || method.getName().equals("isButtonJustPressed")) return false;
+                        return method.invoke(actual, args);
+                    });
+                try { room.render(.05f); } finally { Gdx.input = actual; }
+            }
+            check(!boss.airborne(), "The boss must land after the final second");
+            check(boss.leapX() == markerX && boss.leapY() == markerY, "Red marker must remain fixed while the player moves or dashes");
+            check(boss.x() == markerX && boss.y() == markerY, "Boss must land at the marker's center");
+            check(powered && !dash ? session.player().getVida() < before : session.player().getVida() == before,
+                "Phase one permits walking; phase two requires a dash to escape the impact");
+            check(session.player().movementSpeed() == session.player().getProfession().baseSpeed, "Landing must release the temporary walking penalty");
+            screenshot(powered ? dash ? "boss-leap-phase-two-dodged" : "boss-leap-phase-two-impact" : "boss-leap-landed");
+            game.finishRun(session, RunOutcome.ABANDONED);
+        }
     }
 
     private static void verifyBossWeapons(Main game) throws Exception {
@@ -291,7 +384,7 @@ public final class DemoSmokeTest {
     }
 
     private static void verifyBossResurrection(Main game) throws Exception {
-        game.selectSave(2, false); press(game.getScreen(), Input.Keys.NUM_2);
+        game.selectSave(2, false); press(game.getScreen(), Input.Keys.NUM_2); confirmCharacter(game);
         RunSession session = bossSession(Profession.FERREIRO);
         session.player().ganharRessurreicao(); session.player().sofrerDano(session.player().getVida() - 1);
         BossRoomScreen room = new BossRoomScreen(game, session);
@@ -457,9 +550,9 @@ public final class DemoSmokeTest {
         java.util.List<Inimigo> enemies = (java.util.List<Inimigo>) field(screen, "enemies");
         check(!enemies.isEmpty(), "Continuous hordes must still spawn with scaled stats");
         for (Inimigo enemy : enemies) {
-            check(Math.abs(enemy.vida - enemy.getType().health * session.enemyDifficulty().healthMultiplier()) < 0.001f,
+            check(Math.abs(enemy.vida - (enemy.isArcher() ? ArcherAttack.HEALTH : enemy.getType().health) * session.enemyDifficulty().healthMultiplier()) < 0.001f,
                 "New enemy health must use total attempt time");
-            check(Math.abs(enemy.getDano() - enemy.getType().damage * session.enemyDifficulty().damageMultiplier()) < 0.001f,
+            check(Math.abs(enemy.getDano() - (enemy.isArcher() ? ArcherAttack.CONTACT_DAMAGE : enemy.getType().damage) * session.enemyDifficulty().damageMultiplier()) < 0.001f,
                 "New enemy damage must use the linear curve");
         }
         Inimigo target = enemies.get(0); target.sofrerDano(1); float damagedLife = target.vida;
@@ -533,16 +626,20 @@ public final class DemoSmokeTest {
         BossRoomScreen room = (BossRoomScreen) game.getScreen(); BossEncounter boss = (BossEncounter) field(room, "boss");
         actor = (Jogador) field(room, "player"); actor.x = boss.x() + 40 - 8; actor.y = boss.y() - 8;
         set(session.player(), "auraDePoseidonAtiva", false); // Isolate forged damage from random level rewards.
+        set(session.player(), "shockRank", 0); set(session.player(), "burnRank", 0); set(session.player(), "impactRank", 0);
         set(session.player(), "cooldownTiro", 0f); float life = boss.health(), realDamage = session.player().getDano();
         for (int frame = 0; frame < 8 && boss.health() == life; frame++) fireAtBoss(room, boss);
         check(Math.abs(life - boss.health() - realDamage) < 0.001f, "Forged damage must reach the floor boss");
         screenshot("boss-rare-weapon");
         press(room, Input.Keys.ESCAPE); press(room, Input.Keys.M); press(game.getScreen(), Input.Keys.ENTER);
-        check(((RunSession) field(game.getScreen(), "session")).player().getWeaponRarity() == WeaponRarity.COMMON, "A new attempt must reset weapon rarity");
+        check(((RunSession) field(game.getScreen(), "session")).player().getWeaponRarity() == WeaponRarity.RARE, "A new attempt must keep permanent weapon rarity");
+        check(new ProfileService(TEST_SAVES.store(game.activeSlot())).profile().weaponRarity() == WeaponRarity.RARE,
+            "Permanent forging must survive profile reload");
+        game.getScreen().render(0); screenshot("permanent-forge-retry");
     }
     @SuppressWarnings("unchecked")
     private static void verifyRareWeapons(Main game) throws Exception {
-        for (Profession profession : Profession.values()) {
+        for (Profession profession : new Profession[]{Profession.CACADOR, Profession.FERREIRO, Profession.VIGILANTE, Profession.APOSTADOR}) {
             RunSession session = RunSession.campaign(game.campaignRegion(), profession, PermanentBonuses.NONE, new Rolls(0.5f));
             session.player().forgeWeapon();
             GameScreen screen = new GameScreen(game, session); game.setScreen(screen);
@@ -572,7 +669,7 @@ public final class DemoSmokeTest {
         game.getScreen().render(0); screenshot("saves-four");
         press(game.getScreen(), Input.Keys.NUM_4); check(game.getScreen() instanceof ProfessionScreen, "Fourth save must create a new character");
         game.getScreen().render(0); screenshot("professions-four");
-        press(game.getScreen(), Input.Keys.NUM_4); check(game.getScreen() instanceof RefugeScreen, "Fourth profession must enter refuge");
+        press(game.getScreen(), Input.Keys.NUM_4); confirmCharacter(game); check(game.getScreen() instanceof RefugeScreen, "Fourth profession must enter refuge");
         check(game.profiles().profile().profession() == Profession.APOSTADOR
             && new ProfileService(TEST_SAVES.store(3)).profile().profession() == Profession.APOSTADOR, "Lucky profession must persist");
         press(game.getScreen(), Input.Keys.ENTER);
@@ -609,14 +706,762 @@ public final class DemoSmokeTest {
         // A new session in a different room of the same region remains blocked.
         ProfileService reloaded = new ProfileService(TEST_SAVES.store(3));
         check(!reloaded.profile().canClaimForgeMaterial(game.campaignRegion().id()), "Regional claim must persist after spending and returning");
+        check(reloaded.profile().weaponRarity() == WeaponRarity.RARE, "Forged fists must persist in their own save");
         RunSession retry = RunSession.campaign(game.campaignRegion(), Profession.APOSTADOR, PermanentBonuses.NONE, new Rolls(0.5f, 0));
-        game.setScreen(new GameScreen(game, retry)); meetGoals(retry); retry.enterArena("sombras");
+        game.setScreen(new GameScreen(game, retry));
+        check(retry.player().getWeaponRarity() == WeaponRarity.RARE && retry.player().meleeReach() == 34,
+            "A new run must restore the saved fists and their range");
+        meetGoals(retry); retry.enterArena("sombras");
         game.setScreen(new GameScreen(game, retry)); retry.advance(45); retry.markMiniBossSpawned();
         check(!retry.recordMiniBossDefeat() && game.profiles().collectForgeMaterials(retry) == 0, "A different room or run must not rearm the region");
         check(retry.encounters().materialChance() == 0 && game.profiles().profile().forgeMaterials() == 0, "Luck must respect the persistent material cap");
         game.getScreen().render(0); screenshot("material-region-cap");
         game.finishRun(retry, RunOutcome.ABANDONED);
         check(!game.profiles().chooseProfession(Profession.CACADOR), "Apostador must remain fixed to its save");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyArenaRewards(Main game) throws Exception {
+        // Reach Cinzas through the real route screen and check its announced event stays fixed.
+        RunSession recovery = RunSession.campaign(game.campaignRegion(), game.profiles().profile().profession(),
+            game.profiles().profile().bonuses(), new Rolls(0.5f));
+        GameScreen screen = new GameScreen(game, recovery); game.setScreen(screen);
+        meetGoals(recovery); press(screen, Input.Keys.E);
+        check(game.getScreen() instanceof RouteScreen, "Starting arena must still offer all routes");
+        ArenaVariation announced = recovery.variation("cinzas");
+        game.getScreen().render(0.5f); screenshot("routes-rewards-events");
+        press(game.getScreen(), Input.Keys.NUM_2);
+        screen = (GameScreen) game.getScreen();
+        check(recovery.arena().id().equals("cinzas") && recovery.variation() == announced, "The chosen room must keep its forecast event");
+        recovery.player().sofrerDano(50); meetGoals(recovery);
+        press(screen, Input.Keys.E);
+        check(game.getScreen() instanceof ArenaRewardScreen, "Cinzas must grant its guaranteed chest after the exit");
+        float time = recovery.progress().elapsed(), health = recovery.player().getVida();
+        game.getScreen().render(1); screenshot("cinzas-recovery");
+        check(recovery.progress().elapsed() == time, "Completion rewards must be safe and freeze difficulty");
+        press(game.getScreen(), Input.Keys.F);
+        check(game.getScreen() instanceof RouteScreen && recovery.player().getVida() == health + 40,
+            "F must open the guaranteed chest and restore health");
+        check(!recovery.canClaimArenaReward(), "Recovery chest must be consumed once");
+        game.offerRoute(recovery); check(recovery.player().getVida() == health + 40, "Reopening the route must not repeat healing");
+        game.finishRun(recovery, RunOutcome.ABANDONED);
+
+        RunSession full = RunSession.campaign(game.campaignRegion(), Profession.APOSTADOR, PermanentBonuses.NONE, new Rolls(0.5f));
+        meetGoals(full); full.enterArena("cinzas"); game.setScreen(new GameScreen(game, full));
+        meetGoals(full); press(game.getScreen(), Input.Keys.E); game.getScreen().render(0.5f);
+        int earned = full.earnedObols(); press(game.getScreen(), Input.Keys.F);
+        check(full.earnedObols() == earned + 5, "A guaranteed recovery chest at full health must grant currency");
+        game.finishRun(full, RunOutcome.ABANDONED);
+
+        RunSession risk = RunSession.campaign(game.campaignRegion(), Profession.APOSTADOR, PermanentBonuses.NONE, new Rolls(0.5f));
+        meetGoals(risk); risk.enterArena("sombras"); screen = new GameScreen(game, risk); game.setScreen(screen);
+        risk.player().ganharXP(10); meetGoals(risk); press(screen, Input.Keys.E);
+        check(game.getScreen() == screen && field(screen, "state").toString().equals("LEVEL_UP"),
+            "Regular XP choices must be resolved before the route's extra boon");
+        press(screen, Input.Keys.NUM_1);
+        check(game.getScreen() instanceof ArenaRewardScreen, "Sombras must show a separate extra boon");
+        var options = risk.arenaRewardChoices();
+        check(!options.isEmpty() && options.stream().allMatch(b -> b.rarity.ordinal() >= BoonRarity.RARE.ordinal()),
+            "Every extra option must respect the guaranteed minimum rarity");
+        var originalOptions = java.util.List.copyOf(options);
+        game.setScreen(new ArenaRewardScreen(game, risk));
+        check(risk.arenaRewardChoices().equals(originalOptions), "Reopening a reward must not reroll options");
+        int level = risk.player().getNivel(), rank = risk.rank(options.get(0)); float xp = risk.player().getXpAtual();
+        game.getScreen().render(0.5f); screenshot("sombras-rare-reward");
+        press(game.getScreen(), Input.Keys.NUM_1);
+        check(game.getScreen() instanceof RouteScreen && risk.rank(options.get(0)) == rank + 1,
+            "Claiming the rare reward must apply its effect exactly once");
+        check(risk.player().getNivel() == level && risk.player().getXpAtual() == xp, "Extra boon must not invent a level or consume XP");
+        game.getScreen().render(0.5f); press(game.getScreen(), Input.Keys.NUM_1);
+        check(game.getScreen() instanceof BossRoomScreen, "The completed optional route must continue to the boss");
+        game.finishRun(risk, RunOutcome.ABANDONED);
+
+        RunSession exhausted = RunSession.campaign(game.campaignRegion(), Profession.APOSTADOR, PermanentBonuses.NONE, new Rolls(0.5f));
+        meetGoals(exhausted); exhausted.enterArena("sombras");
+        for (Upgrade boon : Upgrade.values()) if (boon.rarity != BoonRarity.COMMON)
+            for (int i = 0; i < boon.maxRank; i++) exhausted.applyUpgrade(boon);
+        game.setScreen(new GameScreen(game, exhausted)); meetGoals(exhausted); press(game.getScreen(), Input.Keys.E);
+        game.getScreen().render(0.5f); screenshot("sombras-exhausted-reward");
+        earned = exhausted.earnedObols(); press(game.getScreen(), Input.Keys.NUM_1);
+        check(game.getScreen() instanceof RouteScreen && exhausted.earnedObols() == earned + 8,
+            "Exhausted rare categories must turn the extra reward into currency");
+        game.finishRun(exhausted, RunOutcome.ABANDONED);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static void verifyNewProfessionsAndCombat(Main game) throws Exception {
+        game.setScreen(new SaveSelectionScreen(game,false));
+        press(game.getScreen(),Input.Keys.RIGHT); screenshot("saves-page-two");
+        press(game.getScreen(),Input.Keys.NUM_3);
+        press(game.getScreen(),Input.Keys.RIGHT); screenshot("professions-page-two-locked");
+        press(game.getScreen(),Input.Keys.NUM_3);
+        check(game.getScreen() instanceof ProfessionScreen && !game.profiles().profile().professionChosen(),
+            "Legendary class must remain locked before purchase");
+        game.selectSave(3,false);
+        RefugeScreen refuge = (RefugeScreen) game.getScreen(); press(refuge,Input.Keys.L);
+        set(game.profiles().profile(),"obols",9); game.profiles().retrySave();
+        set(game.shared().progress(),"souls",1009); game.shared().retrySave();
+        press(refuge,Input.Keys.N);
+        check(game.necromancerUnlocked() && game.shared().progress().souls()==9 && game.profiles().profile().obols()==9,
+            "Altar must debit the legendary unlock atomically");
+        press(refuge,Input.Keys.N); check(game.shared().progress().souls()==9 && game.profiles().profile().obols()==9,"Repeated unlock must not spend again");
+        check(new SharedProgressService(TEST_SAVES.sharedStore()).progress().necromancerUnlocked(),"Unlock must survive reloading shared progress");
+        screenshot("legendary-unlock");
+
+        for(int index=4;index<8;index++) {
+            game.setScreen(new SaveSelectionScreen(game,false)); press(game.getScreen(),Input.Keys.RIGHT);
+            press(game.getScreen(),Input.Keys.NUM_1+index-4);
+            check(game.getScreen() instanceof ProfessionScreen,"New slots must ask for a profession");
+            press(game.getScreen(),Input.Keys.RIGHT); screenshot("professions-page-two");
+            press(game.getScreen(),Input.Keys.NUM_1+index-4);
+            confirmCharacter(game);
+            Profession profession = Profession.values()[index];
+            check(game.getScreen() instanceof RefugeScreen && game.profiles().profile().profession()==profession,"Second profession page must create the selected character");
+            check(new ProfileService(TEST_SAVES.store(index)).profile().profession()==profession,"New professions must persist");
+            press(game.getScreen(),Input.Keys.ENTER);
+            GameScreen screen = (GameScreen) game.getScreen(); RunSession run = (RunSession) field(screen,"session");
+            var atlas=(com.badlogic.gdx.graphics.Texture)field(screen,"atlas");
+            var enemies=(java.util.List<Inimigo>)field(screen,"enemies");
+            Inimigo first=new Inimigo(130,100,atlas), second=new Inimigo(145,100,atlas);
+            first.vida=second.vida=100; enemies.add(first); enemies.add(second);
+            fire(screen);
+            for(int frame=0;frame<8 && first.vida==100;frame++) screen.render(.02f);
+            check(first.vida<100,profession+" weapon must hit real enemies");
+            CombatEffects fx=(CombatEffects)field(screen,"effects");
+            if(profession==Profession.FEITICEIRA) check(second.vida<100,"Spell impact must deal splash damage");
+            if(profession==Profession.SACERDOTE) {
+                check(fx.cursed(first) && fx.cursed(second),"Priest must curse both enemies in the impact area"); float life=first.vida;
+                screen.render(.05f); check(first.vida<life,"Curse must tick during combat");
+            }
+            if(profession==Profession.NECROMANTE) {
+                Necromancy army=run.necromancy();
+                Field random=Necromancy.class.getDeclaredField("random"); random.setAccessible(true);
+                random.set(army,new java.util.Random(){@Override public double nextDouble(){return 0;}});
+                first.sofrerDano(1000); screen.render(0);
+                check(army.allies().size()==1 && run.progress().kills()==1,"Necromancer must convert the defeated enemy and count its death only once");
+                float life=second.vida; screen.render(.05f); check(second.vida<life,"Resurrected ally must fight alongside the player");
+                screenshot("necromancer-allies");
+                meetGoals(run); press(screen,Input.Keys.E); game.getScreen().render(.5f); press(game.getScreen(),Input.Keys.NUM_1);
+                check(game.getScreen() instanceof BossRoomScreen && army.allies().size()==1,"Allies must carry into the guardian room");
+                ((BossEncounter)field(game.getScreen(),"boss")).hurt(100000);
+                game.getScreen().render(0); check(army.allies().isEmpty(),"Ending a run must release allies");
+                continue;
+            }
+            if(profession==Profession.GUERREIRO) {
+                enemies.clear();
+                Inimigo contact=new Inimigo(109,100,atlas); contact.vida=100; enemies.add(contact);
+                PlayerState player=run.player(); float hp=player.getVida();
+                holdGuard(screen,700,270);
+                check(player.guarding() && player.getVida()==hp && player.getEstaminaAtual()<100,"Right mouse must block frontal contact in real arena combat");
+                screenshot("shield-guard");
+                player.forgeWeapon();
+                Field random=GameScreen.class.getDeclaredField("combatRandom");random.setAccessible(true);
+                random.set(screen,new java.util.Random(){@Override public double nextDouble(){return 0;}});
+                set(contact,"attackTimer",0f); float life=contact.vida;
+                holdGuard(screen,700,270);
+                check(contact.vida<life,"Forged shield must retaliate in arena combat");
+                screenshot("shield-retaliation");
+            }
+            screen.render(0); screenshot("class-"+profession.name().toLowerCase(java.util.Locale.ROOT));
+            game.finishRun(run,RunOutcome.ABANDONED);
+        }
+
+        RunSession run=RunSession.campaign(game.campaignRegion(),Profession.FEITICEIRA,PermanentBonuses.NONE,new Rolls(.5f));
+        GameScreen screen=new GameScreen(game,run);game.setScreen(screen);
+        var atlas=(com.badlogic.gdx.graphics.Texture)field(screen,"atlas");
+        var enemies=(java.util.List<Inimigo>)field(screen,"enemies");
+        Inimigo target=new Inimigo(130,100,atlas), nearby=new Inimigo(145,100,atlas);
+        target.vida=nearby.vida=300;enemies.add(target);enemies.add(nearby);
+        run.applyUpgrade(Upgrade.CHOQUE);run.applyUpgrade(Upgrade.QUEIMADURA);run.applyUpgrade(Upgrade.IMPACTO);
+        run.applyUpgrade(Upgrade.POSEIDON);
+        fire(screen);for(int frame=0;frame<8 && target.vida==300;frame++)screen.render(.02f);
+        screen.render(.05f);screenshot("elemental-synergies");
+        meetGoals(run);run.advance(20);screen.render(0);screenshot("divine-fury-warning");
+        press(screen,Input.Keys.ESCAPE);float pressure=run.fury().farmingSeconds();screen.render(1);
+        check(run.fury().farmingSeconds()==pressure,"Pause must freeze divine fury");
+        press(screen,Input.Keys.ESCAPE);run.advance(20);screen.render(0);screenshot("divine-fury-active");
+        check(run.fury().level()>0 && run.fury().healthMultiplier()>1,"Post-unlock farming must strengthen future hordes");
+        press(screen,Input.Keys.E);game.getScreen().render(.5f);press(game.getScreen(),Input.Keys.NUM_1);
+        check(game.getScreen() instanceof BossRoomScreen && run.fury().level()==0,"Advancing must clear farming pressure");
+        game.finishRun(run,RunOutcome.ABANDONED);
+    }
+    private static void holdGuard(Screen screen,int mouseX,int mouseY) {
+        Input actual=Gdx.input;
+        Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},
+            (proxy,method,args)->{
+                if(method.getName().equals("isButtonPressed"))return (int)args[0]==Input.Buttons.RIGHT;
+                if(method.getName().equals("getX"))return mouseX;
+                if(method.getName().equals("getY"))return mouseY;
+                return method.invoke(actual,args);
+            });
+        try {screen.render(.05f);}finally {Gdx.input=actual;}
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyCombatReadability(Main game) throws Exception {
+        RunSession run = RunSession.demo(); GameScreen room = new GameScreen(game,run); game.setScreen(room);
+        Jogador actor = (Jogador) field(room,"player");
+        var atlas = (com.badlogic.gdx.graphics.Texture) field(room,"atlas");
+        var enemies = (java.util.List<Inimigo>) field(room,"enemies");
+        for (EnemyType type : EnemyType.values()) {
+            enemies.clear();
+            Inimigo enemy = new Inimigo(actor.x+15,actor.y,atlas); enemy.configurarTipo(type); enemies.add(enemy);
+            check(!actor.hitbox().overlaps(enemy.hitbox()),"Transparent borders must not overlap for "+type);
+            float hp = run.player().getVida(); room.render(0);
+            check(run.player().getVida()==hp,"The old 16x16 overlap must not cause invisible contact damage");
+            enemy.x=actor.x;
+            check(actor.hitbox().overlaps(enemy.hitbox()),"Visible sprites at the same position must overlap");
+            room.render(0);
+            check(run.player().getVida()==hp-type.damage,"Visible contact must still damage the player");
+        }
+        enemies.clear(); run.player().ganharXP(10); room.render(0);
+        ChoiceInputGuard guard=(ChoiceInputGuard)field(room,"choiceGuard");
+        clickChoice(room,.2f,true,true);
+        check(field(room,"state").toString().equals("LEVEL_UP"),"A combat click must not select a newly opened boon");
+        press(room,Input.Keys.TAB); float remaining=guard.remaining(), elapsed=run.progress().elapsed();
+        room.render(1); room.resize(800,600); room.render(.5f); room.resize(960,540);
+        check(guard.remaining()==remaining && run.progress().elapsed()==elapsed,"Tab must freeze choices and combat");
+        screenshot("boons-empty"); press(room,Input.Keys.ESCAPE);
+        check(field(room,"state").toString().equals("LEVEL_UP"),"Closing Tab must restore the pending choices");
+        clickChoice(room,2,true,true);
+        check(field(room,"state").toString().equals("LEVEL_UP") && !guard.ready(),"Held attack must stay blocked beyond the delay");
+        clickChoice(room,0,false,false); check(guard.ready(),"Releasing attack must unlock the choice");
+        screenshot("upgrades-ready");
+        clickChoice(room,.01f,true,true);
+        check(field(room,"state").toString().equals("PLAYING"),"A fresh click after release must choose once");
+        check(java.util.Arrays.stream(Upgrade.values()).mapToInt(run::rank).sum()==1,"One click must award one boon");
+        for(Upgrade boon:Upgrade.values()) if(run.rank(boon)==0)run.applyUpgrade(boon);
+        press(room,Input.Keys.TAB);
+        BoonPanel panel=(BoonPanel)field(room,"boonPanel");
+        elapsed=run.progress().elapsed(); room.render(.5f);
+        check(run.progress().elapsed()==elapsed && panel.acquired().size()==15,"Tab must list every chosen boon without advancing combat");
+        screenshot("boons-page-one"); press(room,Input.Keys.RIGHT); screenshot("boons-page-two");
+        check(panel.page()==1,"Tab list must page with arrow keys");
+        press(room,Input.Keys.TAB); room.render(.05f);
+        check(run.progress().elapsed()>elapsed,"Combat must resume after closing Tab");
+        press(room,Input.Keys.ESCAPE); press(room,Input.Keys.TAB); press(room,Input.Keys.ESCAPE);
+        check(field(room,"state").toString().equals("PAUSED"),"Tab from pause must preserve pause after closing");
+        screenshot("hud-attack-rate"); game.finishRun(run,RunOutcome.ABANDONED);
+
+        RunSession bossRun=bossSession(Profession.SACERDOTE); bossRun.applyUpgrade(Upgrade.CADENCIA);
+        BossRoomScreen bossRoom=new BossRoomScreen(game,bossRun); game.setScreen(bossRoom);
+        BossEncounter boss=(BossEncounter)field(bossRoom,"boss"); press(bossRoom,Input.Keys.TAB);
+        float bossTime=boss.elapsed(); elapsed=bossRun.progress().elapsed(); bossRoom.render(.5f);
+        check(boss.elapsed()==bossTime && bossRun.progress().elapsed()==elapsed,"Tab must freeze boss attacks and difficulty too");
+        screenshot("boss-boons"); press(bossRoom,Input.Keys.ESCAPE); bossRoom.render(.05f);
+        check(boss.elapsed()>bossTime,"Closing boss Tab must resume attacks"); game.finishRun(bossRun,RunOutcome.ABANDONED);
+    }
+    @SuppressWarnings("unchecked")
+    private static void verifyAthenaExperience(Main game) throws Exception {
+        RunSession run = RunSession.demo();
+        GameScreen room = new GameScreen(game, run); game.setScreen(room);
+        java.util.Random rng = (java.util.Random) field(room, "boonRandom");
+        int seed = 0;
+        while (!UpgradeChoices.draw(run, 3, new java.util.Random(seed)).contains(Upgrade.INTELIGENCIA)) {
+            check(++seed < 1000, "An eligible Epic Athena must be drawable");
+        }
+        rng.setSeed(seed);
+        run.player().ganharXP(11); room.render(0);
+        var choices = (java.util.List<Upgrade>) field(room, "choices");
+        int index = choices.indexOf(Upgrade.INTELIGENCIA);
+        check(index >= 0 && Upgrade.INTELIGENCIA.rarity == BoonRarity.EPIC, "Athena must appear as Epic in real choices");
+        screenshot("athena-epic-choice");
+        press(room, Input.Keys.NUM_1 + index);
+        check(run.rank(Upgrade.INTELIGENCIA) == 1 && run.player().getXpAtual() == 1, "Choosing Athena must leave banked XP intact");
+        press(room, Input.Keys.TAB); room.render(0); screenshot("athena-acquired"); press(room, Input.Keys.TAB);
+        Jogador actor = (Jogador) field(room, "player");
+        var atlas = (com.badlogic.gdx.graphics.Texture) field(room, "atlas");
+        var orbs = (java.util.List<OrbeXP>) field(room, "orbs");
+        orbs.add(new OrbeXP(actor.x + 5, actor.y + 5, Art.cell(atlas, 1, 3), EnemyType.COMMON.xp));
+        room.render(0);
+        check(orbs.isEmpty() && run.player().getXpAtual() == 3.5f, "A common crystal must award 2.5 XP and retain the fraction");
+        screenshot("athena-fractional-xp");
+        orbs.add(new OrbeXP(actor.x + 5, actor.y + 5, Art.cell(atlas, 1, 3), EnemyType.TANK.xp));
+        room.render(0);
+        check(run.player().getNivel() == 3 && run.player().getXpAtual() == 1, "Boosted crystals must earn a real level without losing overflow");
+        check(field(room, "state").toString().equals("LEVEL_UP") && !choices.contains(Upgrade.INTELIGENCIA), "Athena must not be offered a second time");
+        ChoiceInputGuard guard = (ChoiceInputGuard) field(room, "choiceGuard");
+        check(!guard.ready(), "The faster level must retain its input protection");
+        clickChoice(room, .2f, true, true);
+        check(field(room, "state").toString().equals("LEVEL_UP"), "An attack click must not consume the new boon");
+        press(room, Input.Keys.NUM_1);
+        game.finishRun(run, RunOutcome.ABANDONED);
+    }
+    @SuppressWarnings("unchecked")
+    private static void verifySharedSoulsAndReports(Main game) throws Exception {
+        game.selectSave(0,false); game.startCampaign();
+        GameScreen room=(GameScreen)game.getScreen(); RunSession run=(RunSession)field(room,"session");
+        var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+        var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+        Jogador actor=(Jogador)field(room,"player");
+        run.applyUpgrade(Upgrade.FORCA); run.applyUpgrade(Upgrade.CADENCIA); run.advance(12);
+        Inimigo enemy=new Inimigo(actor.x+20,actor.y,atlas); enemy.vida=1; enemies.add(enemy);
+        int souls=game.shared().progress().souls();
+        fire(room);
+        for(int i=0;i<20 && run.progress().kills()==0;i++) room.render(.02f);
+        check(run.progress().kills()==1,"A real weapon must create the report's kill and Soul reward");
+        run.player().receive(new CombatHit(10000,actor.x,actor.y,CombatHit.Kind.GROUND,"Guardião / Queda do Tártaro"),actor.x,actor.y);
+        room.render(0);
+        check(game.getScreen() instanceof GameOverScreen,"A lethal hit must open the result and save a report");
+        RunReport report=game.shared().progress().latest(0);
+        check(report!=null && report.outcome()==RunOutcome.DEATH && report.souls()==1
+            && report.deathCause().equals("Guardião / Queda do Tártaro"),"The report must preserve result, source and reward");
+        check(Math.abs(report.damageDealt()-1)<.001f && report.received()>0,"Effective damage must exclude weapon overkill");
+        check(game.shared().progress().souls()==souls+1,"Finishing the run must credit the shared balance once");
+        game.getScreen().render(.5f); press(game.getScreen(),Input.Keys.R);
+        check(game.getScreen() instanceof RunReportScreen,"R on the result must open the detailed report");
+        RunReportScreen screen=(RunReportScreen)game.getScreen();
+        screen.render(.3f); screenshot("run-report-overview");
+        press(screen,Input.Keys.RIGHT); screenshot("run-report-rooms");
+        press(screen,Input.Keys.RIGHT); screenshot("run-report-boons");
+        press(screen,Input.Keys.RIGHT); screenshot("run-report-damage");
+        screen.resize(800,600); screen.render(0); screen.resize(960,540);
+        check(game.shared().progress().souls()==souls+1,"Inspecting a report must not grant rewards again");
+        press(screen,Input.Keys.ESCAPE); game.getScreen().render(.5f); press(game.getScreen(),Input.Keys.ENTER);
+        check(game.getScreen() instanceof RefugeScreen,"Closing the report must preserve the route back to the refuge");
+        press(game.getScreen(),Input.Keys.R);
+        check(((RunReportScreen)game.getScreen()).report().id().equals(report.id()),"Refuge R must reopen the saved report");
+        game.getScreen().render(.3f); press(game.getScreen(),Input.Keys.ESCAPE);
+        game.startCampaign(); RunSession second=(RunSession)field(game.getScreen(),"session");
+        second.advance(5); second.recordKill(EnemyType.FAST); game.finishRun(second,RunOutcome.ABANDONED);
+        check(game.shared().progress().souls()==souls+3,"Abandonment must also preserve earned Souls");
+        press(game.getScreen(),Input.Keys.R); screen=(RunReportScreen)game.getScreen();
+        screen.render(.3f); check(screen.report().outcome()==RunOutcome.ABANDONED,"The latest summary must include abandonment");
+        press(screen,Input.Keys.DOWN);
+        check(screen.report().id().equals(report.id()),"Older summaries must remain browsable without changing progress");
+        screenshot("run-report-history"); press(screen,Input.Keys.ESCAPE);
+        game.selectSave(1,false);
+        check(game.shared().progress().souls()==souls+3,"Changing character must preserve the shared Soul balance");
+        game.getScreen().render(0); screenshot("shared-souls-refuge");
+        Main reloaded=new Main(TEST_SAVES);
+        check(reloaded.shared().progress().souls()==souls+3 && reloaded.necromancerUnlocked(),"Souls and legendary access must survive reload");
+        check(reloaded.shared().progress().latest(0).outcome()==RunOutcome.ABANDONED,"Saved history must survive reload");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyArchers(Main game) throws Exception {
+        // Eight actual weapon paths, rather than direct hurt calls, must defeat the new common variant.
+        for (Profession profession : Profession.values()) {
+            RunSession run=RunSession.campaign(game.campaignRegion(),profession);
+            GameScreen room=new GameScreen(game,run); game.setScreen(room);
+            var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+            Jogador actor=(Jogador)field(room,"player");
+            Inimigo archer=new Inimigo(actor.x+20,actor.y,atlas); archer.configureArcher(); enemies.add(archer);
+            check(archer.getType()==EnemyType.COMMON && archer.getXpDrop()==3 && archer.getSoulDrop()==3,
+                "Archers must keep common goals and distinct rewards");
+            check(Math.abs(archer.strength()-1.8f)<.001,"Necromancy must use the archer's own threat strength");
+            for(int i=0;i<12 && archer.vida==ArcherAttack.HEALTH;i++) fire(room);
+            check(archer.vida<ArcherAttack.HEALTH,profession+" must hit an archer through the real weapon path");
+            archer.vida=1; run.player().advance(2);
+            for(int i=0;i<12 && run.progress().kills()==0;i++) fire(room);
+            check(run.progress().kills()==1 && run.kills(EnemyType.COMMON)==1 && run.earnedSouls()==3,
+                "A real archer defeat must count once and grant three Souls");
+            check(archer.archer().arrows().isEmpty(),"Death cleanup must remove pending archer arrows");
+            actor.x=archer.x; actor.y=archer.y; room.render(.05f);
+            check(run.player().getXpAtual()==3,"An archer must drop three collectable XP");
+            room.render(.05f);
+            check(run.progress().kills()==1 && run.earnedSouls()==3,"Cleanup must not award the archer twice");
+        }
+        RunSession run=RunSession.campaign(game.campaignRegion(),Profession.VIGILANTE);
+        GameScreen room=new GameScreen(game,run); game.setScreen(room);
+        var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+        var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+        Jogador actor=(Jogador)field(room,"player");
+        Inimigo archer=new Inimigo(actor.x+64,actor.y,atlas); archer.configureArcher(); enemies.add(archer);
+        archer.applyDifficulty(new EnemyDifficulty(2,1.5f));
+        check(archer.maxHealth()==28 && archer.getDano()==9 && archer.arrowDamage()==15,
+            "Scaling must affect archer health, contact and arrows");
+        room.render(.01f); screenshot("archer-warning");
+        float aimX=archer.archer().aimX(),aimY=archer.archer().aimY();
+        for(int i=0;i<10;i++)room.render(.05f);
+        press(room,Input.Keys.TAB); float progress=archer.archer().aimProgress();
+        room.render(1); check(progress==archer.archer().aimProgress(),"Tab must freeze the archer's warning");
+        press(room,Input.Keys.TAB);
+        press(room,Input.Keys.ESCAPE); progress=archer.archer().aimProgress();
+        room.render(1); check(progress==archer.archer().aimProgress(),"Pause must freeze the archer's warning");
+        press(room,Input.Keys.ESCAPE); room.resize(800,600); room.render(0); room.resize(960,540);
+        actor.y+=32;
+        for(int i=0;i<30 && archer.archer().arrows().isEmpty();i++)room.render(.05f);
+        check(archer.archer().aimX()==aimX && archer.archer().aimY()==aimY,"Moving must not drag the locked target");
+        check(!archer.archer().arrows().isEmpty() && archer.archer().arrows().getFirst().directionY()==0,
+            "The real arrow must fly toward the initial position");
+        screenshot("archer-arrow");
+        float life=run.player().getVida();
+        for(int i=0;i<20;i++)room.render(.05f);
+        check(run.player().getVida()==life && !archer.archer().arrows().isEmpty()
+            && archer.archer().arrows().getFirst().directionY()==0,"Leaving the mark must evade the arrow without redirecting it");
+        archer.vida=0; room.render(.05f);
+        check(archer.archer().arrows().isEmpty(),"Defeating the archer must also clear an arrow already in flight");
+
+        // The real player's alpha mask and collision pipeline receive the scaled arrow once.
+        run=RunSession.campaign(game.campaignRegion(),Profession.VIGILANTE);
+        room=new GameScreen(game,run); game.setScreen(room);
+        atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas"); actor=(Jogador)field(room,"player");
+        enemies=(java.util.List<Inimigo>)field(room,"enemies");
+        archer=new Inimigo(actor.x+64,actor.y,atlas); archer.configureArcher();
+        archer.applyDifficulty(new EnemyDifficulty(2,1.5f)); enemies.add(archer);
+        life=run.player().getVida();
+        for(int i=0;i<35;i++)room.render(.05f);
+        check(run.player().getVida()==life-15 && archer.archer().arrows().isEmpty(),
+            "A scaled arrow must collide with the visible player and disappear after one hit");
+        run.end(); RunReport report=run.report(RunOutcome.DEATH,0);
+        check(report.received()==15 && report.deathCause().equals("Arqueiro do Estige / Flecha"),
+            "The report must identify incoming archer damage");
+
+        // A real frontal guard also routes a guaranteed rare counterattack to the firing enemy.
+        run=RunSession.campaign(game.campaignRegion(),Profession.GUERREIRO);
+        room=new GameScreen(game,run); game.setScreen(room);
+        atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas"); actor=(Jogador)field(room,"player");
+        enemies=(java.util.List<Inimigo>)field(room,"enemies");
+        archer=new Inimigo(actor.x+64,actor.y,atlas); archer.configureArcher(); enemies.add(archer);
+        if(run.player().canForgeWeapon())run.player().forgeWeapon();
+        set(room,"combatRandom",new java.util.Random(){@Override public double nextDouble(){return 0;}});
+        life=run.player().getVida();
+        for(int i=0;i<35;i++)holdGuard(room,700,270);
+        check(run.player().getVida()==life && archer.vida<ArcherAttack.HEALTH,
+            "The frontal shield must block and a rare counter must hurt the firing archer");
+        screenshot("archer-shield");
+
+        // An off-screen archer must approach without starting a warning or shooting.
+        run=RunSession.demo(); room=new GameScreen(game,run); game.setScreen(room);
+        atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas"); actor=(Jogador)field(room,"player");
+        enemies=(java.util.List<Inimigo>)field(room,"enemies");
+        archer=new Inimigo(actor.x,actor.y+125,atlas); archer.configureArcher(); enemies.add(archer);
+        room.render(.05f);
+        check(archer.archer().phase()==ArcherAttack.Phase.SEEKING && archer.archer().arrows().isEmpty(),
+            "Archers outside the visible safe margin must approach instead of shooting");
+        game.setScreen(new MenuScreen(game));
+        check(archer.archer().arrows().isEmpty() && (boolean)field(room,"disposed"),"Screen changes must clear archer hazards");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyRequestedChanges() throws Exception {
+        Main game=new Main(SaveSlots.memory());
+        try {
+            game.create();
+            for(int i=0;i<SaveSlots.COUNT;i++)game.profileAt(i).chooseProfession(Profession.values()[i],true);
+            set(game.shared().progress(),"souls",202); game.shared().retrySave();
+            set(game.profileAt(0).profile(),"obols",123); game.profileAt(0).retrySave();
+            game.selectSave(0,false);
+            RunSession oldRun=RunSession.campaign(game.campaignRegion());
+            game.setScreen(new GameScreen(game,oldRun)); game.finishRun(oldRun,RunOutcome.ABANDONED);
+            String oldId=game.profiles().profile().characterId();
+            String other=game.profileAt(1).profile().toJson();
+            SaveSelectionScreen screen=new SaveSelectionScreen(game,false,true); game.setScreen(screen);
+            screen.render(0); screenshot("saves-delete-buttons");
+            clickAt(screen,401,303);
+            check((int)field(screen,"pendingDelete")==0 && game.profiles().profile().characterId().equals(oldId),
+                "Clicking delete must first open a modal, without resetting or selecting a character");
+            screenshot("save-delete-confirm");
+            clickAt(screen,325,180);
+            check((int)field(screen,"pendingDelete")==-1 && game.profiles().profile().obols()==123,
+                "Cancel must preserve the complete character");
+            clickAt(screen,401,303); press(screen,Input.Keys.RIGHT);
+            screen.render(.25f); screen.resize(800,600); screen.render(0); screen.resize(960,540);
+            press(screen,Input.Keys.ENTER);
+            check(!game.profiles().profile().professionChosen() && game.profiles().profile().obols()==0,
+                "Confirmed deletion must leave the slot empty");
+            check(game.shared().progress().souls()==202 && game.necromancerUnlocked()
+                && game.profileAt(1).profile().toJson().equals(other),"Reset must preserve global unlocks/currency and other saves");
+            check(game.latestReport()==null,"An empty slot must not show the previous character's report");
+            screenshot("save-empty-after-delete");
+            press(screen,Input.Keys.ESCAPE);
+            check(game.getScreen() instanceof MenuScreen,"Leaving after deleting the active refuge save must return safely");
+            game.setScreen(new SaveSelectionScreen(game,false));
+            press(game.getScreen(),Input.Keys.NUM_1);
+            check(game.getScreen() instanceof ProfessionScreen,"Reusing the slot must ask for a new profession");
+            game.getScreen().render(0); screenshot("professions-without-numbers");
+            clickAt(game.getScreen(),707,340);
+            confirmCharacter(game);
+            check(game.getScreen() instanceof RefugeScreen && game.profiles().profile().profession()==Profession.FERREIRO
+                && !game.profiles().profile().characterId().equals(oldId),"A recreated character must have a new profession and identity");
+            press(game.getScreen(),Input.Keys.R);
+            check(game.getScreen() instanceof RefugeScreen,"A new character must not browse the deleted character's summaries");
+            press(game.getScreen(),Input.Keys.P); screen=(SaveSelectionScreen)game.getScreen();
+            press(screen,Input.Keys.RIGHT); clickAt(screen,856,143);
+            check((int)field(screen,"pendingDelete")==7,"The second page must target the eighth slot");
+            screen.render(.21f); press(screen,Input.Keys.ENTER);
+            check(!game.profileAt(7).profile().professionChosen() && game.profiles().profile().profession()==Profession.FERREIRO,
+                "Deleting the eighth slot must preserve the active character");
+            String fifth=game.profileAt(5).profile().characterId();
+            press(screen,Input.Keys.FORWARD_DEL); press(screen,Input.Keys.NUM_2);
+            check((int)field(screen,"pendingDelete")==5,"Keyboard deletion mode must use the current page");
+            press(screen,Input.Keys.ESCAPE);
+            check(game.profileAt(5).profile().characterId().equals(fifth),"Escape in the confirmation must preserve the requested slot");
+
+            game.profileAt(7).chooseProfession(Profession.GUERREIRO,true); game.selectSave(7,false);
+            RunSession run=RunSession.campaign(game.campaignRegion(),Profession.GUERREIRO);
+            GameScreen room=new GameScreen(game,run); game.setScreen(room);
+            var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+            Inimigo front=new Inimigo(109,100,atlas); front.vida=100; enemies.add(front);
+            float life=run.player().getVida();
+            holdGuardAndAttack(room,700,270);
+            check(run.player().guarding() && front.vida<100 && run.player().getVida()==life,
+                "Both mouse buttons must attack and block frontal contact in the real horde screen");
+            screenshot("shield-attacking-while-guarding");
+            RunSession bossRun=bossSession(Profession.GUERREIRO);
+            BossRoomScreen bossRoom=new BossRoomScreen(game,bossRun); game.setScreen(bossRoom);
+            BossEncounter boss=(BossEncounter)field(bossRoom,"boss"); Jogador actor=(Jogador)field(bossRoom,"player");
+            actor.x=boss.x()+30-8; actor.y=boss.y()-8;
+            var view=(com.badlogic.gdx.utils.viewport.FitViewport)field(bossRoom,"world");
+            // Render once to follow the repositioned player before projecting the mouse target.
+            bossRoom.render(0);
+            var point=view.project(new com.badlogic.gdx.math.Vector2(boss.x(),boss.y()));
+            holdGuardAndAttack(bossRoom,Math.round(point.x),Gdx.graphics.getHeight()-Math.round(point.y));
+            check(bossRun.player().guarding() && boss.health()<boss.maxHealth(),
+                "Guarded sword attacks must also damage the floor boss");
+            screenshot("boss-shield-attack");
+
+            run=RunSession.campaign(game.campaignRegion(),Profession.GUERREIRO);
+            room=new GameScreen(game,run); game.setScreen(room);
+            atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            enemies=(java.util.List<Inimigo>)field(room,"enemies");
+            var navigation=(EnemyNavigation)field(room,"navigation");
+            Inimigo fast=new Inimigo(164,100,atlas); fast.configurarTipo(EnemyType.FAST);
+            float offset=(float)field(fast,"pursuitOffset");
+            float burst=.5f-offset; if(burst<0)burst+=2;
+            set(fast,"stateTime",burst); float x=fast.x;
+            fast.update(.05f,navigation); check(Math.abs(x-fast.x-3.5f)<.001,"Fast burst must use 70 units/s");
+            fast.x=164; fast.y=100; float recovery=1.5f-offset; if(recovery<0)recovery+=2;
+            set(fast,"stateTime",recovery); fast.update(.05f,navigation);
+            check(Math.abs(164-fast.x-1.2f)<.001,"Recovery must slow the real fast enemy to 24 units/s");
+            for(int i=0;i<EnemyWaves.MAX_FAST;i++) {
+                fast=new Inimigo(164+i%4*3,150+i/4*3,atlas); fast.configurarTipo(EnemyType.FAST); enemies.add(fast);
+            }
+            run.advance(15);
+            set(room,"waves",new EnemyWaves(new java.util.Random(){@Override public float nextFloat(){return .6f;}}));
+            set(room,"spawnTimer",run.spawnInterval()); room.render(0);
+            check(enemies.stream().filter(e->e.getType()==EnemyType.FAST).count()==24 && enemies.size()>24,
+                "A crowded arena must replace excess fast spawns while continuing to produce other enemies");
+            screenshot("fast-horde-balanced");
+        } finally {game.dispose();}
+    }
+    private static void clickAt(Screen screen,float x,float y) throws Exception {
+        var viewport=(com.badlogic.gdx.utils.viewport.FitViewport)field(screen,"viewport");
+        var point=viewport.project(new com.badlogic.gdx.math.Vector2(x,y));
+        Input actual=Gdx.input;
+        Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},(proxy,method,args)->{
+            if(method.getName().equals("getX"))return Math.round(point.x);
+            if(method.getName().equals("getY"))return Gdx.graphics.getHeight()-Math.round(point.y);
+            if(method.getName().equals("isButtonJustPressed"))return (int)args[0]==Input.Buttons.LEFT;
+            if(method.getName().equals("isButtonPressed") || method.getName().equals("isKeyJustPressed") || method.getName().equals("isKeyPressed"))return false;
+            return method.invoke(actual,args);
+        });
+        try {screen.render(1f/60);}finally {Gdx.input=actual;}
+    }
+    private static void holdGuardAndAttack(Screen screen,int mouseX,int mouseY) {
+        Input actual=Gdx.input;
+        Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},(proxy,method,args)->{
+            if(method.getName().equals("getX"))return mouseX;
+            if(method.getName().equals("getY"))return mouseY;
+            if(method.getName().equals("isButtonPressed"))return (int)args[0]==Input.Buttons.LEFT || (int)args[0]==Input.Buttons.RIGHT;
+            if(method.getName().equals("isKeyJustPressed") || method.getName().equals("isKeyPressed"))return false;
+            return method.invoke(actual,args);
+        });
+        try {screen.render(.05f);}finally {Gdx.input=actual;}
+    }
+
+    private static final class RecordedAudio implements AudioBackend {
+        final java.util.List<SoundCue> played=new java.util.ArrayList<>();
+        float musicGain,effectsGain; boolean disposed;
+        Track track;
+        public boolean available(){return !disposed;}
+        public long play(SoundCue cue,float volume){played.add(cue);effectsGain=volume;return played.size();}
+        final java.util.List<Long> stopped=new java.util.ArrayList<>();
+        public void stop(SoundCue cue,long id){stopped.add(id);}
+        public void volume(SoundCue cue,long id,float volume){effectsGain=volume;}
+        public void music(Track track,float volume){this.track=track;musicGain=volume;}
+        public void musicVolume(float volume){musicGain=volume;}
+        public void dispose(){disposed=true;}
+    }
+    @SuppressWarnings("unchecked")
+    private static void verifyAudioAndFeedback() throws Exception {
+        AudioSettingsStore preferences=AudioSettingsStore.memory();RecordedAudio output=new RecordedAudio();
+        Main game=new Main(SaveSlots.memory(),preferences,output);
+        try {
+            game.create();check(output.track==AudioBackend.Track.REFUGE,"Menus must start the calm loop");
+            press(game.getScreen(),Input.Keys.O);
+            check(game.getScreen() instanceof AudioSettingsScreen,"O in the menu must open audio controls");
+            game.getScreen().render(0);screenshot("audio-settings");
+            clickAt(game.getScreen(),495,354);
+            check(game.audioSettings().value().effects()==.5f,"A real slider click must set and save effects volume");
+            press(game.getScreen(),Input.Keys.DOWN);press(game.getScreen(),Input.Keys.RIGHT);
+            check(game.audioSettings().value().music()==.35f && output.musicGain==.35f,"Music adjustment must apply immediately");
+            press(game.getScreen(),Input.Keys.M);int count=output.played.size();
+            press(game.getScreen(),Input.Keys.T);
+            check(game.audioSettings().value().muted() && output.musicGain==0 && output.played.size()==count,
+                "Mute must silence the preview without losing the chosen levels");
+            screenshot("audio-muted");
+            press(game.getScreen(),Input.Keys.M);press(game.getScreen(),Input.Keys.T);
+            check(output.played.getLast()==SoundCue.BLOCK && output.musicGain==.35f,"Unmute must restore gains and preview");
+            press(game.getScreen(),Input.Keys.ESCAPE);
+            check(game.getScreen() instanceof MenuScreen,"Audio back must return to the menu");
+            Main loaded=new Main(SaveSlots.memory(),preferences,new RecordedAudio());
+            check(loaded.audioSettings().value().equals(game.audioSettings().value()),"Volumes must persist across a new application");
+            game.profileAt(0).chooseProfession(Profession.GUERREIRO,true);
+            for(Profession profession:Profession.values()) {
+                RunSession run=RunSession.demo(profession);GameScreen room=new GameScreen(game,run);game.setScreen(room);
+                var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+                var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+                Inimigo enemy=new Inimigo(120,100,atlas);enemy.vida=100;enemies.add(enemy);
+                count=output.played.size();
+                for(int i=0;i<12 && enemy.vida==100;i++){game.audio().advance(.05f);fire(room);}
+                check(enemy.vida<100 && output.played.subList(count,output.played.size()).contains(SoundCue.attack(profession.weapon)),
+                    profession+" must emit its own weapon cue only on a real attack");
+                CombatFeedback feedback=(CombatFeedback)field(room,"feedback");
+                check(feedback.pulses().stream().anyMatch(pulse->pulse.kind==CombatFeedback.Kind.HIT),
+                    "Actual weapon damage must create a visible impact");
+                room.render(0);screenshot("feedback-"+profession.name().toLowerCase(java.util.Locale.ROOT));
+            }
+            RunSession run=RunSession.demo(Profession.GUERREIRO);
+            GameScreen room=new GameScreen(game,run);game.setScreen(room);
+            var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+            Inimigo front=new Inimigo(109,100,atlas);front.vida=100;enemies.add(front);
+            game.audio().advance(1);count=output.played.size();holdGuardAndAttack(room,700,270);
+            CombatFeedback feedback=(CombatFeedback)field(room,"feedback");
+            check(output.played.subList(count,output.played.size()).contains(SoundCue.BLOCK) && feedback.hurtFlash()==0,
+                "A real block must have a defense cue rather than a hurt flash");
+            screenshot("feedback-block");
+            run.player().ganharRessurreicao();run.player().usarRessurreicao();set(front,"attackTimer",0f);
+            game.audio().advance(1);room.render(.05f);
+            check(output.played.getLast()==SoundCue.IMMUNE && feedback.hurtFlash()==0,"Invulnerability must be distinguishable from a shield block");
+            run.player().advance(2.1f);set(front,"attackTimer",0f);
+            game.audio().advance(1);room.render(.05f);
+            check(output.played.getLast()==SoundCue.PLAYER_HURT && feedback.hurtFlash()>0,"Real life loss must create the hurt cue and border");
+            screenshot("feedback-hurt");
+
+            press(room,Input.Keys.ESCAPE);press(room,Input.Keys.O);
+            float elapsed=run.progress().elapsed(),remaining=feedback.pulses().isEmpty()?0:feedback.pulses().getFirst().remaining;
+            press(room,Input.Keys.M);room.render(2);
+            check(game.getScreen()==room && !run.finished() && run.progress().elapsed()==elapsed,
+                "M in audio controls must mute rather than abandon, and the arena clock must remain frozen");
+            check(feedback.pulses().isEmpty() || feedback.pulses().getFirst().remaining==remaining,"Audio controls must also freeze visual effects");
+            room.resize(800,600);room.render(0);room.resize(960,540);screenshot("audio-in-pause");
+            press(room,Input.Keys.ESCAPE);
+            check(field(room,"state").toString().equals("PAUSED"),"Closing audio must preserve the existing pause");
+            press(room,Input.Keys.ESCAPE);run.player().ganharXP(100);room.render(.01f);
+            check(field(room,"state").toString().equals("LEVEL_UP"),"The next scenario must be a protected boon choice");
+            press(room,Input.Keys.O);room.render(2);press(room,Input.Keys.ESCAPE);
+            ChoiceInputGuard guard=(ChoiceInputGuard)field(room,"choiceGuard");
+            check(!guard.ready() && field(room,"state").toString().equals("LEVEL_UP"),"Audio must not advance or consume the boon choice guard");
+
+            RunSession bossRun=bossSession(Profession.GUERREIRO);BossRoomScreen bossRoom=new BossRoomScreen(game,bossRun);game.setScreen(bossRoom);
+            BossEncounter boss=(BossEncounter)field(bossRoom,"boss");
+            game.audioSettings().change(new AudioSettings(.5f,.35f,false));game.audio().refreshVolume();
+            count=output.played.size();
+            for(int i=0;i<200 && boss.state()!=BossEncounter.State.TELEGRAPH;i++){game.audio().advance(.05f);bossRoom.render(.05f);}
+            check(boss.state()==BossEncounter.State.TELEGRAPH && output.played.subList(count,output.played.size()).contains(SoundCue.BOSS_WARNING),
+                "The actual boss telegraph transition must produce an audible warning");
+            count=output.played.size();for(int i=0;i<10;i++)bossRoom.render(0);
+            check(output.played.size()==count,"Drawing a telegraph repeatedly must not replay its warning");
+            press(bossRoom,Input.Keys.O);float bossElapsed=boss.elapsed(),runElapsed=bossRun.progress().elapsed();
+            bossRoom.render(2);check(boss.elapsed()==bossElapsed && bossRun.progress().elapsed()==runElapsed,"Boss audio controls must freeze the attack and run clocks");
+            press(bossRoom,Input.Keys.ESCAPE);bossRoom.render(.01f);
+            check(boss.elapsed()>bossElapsed,"Closing boss audio must resume the same encounter");
+
+            // Real crystal collection, not just an animation request, emits the XP cue.
+            run=RunSession.demo();room=new GameScreen(game,run);game.setScreen(room);
+            Jogador actor=(Jogador)field(room,"player");atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            var orbs=(java.util.List<OrbeXP>)field(room,"orbs");
+            orbs.add(new OrbeXP(actor.x+5,actor.y+5,Art.cell(atlas,1,3),1));
+            game.audio().advance(1);room.render(.01f);
+            check(run.player().getXpAtual()==1 && output.played.getLast()==SoundCue.XP,"Collecting a crystal must emit XP feedback once");
+            run.player().sofrerDano(10000);room.render(0);
+            check(game.getScreen() instanceof GameOverScreen && output.played.getLast()==SoundCue.DEATH,"The result transition must emit a death cue");
+            int afterDeath=output.played.size();game.getScreen().render(0);game.getScreen().render(0);
+            check(output.played.size()==afterDeath,"Result rendering must not replay the death cue");
+        }finally{game.dispose();}
+        check(output.disposed,"Audio buffers must be released with the application");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyMilestoneOne() throws Exception {
+        RecordedAudio output=new RecordedAudio();
+        Main game=new Main(SaveSlots.memory(),AudioSettingsStore.memory(),output);
+        try {
+            game.create();game.profiles().chooseProfession(Profession.CACADOR);
+            RunSession run=RunSession.campaign(game.campaignRegion());
+            GameScreen room=new GameScreen(game,run);game.setScreen(room);
+            run.advance(45);run.markMiniBossSpawned();
+            Jogador actor=(Jogador)field(room,"player");
+            MiniBossEncounter mini=new MiniBossEncounter(actor.x+400,actor.y,EnemyDifficulty.BASE);
+            set(room,"miniBoss",mini);set(mini,"timer",0f);
+            long warnings=output.played.stream().filter(c->c==SoundCue.BOSS_WARNING).count();
+            room.render(.01f);
+            check(mini.state()==MiniBossEncounter.State.TELEGRAPH,"An invisible Carrasco must still simulate its attack");
+            check(output.played.stream().filter(c->c==SoundCue.BOSS_WARNING).count()==warnings,"Offscreen attacks must be silent");
+            mini.x=actor.x+70;mini.y=actor.y;room.render(0);
+            check(output.played.stream().filter(c->c==SoundCue.BOSS_WARNING).count()==warnings,"Returning to view must not replay an old warning");
+            set(mini,"state",MiniBossEncounter.State.RECOVERY);set(mini,"timer",0f);
+            game.audio().advance(1);room.render(.01f);
+            check(output.played.getLast()==SoundCue.BOSS_WARNING,"A fresh visible warning must be audible");
+            long ownVoice=output.played.size();
+            game.audio().advance(.4f);game.audio().play(SoundCue.BOSS_WARNING);long otherVoice=output.played.size();
+            game.audio().play(SoundCue.PLAYER_HURT);long playerVoice=output.played.size();
+            mini.x=actor.x+400;room.render(0);
+            check(output.stopped.contains(ownVoice),"Leaving the viewport must stop this Carrasco's playing voice");
+            check(!output.stopped.contains(otherVoice) && !output.stopped.contains(playerVoice),"Culling cannot silence other emitters or the player");
+            warnings=output.played.stream().filter(c->c==SoundCue.BOSS_WARNING).count();
+            mini.x=actor.x+70;room.render(0);
+            check(output.played.stream().filter(c->c==SoundCue.BOSS_WARNING).count()==warnings,"Only a new telegraph can restart the sound");
+            var world=(com.badlogic.gdx.utils.viewport.FitViewport)field(room,"world");
+            var camera=(com.badlogic.gdx.graphics.OrthographicCamera)world.getCamera();
+            var visible=GameScreen.class.getDeclaredMethod("miniBossVisible");visible.setAccessible(true);
+            room.resize(800,600);room.render(0);
+            check((boolean)visible.invoke(room),"Letterboxing must preserve world visibility");
+            game.audio().advance(1);set(mini,"state",MiniBossEncounter.State.RECOVERY);set(mini,"timer",0f);
+            room.render(.01f);ownVoice=output.played.size();
+            camera.zoom=.2f;camera.update();room.render(0);
+            check(!(boolean)visible.invoke(room) && output.stopped.contains(ownVoice),"Camera zoom must cull the actual source during drawing");
+            camera.zoom=1;room.resize(960,540);room.render(0);
+            float right=camera.position.x+camera.viewportWidth/2;
+            mini.x=right-12;room.render(0);check((boolean)visible.invoke(room),"A partially visible body remains audible");
+            mini.x=right+32;room.render(0);check(!(boolean)visible.invoke(room),"A body outside the edge is invisible");
+            set(room,"miniBoss",null);game.audio().stopEmitter(mini);
+            run.applyUpgrade(Upgrade.INTELIGENCIA);run.player().ganharXP(1);
+            room.render(0);check(CombatHud.xpFraction(run.player())==.25f,"Real 2.5 XP must fill one quarter of the initial bar");
+            screenshot("m1-hud-campaign");
+            press(room,Input.Keys.TAB);float time=run.progress().elapsed();room.render(1);
+            check(run.progress().elapsed()==time,"Detailed Tab stats must keep combat frozen");screenshot("m1-tab-details");press(room,Input.Keys.TAB);
+            meetGoals(run);room.render(.01f);
+            var beacon=(com.badlogic.gdx.math.Vector2)field(room,"exitBeacon");
+            check(beacon!=null,"Goal completion must produce a visible exit beacon");
+            screenshot("m1-passage");
+            actor.x-=60;press(room,Input.Keys.E);
+            check(game.getScreen()!=room,"Exit remains usable without finding or reaching the beacon");
+            game.finishRun(run,RunOutcome.ABANDONED);
+
+            RunSession bossRun=bossSession(Profession.GUERREIRO);
+            BossRoomScreen bossRoom=new BossRoomScreen(game,bossRun);game.setScreen(bossRoom);
+            BossEncounter boss=(BossEncounter)field(bossRoom,"boss");
+            for(int i=0;i<40;i++)bossRoom.render(.05f);
+            boss.hurt(boss.health()/2);
+            for(int i=0;i<30;i++)bossRoom.render(.05f);
+            bossRoom.render(0);screenshot("m1-boss-hud");
+            game.finishRun(bossRun,RunOutcome.ABANDONED);
+            RunReport report=bossRun.report(RunOutcome.ABANDONED,0);
+            check(report.rooms().getLast().bossFight()!=null,"Ending a real boss room must snapshot its phase metrics");
+            check(report.rooms().getLast().bossFight().phaseTwoSeconds()>0,"The report must retain second-phase time");
+            RunReportScreen result=new RunReportScreen(game,report,()->new MenuScreen(game));game.setScreen(result);
+            result.render(.25f);set(result,"page",result.pageCount()-1);result.render(0);screenshot("m1-boss-report");
+        } finally {game.dispose();}
+    }
+
+    private static void clickChoice(Screen screen,float delta,boolean held,boolean clicked) {
+        Input actual=Gdx.input;
+        Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},(proxy,method,args)->{
+            if(method.getName().equals("getX"))return 175;
+            if(method.getName().equals("getY"))return 280;
+            if(method.getName().equals("isButtonPressed"))return held && (int)args[0]==Input.Buttons.LEFT;
+            if(method.getName().equals("isButtonJustPressed"))return clicked && (int)args[0]==Input.Buttons.LEFT;
+            if(method.getName().equals("isKeyJustPressed") || method.getName().equals("isKeyPressed"))return false;
+            return method.invoke(actual,args);
+        });
+        try {screen.render(delta);} finally {Gdx.input=actual;}
     }
 
     private static void meetGoals(RunSession session) {
@@ -663,7 +1508,97 @@ public final class DemoSmokeTest {
     private static void check(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
     }
-    private static void press(Screen screen, int key) {
+    @SuppressWarnings("unchecked")
+    private static void verifyMilestoneTwo() throws Exception {
+        SaveSlots slots = SaveSlots.memory();
+        Main game = new Main(slots, AudioSettingsStore.memory(), new RecordedAudio());
+        try {
+            game.create();
+            for (GameDifficulty mode : GameDifficulty.values()) {
+                game.selectSave(mode.ordinal(), false);
+                press(game.getScreen(), Input.Keys.NUM_3);
+                check(game.getScreen() instanceof DifficultyScreen, "New character needs difficulty confirmation");
+                press(game.getScreen(), Input.Keys.NUM_1 + mode.ordinal());
+                check(((DifficultyScreen)game.getScreen()).selected() == mode, "All three modes must be selectable");
+                check(!slots.store(mode.ordinal()).load().professionChosen(), "Selection alone must not save");
+                press(game.getScreen(), Input.Keys.ESCAPE);
+                check(game.getScreen() instanceof ProfessionScreen && !game.profiles().profile().professionChosen(), "Cancelling must discard both choices");
+                press(game.getScreen(), Input.Keys.NUM_3);
+                press(game.getScreen(), Input.Keys.NUM_1 + mode.ordinal());
+                game.getScreen().render(.21f); screenshot("m2-difficulty-" + mode.name().toLowerCase(java.util.Locale.ROOT));
+                press(game.getScreen(), Input.Keys.ENTER);
+                check(game.getScreen() instanceof RefugeScreen && game.profiles().profile().difficulty() == mode, "Confirmation must create the chosen mode");
+                check(new ProfileService(slots.store(mode.ordinal())).profile().difficulty() == mode, "Difficulty must reload from storage");
+                press(game.getScreen(), Input.Keys.ENTER);
+                GameScreen room = (GameScreen)game.getScreen(); RunSession run = (RunSession)field(room,"session");
+                check(run.difficulty() == mode, "Main must start with the character difficulty");
+                var atlas = (com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+                for (EnemyType type : EnemyType.values()) {
+                    Inimigo enemy = new Inimigo(160,100,atlas); enemy.configurarTipo(type); enemy.applyDifficulty(run.enemyDifficulty());
+                    check(Math.abs(enemy.maxHealth() - type.health * mode.healthMultiplier) < .001f, "Every enemy type must scale health");
+                    check(Math.abs(enemy.getDano() - type.damage * mode.damageMultiplier) < .001f, "Every enemy type must scale damage");
+                    check(enemy.getXpDrop() == type.xp, "Difficulty must preserve XP drops");
+                }
+                Inimigo archer = new Inimigo(160,100,atlas); archer.configureArcher(); archer.applyDifficulty(run.enemyDifficulty());
+                check(Math.abs(archer.arrowDamage() - 10 * mode.damageMultiplier) < .001f, "Archer arrows must scale");
+                check(Math.abs(archer.maxHealth() - 14 * mode.healthMultiplier) < .001f, "Archer health must scale");
+                MiniBossEncounter mini = new MiniBossEncounter(160,100,run.enemyDifficulty());
+                check(Math.abs(mini.maxHealth() - 180 * mode.healthMultiplier) < .001f, "Miniboss health must scale");
+                check(Math.abs((float)field(mini,"damageMultiplier") - mode.damageMultiplier) < .001f, "Miniboss attacks must scale");
+                run.recordKill(EnemyType.COMMON); run.addChestObols(3);
+                game.finishRun(run,RunOutcome.DEATH);
+                RunReport report = game.latestReport();
+                check(report.difficulty() == mode && report.obols() == mode.reward(3), "Result report must keep scaled rewards and difficulty");
+                game.setScreen(new RunReportScreen(game,report,()->new RefugeScreen(game)));
+                game.getScreen().render(0); screenshot("m2-report-" + mode.name().toLowerCase(java.util.Locale.ROOT));
+                game.startCampaign();
+                room = (GameScreen)game.getScreen(); run = (RunSession)field(room,"session");
+                check(run.difficulty() == mode && run.earnedSouls() == 0, "Restart preserves mode and clears pending rewards");
+                meetGoals(run); run.enterArena("portoes"); game.setScreen(new BossRoomScreen(game,run));
+                BossEncounter boss = (BossEncounter)field(game.getScreen(),"boss");
+                check(Math.abs(boss.maxHealth() - 500 * run.enemyDifficulty().healthMultiplier()) < .001f, "Boss room uses composed health scaling");
+                check(Math.abs((float)field(boss,"damageMultiplier") - run.enemyDifficulty().damageMultiplier()) < .001f, "Boss attacks use composed damage scaling");
+                game.finishRun(run,RunOutcome.ABANDONED);
+                game.startDemo(); room = (GameScreen)game.getScreen(); run = (RunSession)field(room,"session");
+                check(run.isDemo() && run.difficulty() == mode && run.earnedObols() == 0, "Demo honors mode without campaign rewards");
+                game.finishRun(run,RunOutcome.ABANDONED);
+            }
+            game.setScreen(new SaveSelectionScreen(game,false)); game.getScreen().render(0); screenshot("m2-saves");
+            game.getScreen().resize(800,600); game.getScreen().render(0); screenshot("m2-saves-800");
+            game.getScreen().resize(960,540);
+        } finally { game.dispose(); }
+
+        boolean[] fail = {true};
+        ProfileStore first = new ProfileStore() {
+            private CampaignProfile saved = new CampaignProfile();
+            public CampaignProfile load() { return saved.copy(); }
+            public void save(CampaignProfile profile) throws java.io.IOException {
+                if (fail[0]) throw new java.io.IOException("test"); saved = profile.copy();
+            }
+        };
+        Main retryGame = new Main(new SaveSlots(first), AudioSettingsStore.memory(), new RecordedAudio());
+        try {
+            retryGame.create(); retryGame.selectSave(0,false); press(retryGame.getScreen(),Input.Keys.NUM_1);
+            press(retryGame.getScreen(),Input.Keys.NUM_3); retryGame.getScreen().render(.21f);
+            press(retryGame.getScreen(),Input.Keys.ENTER);
+            check(retryGame.getScreen() instanceof DifficultyScreen && !retryGame.profiles().profile().professionChosen(), "Failed disk creation must stay on the confirmation screen");
+            check(((DifficultyScreen)retryGame.getScreen()).selected() == GameDifficulty.HARD, "Failure preserves pending selection for retry");
+            retryGame.getScreen().render(0); screenshot("m2-creation-error");
+            fail[0] = false; press(retryGame.getScreen(),Input.Keys.ENTER);
+            check(retryGame.getScreen() instanceof RefugeScreen && first.load().difficulty() == GameDifficulty.HARD, "Successful retry commits both settings");
+        } finally { retryGame.dispose(); }
+    }
+
+    private static void confirmCharacter(Main game) throws Exception {
+        check(game.getScreen() instanceof DifficultyScreen, "Profession must lead to difficulty confirmation");
+        check(!game.profiles().profile().professionChosen(), "Pending choices must not create the save");
+        game.getScreen().render(.21f);
+        press(game.getScreen(), Input.Keys.ENTER);
+    }
+    private static void press(Screen screen, int key) throws Exception {
+        if (key >= Input.Keys.NUM_1 && key <= Input.Keys.NUM_3
+            && (screen instanceof GameScreen && field(screen,"state").toString().equals("LEVEL_UP")
+                || screen instanceof ArenaRewardScreen && !(boolean) field(screen,"recovery"))) screen.render(1.51f);
         Input actual = Gdx.input;
         Gdx.input = (Input) Proxy.newProxyInstance(Input.class.getClassLoader(), new Class<?>[]{Input.class},
             (proxy, method, args) -> {

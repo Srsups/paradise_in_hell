@@ -52,6 +52,25 @@ Tiled, Skin Composer, Texture Packer e editores de partículas aparecem no
 [catálogo oficial de ferramentas libGDX](https://libgdx.com/dev/tools/).
 Nenhuma dessas ferramentas foi instalada nesta entrega.
 
+## Revisão visual planejada em 13/10/2026
+
+Sprites, animações e tipografia podem ser produzidos na base Java/libGDX atual.
+O [roteiro de melhorias](ROTEIRO_DE_MELHORIAS.md#m3--base-visual-e-conversa-piloto)
+propõe atlas com regiões nomeadas, estados/direções, estilos compartilhados e
+um piloto antes de ampliar a arte de todos os personagens.
+
+O framework documenta [TexturePacker/TextureAtlas](https://libgdx.com/wiki/tools/texture-packer)
+para imagens, [Skin](https://libgdx.com/wiki/graphics/2d/scene2d/skin) para recursos
+de interface e [gdx-freetype](https://libgdx.com/wiki/extensions/gdx-freetype)
+para gerar BitmapFont de TTF. A implementação deve usar dependências compatíveis
+com gdxVersion e validar o runtime Windows se acrescentar nativos.
+Essas ferramentas/novas fontes ainda não foram instaladas nesta revisão.
+
+A principal mudança é no fluxo de produção e na apresentação: trocar os desenhos
+geométricos visíveis por arte/efeitos, mantendo cálculos de movimento e colisão.
+Medir animação, volume de assets e desempenho do piloto antes de escolher qualquer
+ferramenta adicional ou reconsiderar plataforma.
+
 ## Quando reconsiderar
 
 Reavaliar após a primeira região se produzir uma nova arena, conversa ou

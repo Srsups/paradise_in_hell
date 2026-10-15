@@ -7,6 +7,7 @@ import br.com.srsups.paradiseinhell.ProfileStore;
 import br.com.srsups.paradiseinhell.RefugeScreen;
 import br.com.srsups.paradiseinhell.SaveSelectionScreen;
 import br.com.srsups.paradiseinhell.BlacksmithScreen;
+import br.com.srsups.paradiseinhell.ArenaRewardScreen;
 import br.com.srsups.paradiseinhell.PermanentBonuses;
 import br.com.srsups.paradiseinhell.Profession;
 import br.com.srsups.paradiseinhell.GameScreen;
@@ -20,10 +21,11 @@ import java.util.Arrays;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication(Arrays.asList(args).contains("--smoke-test"));
+        boolean audioSmoke=Arrays.asList(args).contains("--audio-smoke-test");
+        createApplication(audioSmoke || Arrays.asList(args).contains("--smoke-test"),audioSmoke);
     }
 
-    private static Lwjgl3Application createApplication(boolean smokeTest) {
+    private static Lwjgl3Application createApplication(boolean smokeTest,boolean audioSmoke) {
         Main game = smokeTest ? new Main(ProfileStore.memory()) {
             private int frames;
             @Override public void render() {
@@ -55,13 +57,53 @@ public class Lwjgl3Launcher {
                     session.encounters().openBlacksmith();
                     setScreen(new BlacksmithScreen(this, session));
                 }
-                if (++frames >= 16) Gdx.app.exit();
+                if (frames == 14 || frames == 16) {
+                    RunSession session = RunSession.campaign(campaignRegion(), Profession.APOSTADOR);
+                    for (var goal : session.arena().killGoals().entrySet())
+                        for (int count = 0; count < goal.getValue(); count++) session.recordKill(goal.getKey());
+                    session.enterArena(frames == 14 ? "cinzas" : "sombras");
+                    for (var goal : session.arena().killGoals().entrySet())
+                        for (int count = 0; count < goal.getValue(); count++) session.recordKill(goal.getKey());
+                    setScreen(new ArenaRewardScreen(this, session));
+                }
+                if (frames == 18) setScreen(new br.com.srsups.paradiseinhell.ProfessionScreen(this, campaignRegion()));
+                if (frames == 19) setScreen(new br.com.srsups.paradiseinhell.DifficultyScreen(this, Profession.CACADOR, campaignRegion()));
+                if (frames == 20 || frames == 22 || frames == 24 || frames == 26) {
+                    Profession profession = Profession.values()[4 + (frames - 20) / 2];
+                    RunSession session = RunSession.campaign(campaignRegion(), profession);
+                    session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.CHOQUE);
+                    session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.QUEIMADURA);
+                    session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.IMPACTO);
+                    setScreen(new GameScreen(this, session));
+                }
+                if(frames==28) {
+                    RunSession session=RunSession.demo(Profession.SACERDOTE);
+                    session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.CADENCIA); session.advance(4); session.end();
+                    br.com.srsups.paradiseinhell.RunReport report=shared().settle(session,br.com.srsups.paradiseinhell.RunOutcome.ABANDONED,0);
+                    setScreen(new br.com.srsups.paradiseinhell.RunReportScreen(this,report,()->new RefugeScreen(this)));
+                }
+                if(audioSmoke && frames==31) {
+                    if(!Gdx.audio.getClass().getSimpleName().contains("OpenAL") || !audio().available())
+                        throw new IllegalStateException("Native audio device is unavailable");
+                    for(br.com.srsups.paradiseinhell.SoundCue cue:br.com.srsups.paradiseinhell.SoundCue.values()) {
+                        audio().stopEffects();
+                        if(!audio().play(cue))throw new IllegalStateException("Audio clip failed: "+cue);
+                    }
+                    audio().stopEffects();
+                    setScreen(new br.com.srsups.paradiseinhell.AudioSettingsScreen(this,()->new br.com.srsups.paradiseinhell.MenuScreen(this)));
+                }
+                if(audioSmoke && frames==115) {
+                    if(!audio().musicPlaying() || audio().musicPosition()<.1f)
+                        throw new IllegalStateException("Packaged streaming music did not advance");
+                    System.out.println("PACKAGED_AUDIO_SMOKE_OK: 24 native effects, streaming music, audio menu, bundled assets");
+                }
+                if (++frames >= (audioSmoke?120:30)) Gdx.app.exit();
             }
         } : new Main();
         Lwjgl3ApplicationConfiguration configuration = getDefaultConfiguration();
         if (smokeTest) {
             configuration.setInitialVisible(false);
-            configuration.disableAudio(true);
+            configuration.disableAudio(!audioSmoke);
         }
         return new Lwjgl3Application(game, configuration);
     }

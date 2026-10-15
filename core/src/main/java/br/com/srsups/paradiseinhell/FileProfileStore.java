@@ -51,4 +51,28 @@ public final class FileProfileStore implements ProfileStore {
             catch (AtomicMoveNotSupportedException unsupported) { Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING); }
         } finally { Files.deleteIfExists(temporary); }
     }
+    @Override public void reset(CampaignProfile empty) throws IOException {
+        if (empty.professionChosen()) throw new IllegalArgumentException("Reset requires an empty character");
+        Files.createDirectories(file.getParent());
+        Path temporary = Files.createTempFile(file.getParent(), "profile-reset-", ".tmp");
+        byte[] previousBackup = null;
+        boolean backupRemoved = false;
+        try {
+            Files.writeString(temporary, empty.toJson(), StandardCharsets.UTF_8);
+            // Invalidate the old fallback before committing: a deleted character must never revive from it.
+            if (Files.exists(backup)) {
+                previousBackup = Files.readAllBytes(backup);
+                backupRemoved = Files.deleteIfExists(backup);
+            }
+            try { Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING); }
+            catch (AtomicMoveNotSupportedException unsupported) { Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING); }
+        } catch (IOException failure) {
+            if (backupRemoved) {
+                try { Files.write(backup, previousBackup); }
+                catch (IOException rollbackFailure) { failure.addSuppressed(rollbackFailure); }
+            }
+            throw failure;
+        } finally { Files.deleteIfExists(temporary); }
+    }
+
 }

@@ -15,6 +15,7 @@ public class Jogador {
     private final AttackEmitter emitter;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private float stateTime;
+    private final java.util.Map<TextureRegion, SpriteHitbox> hitboxes = new java.util.IdentityHashMap<>();
     public enum Direcao { FRENTE, COSTAS, ESQUERDA, DIREITA, PARADO }
     private Direcao direcaoAtual = Direcao.PARADO;
 
@@ -40,6 +41,8 @@ public class Jogador {
         framesCostas[1] = Art.cell(spritesheet, 3, 0);
         animacaoCostas = new Animation<>(0.25f, framesCostas);
         animacaoCostas.setPlayMode(Animation.PlayMode.LOOP);
+        for (Animation<TextureRegion> animation : java.util.List.of(animacaoFrente, animacaoLado, animacaoCostas))
+            for (TextureRegion frame : animation.getKeyFrames()) hitboxes.put(frame, Art.hitbox(frame));
     }
 
 
@@ -83,7 +86,7 @@ public class Jogador {
     }
 
 
-    public void draw(SpriteBatch batch) {
+    private TextureRegion frame() {
         TextureRegion currentFrame;
 
         switch (direcaoAtual) {
@@ -109,6 +112,14 @@ public class Jogador {
                 currentFrame = animacaoFrente.getKeyFrame(0); // parado
         }
 
+        return currentFrame;
+    }
+    public SpriteHitbox hitbox() {
+        TextureRegion frame = frame();
+        return hitboxes.get(frame).place(x, y, 16, 16, frame.isFlipX(), frame.isFlipY());
+    }
+    public void draw(SpriteBatch batch) {
+        TextureRegion currentFrame = frame();
         if (stats.flashing()) {
             batch.setColor(Color.RED);
         }

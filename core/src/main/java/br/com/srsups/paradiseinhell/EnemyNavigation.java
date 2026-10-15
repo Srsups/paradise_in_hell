@@ -65,6 +65,23 @@ public final class EnemyNavigation {
     public boolean clearLine(float x, float y, float nextX, float nextY) {
         return canTravel(x, y, nextX, nextY);
     }
+    /** Projectile footprint, independent of the larger walking collision body. */
+    public boolean clearProjectileLine(float x, float y, float nextX, float nextY, float radius) {
+        return clearRay(x - radius, y - radius, nextX - radius, nextY - radius)
+            && clearRay(x + radius, y - radius, nextX + radius, nextY - radius)
+            && clearRay(x - radius, y + radius, nextX - radius, nextY + radius)
+            && clearRay(x + radius, y + radius, nextX + radius, nextY + radius);
+    }
+    public float targetX() { return targetX; }
+    public float targetY() { return targetY; }
+    public boolean moveDirection(Body body, float dx, float dy, float speed, float delta) {
+        if (delta <= 0) return false;
+        float x = body.x + 8, y = body.y + 8;
+        float nextX = x + dx * speed * delta, nextY = y + dy * speed * delta;
+        body.hasWaypoint = false;
+        if (!canTravel(x, y, nextX, nextY)) return false;
+        body.x = nextX - 8; body.y = nextY - 8; return true;
+    }
     private boolean canTravel(float x, float y, float nextX, float nextY) {
         return clearRay(x - HALF_BODY, y - HALF_BODY, nextX - HALF_BODY, nextY - HALF_BODY)
             && clearRay(x + HALF_BODY, y - HALF_BODY, nextX + HALF_BODY, nextY - HALF_BODY)

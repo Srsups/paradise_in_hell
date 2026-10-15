@@ -12,15 +12,27 @@ public final class CampaignProfile {
         public UnsupportedVersion() { super("Unsupported profile version"); }
     }
     public enum Event { CARONTE_MET, BRIBE_JOKE, GUARDIAN_RECOGNIZED }
+    private String characterId = java.util.UUID.randomUUID().toString();
+    public String characterId() { return characterId; }
     private int obols, attempts, deaths, victories, forgeMaterials;
     private Profession profession = Profession.CACADOR;
-    private boolean professionChosen;
+    private GameDifficulty difficulty = GameDifficulty.MEDIUM;
+    private WeaponRarity weaponRarity = WeaponRarity.COMMON;
+    // Legacy access is retained for migration; currency and new unlocks belong to SharedProgress.
+    private boolean professionChosen, necromancerUnlocked;
+    public boolean necromancerUnlocked() { return necromancerUnlocked; }
     private final java.util.Set<String> claimedMaterialRegions = new java.util.TreeSet<>();
     private final EnumMap<PermanentAttribute, Integer> ranks = new EnumMap<>(PermanentAttribute.class);
     private final EnumSet<Event> events = EnumSet.noneOf(Event.class);
 
     public int obols() { return obols; }
     public int forgeMaterials() { return forgeMaterials; }
+    public WeaponRarity weaponRarity() { return weaponRarity; }
+    public boolean canForgeWeapon() { return weaponRarity == WeaponRarity.COMMON && forgeMaterials > 0; }
+    void forgeWeapon() {
+        if (!canForgeWeapon()) throw new IllegalStateException("Permanent forge unavailable");
+        spendForgeMaterial(); weaponRarity = WeaponRarity.RARE;
+    }
     public boolean canClaimForgeMaterial(String regionId) {
         if (regionId == null || regionId.isBlank()) throw new IllegalArgumentException("Invalid material region");
         return !claimedMaterialRegions.contains(regionId);
@@ -38,15 +50,23 @@ public final class CampaignProfile {
     public int deaths() { return deaths; }
     public int victories() { return victories; }
     public Profession profession() { return profession; }
+    public GameDifficulty difficulty() { return difficulty; }
     public boolean professionChosen() { return professionChosen; }
+    public boolean hasProgress() {
+        return professionChosen || obols > 0 || attempts > 0 || forgeMaterials > 0 || weaponRarity != WeaponRarity.COMMON
+            || necromancerUnlocked || !claimedMaterialRegions.isEmpty() || !events.isEmpty()
+            || ranks.values().stream().anyMatch(rank -> rank > 0);
+    }
     public boolean has(Event event) { return events.contains(event); }
     public int rank(PermanentAttribute attribute) { return ranks.getOrDefault(attribute, 0); }
     public PermanentBonuses bonuses() {
         return new PermanentBonuses(rank(PermanentAttribute.VITALITY), rank(PermanentAttribute.STRENGTH), rank(PermanentAttribute.AGILITY));
     }
-    public void chooseProfession(Profession value) {
-        if (professionChosen) throw new IllegalStateException("Profession belongs to this save");
-        profession = java.util.Objects.requireNonNull(value); professionChosen = true;
+    public void chooseProfession(Profession value) { createCharacter(value, GameDifficulty.MEDIUM); }
+    public void createCharacter(Profession value, GameDifficulty mode) {
+        if (professionChosen) throw new IllegalStateException("Character settings belong to this save");
+        java.util.Objects.requireNonNull(value); java.util.Objects.requireNonNull(mode);
+        profession = value; difficulty = mode; professionChosen = true;
     }
     public boolean canBuy(PermanentAttribute attribute) {
         int rank = rank(attribute);
@@ -74,8 +94,10 @@ public final class CampaignProfile {
     public String toJson() {
         JsonValue root = new JsonValue(JsonValue.ValueType.object);
         root.addChild("version", new JsonValue(1L));
+        root.addChild("characterId", new JsonValue(characterId));
         root.addChild("obols", new JsonValue((long) obols));
         root.addChild("forgeMaterials", new JsonValue((long) forgeMaterials));
+        root.addChild("weaponRarity", new JsonValue(weaponRarity.name()));
         JsonValue materialRegions = new JsonValue(JsonValue.ValueType.array);
         for (String region : claimedMaterialRegions) materialRegions.addChild(new JsonValue(region));
         root.addChild("claimedMaterialRegions", materialRegions);
@@ -83,7 +105,9 @@ public final class CampaignProfile {
         root.addChild("deaths", new JsonValue((long) deaths));
         root.addChild("victories", new JsonValue((long) victories));
         root.addChild("profession", new JsonValue(profession.name()));
+        root.addChild("difficulty", new JsonValue(difficulty.name()));
         root.addChild("professionChosen", new JsonValue(professionChosen));
+        root.addChild("necromancerUnlocked", new JsonValue(necromancerUnlocked));
         JsonValue upgrades = new JsonValue(JsonValue.ValueType.object);
         for (PermanentAttribute attribute : PermanentAttribute.values())
             upgrades.addChild(attribute.name(), new JsonValue((long) rank(attribute)));
@@ -98,6 +122,8 @@ public final class CampaignProfile {
         if (!root.isObject()) throw new IllegalArgumentException("Invalid profile");
         if (nonnegative(root, "version") != 1) throw new UnsupportedVersion();
         CampaignProfile profile = new CampaignProfile();
+        profile.characterId = root.has("characterId") ? RunReport.string(root, "characterId") : "";
+        if (!profile.characterId.isEmpty()) java.util.UUID.fromString(profile.characterId);
         // Existing version-one saves predate materials and remain readable.
         profile.forgeMaterials = root.has("forgeMaterials") ? nonnegative(root, "forgeMaterials") : 0;
         if (root.has("claimedMaterialRegions")) {
@@ -111,11 +137,25 @@ public final class CampaignProfile {
             // Old material saves only had the Submundo and did not record origins.
             profile.claimedMaterialRegions.add(RegionDefinition.PROTOTYPE_ID);
         }
+        if (root.has("weaponRarity")) {
+            JsonValue rarity = root.require("weaponRarity");
+            if (!rarity.isString()) throw new IllegalArgumentException("Invalid weapon rarity");
+            profile.weaponRarity = WeaponRarity.valueOf(rarity.asString());
+        } else if (root.has("claimedMaterialRegions") && profile.claimedMaterialRegions.size() > profile.forgeMaterials) {
+            // Previous builds recorded collected regions and stock: a spent fragment means a forge.
+            profile.weaponRarity = WeaponRarity.RARE;
+        }
         profile.obols = nonnegative(root, "obols"); profile.attempts = nonnegative(root, "attempts");
         profile.deaths = nonnegative(root, "deaths"); profile.victories = nonnegative(root, "victories");
         if ((long) profile.deaths + profile.victories > profile.attempts) throw new IllegalArgumentException("Invalid return counts");
         profile.profession = Profession.valueOf(root.getString("profession"));
+        profile.difficulty = root.has("difficulty") ? GameDifficulty.valueOf(RunReport.string(root, "difficulty")) : GameDifficulty.MEDIUM;
         profile.professionChosen = root.getBoolean("professionChosen");
+        if (root.has("necromancerUnlocked")) {
+            JsonValue flag = root.require("necromancerUnlocked");
+            if (!flag.isBoolean()) throw new IllegalArgumentException("Invalid legendary unlock");
+            profile.necromancerUnlocked = flag.asBoolean();
+        }
         JsonValue attributes = root.require("attributes"), flags = root.require("events");
         if (!attributes.isObject() || !flags.isArray()) throw new IllegalArgumentException("Invalid profile fields");
         for (PermanentAttribute attribute : PermanentAttribute.values()) {

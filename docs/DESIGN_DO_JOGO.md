@@ -18,10 +18,25 @@ playtests. Este documento descreve a campanha planejada, ainda em desenvolviment
 | Tom | Sátira, humor leve e ação frequente |
 | Estrutura de tentativa | Percorrer a jornada inteira, com duração aproximada de 30–40 minutos |
 | Morte | Reiniciar a jornada, preservando avanços de história e desbloqueios |
+| Melhoria da forja | Permanente no personagem, incluindo raridade, bônus e poder após morte e entre runs |
 | Material da forja | Uma unidade por andar/região por save; estoque e região premiada persistem entre runs |
 | Profissão com muita sorte | Usa somente socos; sorte favorece drops, eventos e dádivas superiores |
 | Categorias de dádivas | Comum, Rara, Épica e Mitológica conforme a força dos efeitos |
 | Explicação do retorno | Zeus amaldiçoa o protagonista para prolongar o sofrimento; ele aproveita o retorno após a morte para continuar a busca |
+| Dificuldade do personagem | Fácil, Média ou Difícil, escolhida e fixada na criação do save; maior desafio dá melhores recompensas |
+| Nova profissão Épica | Fazendeiro: ancinho em estocada e troca para foice com corte circular completo |
+| Acesso ao Fazendeiro | Desafio de NPC com probabilidade de encontro por run |
+| Dádivas por andar | Mais opções gerais e ao menos uma exclusiva de cada região |
+| Apresentação | HUD essencial com barra de XP, nova tipografia, diálogos com retratos, sprites/animações próprios para classes, inimigos e poderes |
+
+Essas novas direções foram confirmadas em 13/10/2026. O M1 foi implementado
+em 14/10/2026: HUD essencial, visibilidade sonora do Carrasco, revisão do Guardião
+e métricas do encontro. O M2 também está implementado: dificuldade fixa e moedas
+por modo. M3–M7 continuam planejados.
+A dificuldade fixa e o desbloqueio por NPC foram esclarecidos pelo autor.
+Multiplicadores iniciais estão em [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
+Conteúdo da missão, efeitos e direção artística final continuam
+propostos no [roteiro de melhorias](ROTEIRO_DE_MELHORIAS.md).
 
 Os 30–40 minutos são uma meta para uma tentativa bem-sucedida. Tentativas que
 terminam em morte podem ser curtas. Conversas opcionais, pausa e escolhas podem
@@ -77,14 +92,16 @@ exato ainda será discutido.
 | Vida e estado de combate | Mantidos; descanso pode oferecer recuperação | Reiniciados conforme os atributos iniciais |
 | Itens temporários e consumíveis | Mantidos | Reiniciados |
 | Moeda para compras da tentativa | Mantida | Reiniciada; regra exata ainda a definir |
-| Profissão e arma inicial | Fixas para o save | Mantidas; outra profissão exige outro save |
+| Profissão e arma inicial | Fixas para o save; Fazendeiro poderá alternar suas duas ferramentas | Mantidas; outra profissão exige outro save |
+| Dificuldade implementada | Fixa para o save, sem troca no meio da tentativa | Mantida; personagens antigos assumem Média |
+| Desafio do NPC do Fazendeiro | Condições ainda propostas; progresso deverá ter regra de persistência explícita | Desbloqueio concedido é permanente; persistência da missão incompleta a confirmar |
 | Armas futuras desbloqueadas | Disponíveis conforme as regras da profissão | Permanecem disponíveis; catálogo e regras ainda a definir |
 | Informações e eventos de história | Mantidos | Permanecem registrados |
 | Óbolos e atributos comprados no refúgio | Atributos mantidos; Óbolos da travessia guardados no retorno | Saldo e compras preservados |
 | Relações e encontros com NPCs | Atualizados pelos eventos | Memória dos encontros preservada |
 | Fragmentos de Forja | Guardados imediatamente no save | Mantidos até gastar |
 | Região que já concedeu fragmento | Bloqueada no save | Continua bloqueada mesmo após gastar; outra região tem limite próprio |
-| Raridade/poder da arma forjada | Mantidos | Reiniciados para Comum |
+| Raridade/poder da arma forjada | Mantidos | Mantidos permanentemente no save |
 | Arena e caminho em andamento | A tentativa continua | A travessia começa novamente |
 
 O autor confirmou atributos permanentes comprados no refúgio, separados das
@@ -128,7 +145,8 @@ incluindo Zeus. Esse recorte é uma proposta de escopo, ainda sujeita à discuss
 - Inimigos devem contornar estruturas para continuar perseguindo o jogador.
 - Na criação de um save, o narrador pergunta a profissão uma única vez. Ela muda
   a arma e as bases de atributos: arco, espada, pistola ou socos no protótipo. Outra
-  profissão exige outro save. Caçador, Ferreiro, Vigilante e Apostador são nomes provisórios.
+  profissão exige outro save. Caçador, Ferreiro, Vigilante, Apostador, Feiticeira, Sacerdote, Necromante e Guerreiro
+  são profissões implementadas com nomes/valores provisórios.
 - O Apostador luta com socos em um alvo e tem sorte elevada. O protótipo usa 4×,
   favorecendo material, encontro com ferreiro e categorias superiores de dádivas.
 - Dádivas têm categorias Comum, Rara, Épica e Mitológica conforme seu poder, com
@@ -168,7 +186,7 @@ com detalhes opcionais para quem quiser explorar mais a história.
 
 O autor pediu diferenças de gameplay entre runs para sustentar a vontade de
 repetir. O encontro com o Ferreiro Errante foi implementado: 3% base por tentativa,
-material persistente com 1,5% base por mini-boss e forja temporária. O mini-boss
+material persistente com 1,5% base por mini-boss e forja permanente. O mini-boss
 tem giro e pedras, sem ataque de movimento, entre hordas. O limite é um fragmento
 por região por save, mesmo após gastar, morrer ou repetir a região.
 O Apostador tem sorte 4× e dádivas superiores mais frequentes; a seleção por
@@ -176,17 +194,23 @@ categorias já cria diferenças entre runs. Regras:
 [FERREIRO_E_MINI_BOSS.md](FERREIRO_E_MINI_BOSS.md) e
 [SORTE_E_RARIDADE.md](SORTE_E_RARIDADE.md).
 
+Cinzas oferece um baú de recuperação/moeda; Sombras oferece uma dádiva extra
+Rara ou superior. Cada sala sorteia um evento de hordas, mantido ao reabrir a rota
+e apresentado antes da entrada. O protótipo registra a forja permanentemente no save.
+Regras: [ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md).
+
 Os sistemas abaixo permanecem como propostas de conteúdo:
 
 - Encontros sorteados com NPCs, escolhas e efeitos no caminho ou nas recompensas.
-- Rotas com recompensas próprias: arriscar por uma dádiva, suprimento ou moeda.
-- Modificadores de arena e inimigos de elite que exigem mudar o posicionamento.
+- Ampliar as recompensas e desafios próprios das rotas, a partir de Cinzas e Sombras.
+- Ampliar os eventos de hordas com modificadores de arena e inimigos de elite que
+  exijam mudar o posicionamento.
 - Sinergias e condições nas dádivas que favoreçam construções diferentes dentro
   da mesma profissão, já que ela permanece fixa para o personagem.
 - Eventos narrativos que abram novas possibilidades conforme o progresso do save.
 
-Priorizar um encontro e recompensas distintas nas rotas da primeira região,
-testar se mudam decisões e só então ampliar o catálogo. Variedade precisa oferecer
+Testar se o encontro com o ferreiro, as recompensas distintas e os eventos mudam
+as decisões na primeira região e só então ampliar o catálogo. Variedade precisa oferecer
 escolhas com consequências; trocar cores ou aumentar números tem alcance limitado.
 
 ## Direção narrativa proposta
@@ -274,29 +298,47 @@ Critérios de conclusão:
 - [x] Escolher profissão uma única vez por save e manter personagens independentes.
 - [x] Aplicar bônus percentuais às bases das profissões, ímã de XP e escala linear dos inimigos.
 - [x] Oferecer socos com sorte elevada, raridades de dádivas e limite regional persistente de material.
+- [x] Introduzir Feiticeira, Sacerdote, Necromante lendário e Guerreiro com defesa/revide.
+- [x] Combinar choque, queimadura, impacto e aura com recargas próprias.
+- [x] Introduzir Arqueiro do Estige com aviso de mira fixa, flechas bloqueáveis e XP/Almas próprios.
+- [ ] Validar leitura e equilíbrio do inimigo à distância nas oito profissões em travessias completas.
+- [x] Gerar Fúria dos Deuses por farming após a saída liberada, com aviso e escala pela build.
+- [ ] Validar ao menos três combinações viáveis e economia do desbloqueio lendário em partidas completas.
 - [x] Atravessar arenas com objetivos e saídas claramente apresentados no protótipo.
 - [x] Escolher entre acesso direto ao chefe e combates opcionais com metas e intensidade diferentes.
-- [ ] Acrescentar recompensas próprias e desafios opcionais às rotas.
+- [x] Acrescentar recompensas próprias às rotas: baú em Cinzas e dádiva Rara ou superior em Sombras.
+- [x] Variar a composição das hordas por tentativa e anunciar os eventos na escolha de caminho.
+- [ ] Ampliar desafios opcionais e validar o valor de cada rota em playtests.
 - [x] Preservar vida, XP, nível, dádivas, estamina e recargas ao mudar de arena.
 - [ ] Introduzir inventário temporário e preservá-lo nas transições.
-- [x] Interagir com Caronte e o Ferreiro Errante, com presente, eventos e melhoria temporária da arma.
+- [x] Interagir com Caronte e o Ferreiro Errante, com presente, eventos e melhoria permanente da arma.
 - [x] Enfrentar um chefe com ataques sinalizados e vitória por derrota do chefe no protótipo.
 - [x] Morrer, retornar ao refúgio e iniciar outra tentativa com o estado temporário limpo.
 - [x] Preservar uma compra permanente e eventos de Caronte após morrer e após fechar o jogo.
 - [x] Oferecer baús aleatórios com suprimentos durante a tentativa.
-- [ ] Conseguir jogar a travessia inteira, incluindo retorno, em testes manuais.
+- [x] Receber o primeiro parecer do autor em partidas práticas.
+- [ ] Validar a travessia inteira na matriz de profissões, dificuldades e progressão.
+- [x] Aplicar o HUD essencial, regra sonora de visibilidade e ajuste do Guardião.
+- [ ] Validar a dificuldade/ritmo do Guardião revisado em partidas completas.
+- [ ] Incorporar Fazendeiro/NPC de desafio, dádiva regional e novas compras do altar.
+- [ ] Revisar tipografia, conversas, sprites e animações da região completa.
 
 ## Ordem de implementação
 
+Ordem revisada após os playtests de 13/10/2026. A base funcional das etapas
+anteriores permanece registrada no plano de lançamento; os próximos marcos são:
+
 | Etapa | Entrega | Verificação principal |
 | --- | --- | --- |
-| 1 — implementada | Separar o estado da tentativa da tela de combate e definir arenas/regiões | Transições preservam atributos e poderes, sem manter recursos gráficos descartados |
-| 2 — protótipo implementado | Introduzir hordas contínuas, metas de abate e escolha de destino | Completar uma arena libera as opções previstas; a tentativa continua |
-| 3 — protótipo implementado | Adicionar chefe da primeira região | Guardião com três padrões sinalizados, segunda fase e vitória por derrota; compreensão e dificuldade ainda exigem playtests |
-| 4 — protótipo parcial | Adicionar refúgio, NPCs e eventos narrativos | Refúgio/Caronte e encontro raro com Ferreiro Errante; material persistente e forja temporária; outros encontros pendentes |
-| 5 — protótipo implementado | Adicionar perfil persistente e retorno após a morte | Óbolos, atributos e eventos salvos; nova tentativa limpa dádivas e XP |
-| 6 | Completar áudio, arte e ajuste de ritmo da região | Playtests da travessia mostram objetivos claros e vontade de repetir |
-| 7 | Expandir o conteúdo para as próximas regiões e Zeus | Uma tentativa completa chega ao desfecho dentro da duração pretendida |
+| M1 — implementado; playtests pendentes | HUD essencial, áudio do mini-boss e chefe mais exigente | Barra de XP/Tab, visibilidade por máscara/câmera, padrões variados e novas métricas |
+| M2 — implementado; playtests pendentes | Três dificuldades fixas por save | Migração para Média, moedas fracionárias e modos distintos; 222 testes/OpenGL |
+| M3 | Base visual e conversa piloto | Fonte, atlas, animações e diálogo de Caronte revisados |
+| M4 | Catálogo de dádivas e altar | Seis gerais + uma regional e três compras como primeiro lote proposto |
+| M5 | Desafio de NPC e Fazendeiro Épico | Encontro por run, progresso/recompensa persistentes e duas ferramentas úteis |
+| M6 | Arte de toda a primeira região | Classes/inimigos distintos, VFX por sprites e direção suave |
+| M7 | Fechar região e preparar expansão | Variedade/narrativa, playtests, produção das regiões seguintes e Zeus |
+
+Critérios completos e decisões ainda abertas: [ROTEIRO_DE_MELHORIAS.md](ROTEIRO_DE_MELHORIAS.md).
 
 O estado da tentativa será responsável por nível, poderes, inventário e caminho
 atual. O perfil persistente guardará desbloqueios e eventos narrativos. Cada arena
@@ -306,7 +348,18 @@ Salvar para interromper e retomar uma tentativa é uma funcionalidade proposta,
 separada da regra de morte. Definir quando e como o jogo será salvo antes de
 implementá-la; morrer deve concluir a tentativa em andamento.
 
+O Arqueiro do Estige acrescenta pressão à distância às hordas, preservando as
+metas de comuns, rápidos e tanks. Regras e matriz de partidas das oito profissões:
+[ARQUEIRO_DO_ESTIGE.md](ARQUEIRO_DO_ESTIGE.md). A verificação automática já passou;
+os testes manuais de equilíbrio continuam pendentes.
+
 ## Decisões ainda abertas
+
+- Ajustes dos multiplicadores iniciais após partidas; regras implementadas no M2.
+- Identidade/chance do NPC, condições/persistência do desafio e escopo compartilhado do acesso ao Fazendeiro.
+- Bases, alcance, recarga de troca e poder de forja de ancinho/foice.
+- Novas dádivas gerais/regionais e limites/preços do altar.
+- Estilo/fontes do piloto visual e custo das animações direcionais.
 
 - Condições da maldição, impedimento para Zeus revogá-la e seu estado após o resgate.
 - Função do item ou poder buscado no submundo.
@@ -324,7 +377,7 @@ arenas conectadas, profissões, armas, metas de abate, seleção de destino e co
 com o Guardião do Tártaro. As definições das arenas estão em JSON;
 a [documentação técnica](CAMPANHA_TECNICA.md) explica como ampliar o percurso.
 
-O Guardião é um chefe provisório com três padrões sinalizados e segunda fase;
+O Guardião é um chefe provisório com quatro padrões sinalizados e segunda fase;
 sua identidade final continua aberta. As regras estão em [CHEFE_DO_SUBMUNDO.md](CHEFE_DO_SUBMUNDO.md).
 Os nomes e metas das arenas são provisórios; a fase não termina por tempo.
 Refúgio, Caronte, loja de atributos permanentes, baús e perfil salvo foram
@@ -333,8 +386,23 @@ percentuais estão em [BALANCEAMENTO_E_SAVES.md](BALANCEAMENTO_E_SAVES.md).
 Ferreiro, mini-boss, forja, limite por região, quarto save, Apostador e categorias
 ponderadas de dádivas foram acrescentados. Sorte e probabilidades estão em
 [SORTE_E_RARIDADE.md](SORTE_E_RARIDADE.md). Outros encontros, inventário geral
-e novas formas de variar as tentativas continuam planejados;
-a primeira região completa ainda não foi entregue.
+e novas formas de variar as tentativas continuam planejados. Recompensas próprias
+nas rotas, eventos de hordas e forja permanente já estão em
+[ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md);
+Novas classes, sinergias e Fúria dos Deuses estão em
+[CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md).
+A primeira região tem áudio/feedback provisórios com volumes persistentes.
+Ainda precisa de revisão sonora, arte e playtests. Origem e critérios:
+[AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
 
 Os requisitos de qualidade e publicação permanecem no
 [plano de lançamento](PLANO_DE_LANCAMENTO.md).
+
+## Resumo e progressão compartilhada implementados
+
+O Necromante passou a custar **1.000 Almas** de um saldo compartilhado entre os
+oito saves, conforme decisão de 12/10/2026. Óbolos, atributos, arma e materiais
+continuam pessoais. Ganhos por derrotas são guardados ao retornar; acessos lendários
+antigos são preservados. O resumo por R mostra salas, poderes, dano efetivo,
+causa da morte e moedas, com histórico recente para orientar playtests.
+Regras e valores: [ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).

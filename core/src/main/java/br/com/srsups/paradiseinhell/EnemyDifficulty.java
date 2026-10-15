@@ -4,7 +4,7 @@ package br.com.srsups.paradiseinhell;
 public record EnemyDifficulty(float healthMultiplier, float damageMultiplier) {
     public static final EnemyDifficulty BASE = new EnemyDifficulty(1, 1);
     public EnemyDifficulty {
-        if (!Float.isFinite(healthMultiplier) || !Float.isFinite(damageMultiplier) || healthMultiplier < 1 || damageMultiplier < 1)
+        if (!Float.isFinite(healthMultiplier) || !Float.isFinite(damageMultiplier) || healthMultiplier <= 0 || damageMultiplier <= 0)
             throw new IllegalArgumentException("Invalid difficulty");
     }
     public static EnemyDifficulty at(float elapsedSeconds, float roomDifficultySeconds) {

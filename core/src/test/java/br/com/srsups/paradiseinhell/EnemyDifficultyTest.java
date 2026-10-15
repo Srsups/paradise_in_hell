@@ -28,7 +28,7 @@ class EnemyDifficultyTest {
     }
     @Test void bossUsesScaledHealthPhaseThresholdAndAttackDamage() {
         BossEncounter boss = new BossEncounter(EnemyDifficulty.at(600, 60));
-        assertEquals(420 * 1.72f, boss.maxHealth(), 0.0001f);
+        assertEquals(BossEncounter.MAX_HEALTH * 1.72f, boss.maxHealth(), 0.0001f);
         boss.hurt(boss.maxHealth() / 2); assertTrue(boss.enraged());
         for (int frame = 0; frame < 300 && boss.state() != BossEncounter.State.ACTIVE; frame++) boss.update(0.01f, 120, 80);
         assertEquals(28 * 1.36f, boss.update(0.02f, 120, 80), 0.0001f);

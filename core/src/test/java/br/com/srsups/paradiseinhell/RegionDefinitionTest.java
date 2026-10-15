@@ -22,7 +22,12 @@ class RegionDefinitionTest {
             for (String branch : region.arena(region.start()).exits()) {
                 RunSession run = RunSession.campaign(region);
                 meetGoals(run); run.enterArena(branch);
-                if (run.arena().kind() == ArenaDefinition.Kind.COMBAT) { meetGoals(run); run.enterArena("portoes"); }
+                if (run.arena().kind() == ArenaDefinition.Kind.COMBAT) {
+                    meetGoals(run);
+                    if (run.arena().reward() == ArenaReward.RECOVERY_CHEST) run.claimRecoveryReward(false);
+                    else if (run.arena().reward() == ArenaReward.RARE_BOON) run.claimBoonReward(run.arenaRewardChoices().get(0));
+                    run.enterArena("portoes");
+                }
                 assertEquals(ArenaDefinition.Kind.BOSS_ROOM, run.arena().kind());
                 assertFalse(run.progress().won(), "Access alone is not boss victory");
             }

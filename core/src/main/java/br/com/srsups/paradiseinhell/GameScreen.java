@@ -23,6 +23,11 @@ public class GameScreen extends ScreenAdapter {
     private State state = State.PLAYING, beforePause = State.PLAYING;
     private final RunSession session;
     private final PlayerState stats;
+    private final BoonPanel boonPanel;
+    private final AudioPanel audioPanel;
+    private final CombatFeedback feedback;
+    private final ChoiceInputGuard choiceGuard = new ChoiceInputGuard();
+    private SpriteHitbox[] miniHitboxes;
     private final RunProgress progress;
     private final FitViewport world = new FitViewport(480, 270);
     private final FitViewport hud = new FitViewport(960, 540);
@@ -48,9 +53,14 @@ public class GameScreen extends ScreenAdapter {
     private float spawnTimer, slashTimer, slashAngle, slashX, slashY;
     private boolean leavingArena;
     private MiniBossEncounter miniBoss;
+    private Vector2 exitBeacon;
+    private float exitNoticeTimer;
     private float miniHitCooldown, miniTime, encounterFeedbackTimer;
     private String encounterFeedback = "";
     private EnemyNavigation navigation;
+    private final CombatEffects effects;
+    private final List<CombatTarget> targets = new ArrayList<>();
+    private final java.util.Random combatRandom = new java.util.Random();
     private final EnemyWaves waves = new EnemyWaves();
     private final java.util.Random boonRandom = new java.util.Random();
     private boolean disposed;
@@ -60,6 +70,9 @@ public class GameScreen extends ScreenAdapter {
         this.session = session;
         game.profiles().prepareRun(session);
         this.stats = session.player();
+        audioPanel=new AudioPanel(game);feedback=new CombatFeedback(game.audio());
+        effects=new CombatEffects(session.statistics());
+        this.boonPanel = new BoonPanel(session);
         this.progress = session.progress();
     }
 
@@ -71,11 +84,13 @@ public class GameScreen extends ScreenAdapter {
         atlas = new Texture(Art.ATLAS);
         atlas.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         map = new TileMap(atlas);
+        miniHitboxes = new SpriteHitbox[]{Art.hitbox(Art.cell(atlas, 2, 1)), Art.hitbox(Art.cell(atlas, 3, 1))};
         player = new Jogador(100, 100, atlas, stats, this::attack);
         map.gerarAreaInicialSegura(player.x, player.y, 5);
         followPlayer();
         navigation = new EnemyNavigation(map::ehSolido);
         navigation.update(0, player.x + 8, player.y + 8);
+        session.necromancy().enterRoom(player.x + 8, player.y + 8);
     }
     @Override public void resize(int width, int height) {
         world.update(width, height);
@@ -88,6 +103,19 @@ public class GameScreen extends ScreenAdapter {
     }
     @Override public void render(float delta) {
         if (disposed) return;
+        boolean audioWasOpen=audioPanel.open();
+        if(audioWasOpen)audioPanel.input(hud.unproject(new Vector2(Gdx.input.getX(),Gdx.input.getY())));
+        else if(!boonPanel.open() && Gdx.input.isKeyJustPressed(Input.Keys.O))audioPanel.toggle();
+        if(audioWasOpen || audioPanel.open()){draw();return;}
+        float uiDelta = delta;
+        boolean panelWasOpen = boonPanel.open();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) boonPanel.toggle();
+        else if (boonPanel.open() && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) boonPanel.close();
+        if (boonPanel.open()) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) boonPanel.movePage(-1);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) boonPanel.movePage(1);
+        }
+        if (panelWasOpen || boonPanel.open()) { draw(); return; }
         // Avoid large simulation jumps after dragging the window or a debugger stop.
         delta = Math.min(delta, 0.05f);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -100,7 +128,7 @@ public class GameScreen extends ScreenAdapter {
                         && (Gdx.input.isKeyJustPressed(Input.Keys.E) || Gdx.input.isKeyJustPressed(Input.Keys.ENTER))) prepareExit();
                 else updatePlaying(delta);
             }
-            case LEVEL_UP -> updateChoices();
+            case LEVEL_UP -> updateChoices(uiDelta);
             case PAUSED -> {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                     game.finishRun(session, RunOutcome.ABANDONED);
@@ -113,20 +141,36 @@ public class GameScreen extends ScreenAdapter {
     }
     private void updatePlaying(float delta) {
         session.advance(delta);
+        boolean exitWasOpen=session.arenaComplete();
+        feedback.advance(delta);
         miniTime += delta; miniHitCooldown = Math.max(0, miniHitCooldown - delta);
         encounterFeedbackTimer = Math.max(0, encounterFeedbackTimer - delta);
+        exitNoticeTimer=Math.max(0,exitNoticeTimer-delta);
         slashTimer = Math.max(0, slashTimer - delta);
+        refreshTargets();
+        effects.update(delta);
+        Vector2 guardAim = world.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        stats.setGuard(Gdx.input.isButtonPressed(Input.Buttons.RIGHT), guardAim.x - player.x - 8, guardAim.y - player.y - 8);
+        boolean wasDashing=stats.isDashing();float beforeX=player.x+8,beforeY=player.y+8;
         player.update(delta, map);
+        feedback.dash(stats.getWeapon(),beforeX,beforeY,player.x+8,player.y+8,!wasDashing && stats.isDashing(),stats.isDashing());
         followPlayer();
         navigation.update(delta, player.x + 8, player.y + 8);
-        for (Inimigo enemy : enemies) enemy.update(delta, navigation);
-        for (Projetil projectile : projectiles) projectile.update(delta, map);
+        for (Inimigo enemy : enemies) {
+            boolean aiming=enemy.isArcher() && enemy.archer().phase()==ArcherAttack.Phase.AIMING;
+            enemy.update(delta,navigation,archerVisible(enemy));
+            if(enemy.isArcher() && !aiming && enemy.archer().phase()==ArcherAttack.Phase.AIMING)game.audio().play(SoundCue.ARCHER_WARNING);
+        }
+        for (Projetil projectile : projectiles) {
+            projectile.update(delta,map);
+            if(!projectile.deveSerRemovido)feedback.trail(stats.getWeapon(),projectile.x,projectile.y,projectile.beforeX,projectile.beforeY);
+        }
 
         for (Projetil projectile : projectiles) {
             if (projectile.deveSerRemovido) continue;
             for (Inimigo enemy : enemies) {
-                if (!enemy.estaMorto() && projectile.canHit(enemy) && overlaps(projectile.x - 3, projectile.y - 3, 6, enemy.x, enemy.y, 16)) {
-                    enemy.sofrerDano(projectile.dano);
+                if (!enemy.estaMorto() && projectile.canHit(enemy) && enemy.hitbox().sweptHits(projectile.beforeX, projectile.beforeY, projectile.x, projectile.y, projectile.hitRadius())) {
+                    weaponHit(enemy, projectile.dano);
                     damageNumbers.add(new DamageNumber(CombatNumbers.format(projectile.dano), enemy.x + 8, enemy.y + 16));
                     projectile.hit(enemy);
                     redirectRicochet(projectile);
@@ -134,8 +178,8 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
             if (!projectile.deveSerRemovido && miniBoss != null && !miniBoss.defeated() && projectile.canHit(miniBoss)
-                && overlaps(projectile.x - 3, projectile.y - 3, 6, miniBoss.x - 4, miniBoss.y - 4, 24)) {
-                miniBoss.hurt(projectile.dano);
+                && miniHitbox().sweptHits(projectile.beforeX, projectile.beforeY, projectile.x, projectile.y, projectile.hitRadius())) {
+                weaponHit(miniBoss, projectile.dano);
                 damageNumbers.add(new DamageNumber(CombatNumbers.format(projectile.dano), miniBoss.centerX(), miniBoss.centerY() + 22));
                 projectile.hit(miniBoss); redirectRicochet(projectile);
             }
@@ -144,21 +188,28 @@ public class GameScreen extends ScreenAdapter {
         if (stats.possuiAura()) {
             for (Inimigo enemy : enemies) {
                 if (Vector2.dst2(player.x, player.y, enemy.x, enemy.y) < stats.getRaioAura() * stats.getRaioAura()) {
-                    enemy.sofrerDano(stats.getDanoAura() * delta);
+                    session.statistics().deal(enemy,stats.getDanoAura() * delta,DamageSource.AURA);
+                    effects.onHit(stats, enemy, targets, player.x + 8, player.y + 8, navigation::clearLine, false);
                 }
             }
         }
         if (miniBoss != null && stats.possuiAura()) {
             float radius = stats.getRaioAura() + MiniBossEncounter.BODY_RADIUS;
-            if (Vector2.dst2(player.x + 8, player.y + 8, miniBoss.centerX(), miniBoss.centerY()) <= radius * radius)
-                miniBoss.hurt(stats.getDanoAura() * delta);
+            if (Vector2.dst2(player.x + 8, player.y + 8, miniBoss.centerX(), miniBoss.centerY()) <= radius * radius) {
+                session.statistics().deal(miniBoss,stats.getDanoAura() * delta,DamageSource.AURA);
+                effects.onHit(stats, miniBoss, targets, player.x + 8, player.y + 8, navigation::clearLine, false);
+            }
         }
+        session.necromancy().update(delta, player.x + 8, player.y + 8, targets, map::ehSolido, navigation::clearLine);
         if (miniBoss != null && miniBoss.defeated()) {
-            orbs.add(new OrbeXP(miniBoss.x, miniBoss.y, Art.cell(atlas, 1, 3), MiniBossEncounter.XP));
+            game.audio().stopEmitter(miniBoss);
+            session.necromancy().resurrect(stats, miniBoss);
+            effects.forget(miniBoss);
+            orbs.add(new OrbeXP(miniBoss.x, miniBoss.y, Art.cell(atlas, 1, 3), session.xpDrop(MiniBossEncounter.XP)));
             boolean dropped = session.recordMiniBossDefeat();
             if (dropped) dropped = game.profiles().collectForgeMaterials(session) > 0;
             encounterFeedback = dropped ? "Fragmento de Forja obtido e guardado no save!"
-                : "Mini-boss derrotado: +20 XP.";
+                : "Mini-boss derrotado: cristal de XP disponível.";
             encounterFeedbackTimer = 4;
             stats.curar(stats.getCuraPorAbate()); miniBoss = null;
         }
@@ -166,27 +217,50 @@ public class GameScreen extends ScreenAdapter {
         while (enemyIterator.hasNext()) {
             Inimigo enemy = enemyIterator.next();
             if (enemy.estaMorto()) {
-                orbs.add(new OrbeXP(enemy.x, enemy.y, Art.cell(atlas, 1, 3), enemy.getXpDrop()));
-                session.recordKill(enemy.getType());
+                session.necromancy().resurrect(stats, enemy);
+                effects.forget(enemy);
+                orbs.add(new OrbeXP(enemy.x, enemy.y, Art.cell(atlas, 1, 3), session.xpDrop(enemy.getXpDrop())));
+                session.recordKill(enemy.getType(), enemy.getSoulDrop());
                 stats.curar(stats.getCuraPorAbate());
+                enemy.dispose();
                 enemyIterator.remove();
             } else if (Vector2.dst2(player.x, player.y, enemy.x, enemy.y) > 900 * 900) {
+                effects.forget(enemy);
+                enemy.dispose();
                 enemyIterator.remove();
             }
         }
+        if(!session.isDemo() && !exitWasOpen && session.arenaComplete()) {
+            game.audio().play(SoundCue.PASSAGE);exitNoticeTimer=3.5f;
+        }
+        updateExitBeacon();
         // Resolve defeated enemies first, then contact damage, so healing cannot undo a death.
         for (Inimigo enemy : enemies) {
-            if (overlaps(player.x, player.y, 16, enemy.x, enemy.y, 16) && enemy.podeAtacar()) {
-                stats.sofrerDano(enemy.getDano());
+            if (player.hitbox().overlaps(enemy.hitbox()) && enemy.podeAtacar()) {
+                receiveHit(new CombatHit(enemy.getDano(), enemy.centerX(), enemy.centerY(), CombatHit.Kind.CONTACT,enemy.displayName()+" (contato)"), enemy);
                 enemy.resetarCooldownAtaque();
             }
         }
+        // Resolve arrows only from living enemies, after player attacks and death cleanup.
+        for (Inimigo enemy : enemies) {
+            if (!enemy.isArcher() || enemy.estaMorto()) continue;
+            for (CombatHit hit : enemy.archer().advanceArrows(delta, navigation, player.hitbox()::sweptHits))
+                receiveHit(hit, enemy);
+        }
         if (miniBoss != null) {
-            float miniDamage = miniBoss.update(delta, player.x + 8, player.y + 8, navigation);
-            if (miniDamage > 0 && miniHitCooldown == 0) { stats.sofrerDano(miniDamage); miniHitCooldown = 0.35f; }
+            MiniBossEncounter.State beforeState=miniBoss.state();
+            float miniDamage = miniBoss.update(delta, player.x + 8, player.y + 8, navigation, player.hitbox().overlaps(miniHitbox()));
+            if(!miniBossVisible()) game.audio().stopEmitter(miniBoss);
+            else if(beforeState!=MiniBossEncounter.State.TELEGRAPH && miniBoss.state()==MiniBossEncounter.State.TELEGRAPH)
+                game.audio().play(SoundCue.BOSS_WARNING,miniBoss);
+            if (miniDamage > 0 && miniHitCooldown == 0) {
+                CombatDefense.resolve(stats, miniBoss.hits(), player.x + 8, player.y + 8, miniBoss, combatRandom,session.statistics(),
+                    (hit,blocked,actual,counter)->feedback.receive(hit,blocked,actual,counter,stats.getWeapon(),player.x+8,player.y+8,miniBoss.centerX(),miniBoss.centerY()));
+                miniHitCooldown = 0.35f;
+            }
         }
         if (stats.estaMorto()) {
-            if (stats.possuiRessurreicao()) stats.usarRessurreicao();
+            if (stats.possuiRessurreicao()) {stats.usarRessurreicao();feedback.resurrect(player.x+8,player.y+8);}
             else { finish(false); return; }
         }
         if (progress.won()) { finish(true); return; }
@@ -199,6 +273,7 @@ public class GameScreen extends ScreenAdapter {
             orb.x = motion.x() - 3; orb.y = motion.y() - 3;
             if (motion.collected()) {
                 stats.ganharXP(orb.valorXP);
+                feedback.xp(orb.x+3,orb.y+3);
                 orbIterator.remove();
             } else if (Vector2.dst2(player.x + 8, player.y + 8, orb.x + 3, orb.y + 3) > 900 * 900) orbIterator.remove();
         }
@@ -208,16 +283,64 @@ public class GameScreen extends ScreenAdapter {
         spawnTimer += delta;
         while (spawnTimer >= session.spawnInterval()) {
             spawnTimer -= session.spawnInterval();
-            for (EnemyType type : waves.next(session.waveSize(), session.difficultyTime(), !session.isDemo())) {
+            int activeArchers = (int) enemies.stream().filter(Inimigo::isArcher).count(), waveArchers = 0;
+            for (EnemyType type : waves.next(session.waveSize(), session.difficultyTime(), !session.isDemo(), session.variation(),
+                    (int) enemies.stream().filter(enemy -> enemy.getType() == EnemyType.FAST).count())) {
                 // Bound simultaneous simulation work, never total enemies generated for the phase.
                 if (enemies.size() >= 160) break;
                 Inimigo enemy = EnemySpawner.spawnInimigoForaDaTela((OrthographicCamera) world.getCamera(), atlas, map, type, navigation);
-                if (enemy != null) { enemy.applyDifficulty(session.enemyDifficulty()); enemies.add(enemy); }
+                if (enemy != null) {
+                    if (waves.archer(type, progress.elapsed(), !session.isDemo(), activeArchers, waveArchers)) {
+                        enemy.configureArcher(); activeArchers++; waveArchers++;
+                    }
+                    enemy.applyDifficulty(session.enemyDifficulty()); enemies.add(enemy);
+                }
             }
         }
         spawnMiniBoss();
         updateChests(delta);
         if (stats.podeSubirDeNivel()) iniciarLevelUp();
+    }
+    private boolean miniBossVisible() {
+        return miniBoss!=null && VisibleArea.sprite(world,miniHitbox());
+    }
+    private void updateExitBeacon() {
+        if(session.isDemo() || !session.arenaComplete() || exitBeacon!=null) return;
+        for(int i=0;i<16;i++) {
+            float angle=i*(float)Math.PI/8;
+            float x=player.x+8+(float)Math.cos(angle)*64,y=player.y+8+(float)Math.sin(angle)*48;
+            if(navigation.canOccupy(x,y) && navigation.reachable(x,y)) {exitBeacon=new Vector2(x,y);return;}
+        }
+    }
+    private void drawExitBeacon() {
+        if(exitBeacon==null) return;
+        shapes.setProjectionMatrix(world.getCamera().combined);
+        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(Color.GOLD);
+        float radius=12+(float)Math.sin(progress.elapsed()*3)*1.5f;
+        shapes.circle(exitBeacon.x,exitBeacon.y,radius,24);
+        shapes.rect(exitBeacon.x-5,exitBeacon.y-7,10,14);shapes.end();
+        batch.begin();font.getData().setScale(.7f);font.setColor(Color.GOLD);
+        font.draw(batch,"E",exitBeacon.x-3,exitBeacon.y+24);
+        font.setColor(Color.WHITE);batch.end();
+    }
+    private boolean archerVisible(Inimigo enemy) {
+        return Math.abs(enemy.centerX() - world.getCamera().position.x) < world.getWorldWidth() / 2 - 20
+            && Math.abs(enemy.centerY() - world.getCamera().position.y) < world.getWorldHeight() / 2 - 20;
+    }
+    private void refreshTargets() {
+        targets.clear(); targets.addAll(enemies);
+        if (miniBoss != null) targets.add(miniBoss);
+    }
+    private void weaponHit(CombatTarget target, float damage) {
+        float before=Math.max(0,target.health());
+        session.statistics().deal(target,damage,DamageSource.WEAPON);
+        feedback.hit(stats.getWeapon(),target.centerX(),target.centerY(),Math.max(0,before-Math.max(0,target.health())));
+        effects.onHit(stats, target, targets, player.x + 8, player.y + 8, navigation::clearLine, true);
+    }
+    private void receiveHit(CombatHit hit, CombatTarget source) {
+        CombatDefense.resolve(stats,List.of(hit),player.x+8,player.y+8,source,combatRandom,session.statistics(),
+            (resolved,blocked,actual,counter)->feedback.receive(resolved,blocked,actual,counter,
+                stats.getWeapon(),player.x+8,player.y+8,source.centerX(),source.centerY()));
     }
     private void spawnMiniBoss() {
         if (!session.miniBossDue()) return;
@@ -252,23 +375,26 @@ public class GameScreen extends ScreenAdapter {
         chests.update(delta, player.x + 8, player.y + 8, navigation, !session.isDemo());
         RunChests.Chest nearby = chests.nearby(player.x + 8, player.y + 8);
         if (nearby != null && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            chestFeedback = chests.open(nearby, session); chestFeedbackTimer = 3;
+            chestFeedback = chests.open(nearby, session);
+            game.audio().play(SoundCue.CHEST); chestFeedbackTimer = 3;
         }
     }
-    private static boolean overlaps(float x, float y, float size, float otherX, float otherY, float otherSize) {
-        return x < otherX + otherSize && x + size > otherX && y < otherY + otherSize && y + size > otherY;
-    }
+
     private void finish(boolean victory) {
         game.finishRun(session, victory ? RunOutcome.VICTORY : RunOutcome.DEATH);
     }
     public void iniciarLevelUp() {
         if (!stats.podeSubirDeNivel()) return;
         stats.subirDeNivel();
+        game.audio().play(SoundCue.LEVEL_UP);
         state = State.LEVEL_UP;
+        choiceGuard.reset();
         choices.clear();
         choices.addAll(UpgradeChoices.draw(session, 3, boonRandom));
     }
-    private void updateChoices() {
+    private void updateChoices(float delta) {
+        choiceGuard.advance(delta, Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+        if (!choiceGuard.ready()) return;
         Vector2 pointer = hud.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         for (int index = 0; index < choices.size(); index++) {
             boolean key = Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + index)
@@ -288,10 +414,13 @@ public class GameScreen extends ScreenAdapter {
     private void prepareExit() {
         for (OrbeXP orb : orbs) stats.ganharXP(orb.valorXP);
         orbs.clear();
+        for (Inimigo enemy : enemies) enemy.dispose();
         enemies.clear();
+        if(miniBoss!=null)game.audio().stopEmitter(miniBoss);
         miniBoss = null;
         projectiles.clear();
         chests.clear();
+        effects.clear(); targets.clear(); feedback.clear();
         leavingArena = true;
         if (stats.podeSubirDeNivel()) iniciarLevelUp();
         else game.offerRoute(session);
@@ -300,20 +429,21 @@ public class GameScreen extends ScreenAdapter {
         Vector2 direction = world.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY())).sub(x, y);
         if (direction.isZero()) return;
         WeaponType weapon = stats.getWeapon();
+        feedback.attack(weapon,x,y,direction.x,direction.y);
         if (weapon.isMelee()) {
             slashX = x; slashY = y; slashAngle = direction.angleDeg(); slashTimer = weapon == WeaponType.FISTS ? 0.10f : 0.14f;
             if (weapon == WeaponType.FISTS) { punch(x, y, direction); return; }
             for (Inimigo enemy : enemies) {
                 if (!enemy.estaMorto() && WeaponAttack.swordHits(x, y, direction.x, direction.y, enemy.x + 8, enemy.y + 8, stats.swordReach())
                         && navigation.clearLine(x, y, enemy.x + 8, enemy.y + 8)) {
-                    enemy.sofrerDano(stats.getDano());
+                    weaponHit(enemy, stats.getDano());
                     damageNumbers.add(new DamageNumber(CombatNumbers.format(stats.getDano()), enemy.x + 8, enemy.y + 16));
                 }
             }
             if (miniBoss != null && !miniBoss.defeated()
                 && WeaponAttack.swordHits(x, y, direction.x, direction.y, miniBoss.centerX(), miniBoss.centerY(), stats.swordReach() + MiniBossEncounter.BODY_RADIUS)
                 && navigation.clearLine(x, y, miniBoss.centerX(), miniBoss.centerY())) {
-                miniBoss.hurt(stats.getDano());
+                weaponHit(miniBoss, stats.getDano());
                 damageNumbers.add(new DamageNumber(CombatNumbers.format(stats.getDano()), miniBoss.centerX(), miniBoss.centerY() + 22));
             }
         } else {
@@ -335,10 +465,10 @@ public class GameScreen extends ScreenAdapter {
             && WeaponAttack.meleeHits(x, y, direction.x, direction.y, miniBoss.centerX(), miniBoss.centerY(),
                 stats.meleeReach() + MiniBossEncounter.BODY_RADIUS, 40)
             && navigation.clearLine(x, y, miniBoss.centerX(), miniBoss.centerY())) {
-            miniBoss.hurt(stats.getDano());
+            weaponHit(miniBoss, stats.getDano());
             damageNumbers.add(new DamageNumber(CombatNumbers.format(stats.getDano()), miniBoss.centerX(), miniBoss.centerY() + 22));
         } else if (target != null) {
-            target.sofrerDano(stats.getDano());
+            weaponHit(target, stats.getDano());
             damageNumbers.add(new DamageNumber(CombatNumbers.format(stats.getDano()), target.x + 8, target.y + 16));
         }
     }
@@ -351,16 +481,28 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
         drawChests();
         drawMiniBoss();
+        drawExitBeacon();
         batch.begin();
         for (OrbeXP orb : orbs) orb.draw(batch);
         player.draw(batch);
         for (Inimigo enemy : enemies) enemy.draw(batch);
+        CombatVisuals.allies(batch, atlas, session.necromancy());
         for (Projetil projectile : projectiles) projectile.draw(batch);
         font.getData().setScale(0.65f);
         for (DamageNumber number : damageNumbers) number.draw(batch, font);
+        FeedbackVisuals.labels(batch,font,feedback);
         batch.end();
+        if(miniBossVisible()) {
+            shapes.begin(ShapeRenderer.ShapeType.Filled);
+            CombatHud.bar(shapes,miniBoss.centerX()-18,miniBoss.centerY()+20,36,3,miniBoss.health()/miniBoss.maxHealth(),Color.ORANGE);
+            shapes.end();
+        }
         shapes.setProjectionMatrix(world.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
+        for (Inimigo enemy : enemies) ArcherVisuals.draw(shapes, enemy);
+        FeedbackVisuals.pulses(shapes,feedback);
+        CombatVisuals.effects(shapes, effects, targets);
+        CombatVisuals.guard(shapes, stats, player.x + 8, player.y + 8);
         if (stats.possuiImaXp()) {
             shapes.setColor(0.4f, 0.8f, 0.7f, 1); shapes.circle(player.x + 8, player.y + 8, stats.getRaioAtracaoXp(), 48);
         }
@@ -373,7 +515,7 @@ public class GameScreen extends ScreenAdapter {
             shapes.circle(player.x + 8, player.y + 8, 12);
         }
         if (slashTimer > 0) {
-            shapes.setColor(Color.GOLD);
+            shapes.setColor(FeedbackVisuals.color(stats.getWeapon()));
             if (stats.getWeapon() == WeaponType.FISTS) {
                 float angle = (float) Math.toRadians(slashAngle);
                 shapes.circle(slashX + (float) Math.cos(angle) * stats.meleeReach(),
@@ -383,58 +525,34 @@ public class GameScreen extends ScreenAdapter {
         }
         shapes.end();
         hud.apply();
-        shapes.setProjectionMatrix(hud.getCamera().combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.045f, 0.055f, 0.085f, 1);
-        shapes.rect(0, 458, 960, 82);
-        bar(18, 510, stats.getVida() / stats.getVidaMaxima(), Color.SCARLET);
-        bar(18, 485, stats.getEstaminaAtual() / stats.getEstaminaMaxima(), stats.isExausto() ? Color.SALMON : Color.GREEN);
-        shapes.end();
-        batch.setProjectionMatrix(hud.getCamera().combined);
-        batch.begin();
-        font.getData().setScale(1);
-        font.setColor(Color.WHITE);
-        font.draw(batch, "Vida: " + CombatNumbers.format(Math.max(0, stats.getVida())) + " / " + CombatNumbers.format(stats.getVidaMaxima()), 240, 523);
-        font.draw(batch, "Nível " + stats.getNivel() + "   XP " + (int) stats.getXpAtual() + "/" + stats.getXpParaProximoNivel(), 240, 495);
-        font.draw(batch, RunProgress.formatTime(progress.elapsed()) + (session.isDemo() ? " / 05:00" : "") + "   |   Abates: " + progress.kills(), 530, 523);
-        font.draw(batch, session.isDemo() ? "Horda " + progress.phase() + "   |   ESC: pausa"
-            : session.arena().title(), 530, 495);
-        if (!session.isDemo()) {
-            StringBuilder objective = new StringBuilder();
-            for (EnemyType type : EnemyType.values()) {
-                Integer goal = session.arena().killGoals().get(type);
-                if (goal == null) continue;
-                if (!objective.isEmpty()) objective.append("   |   ");
-                objective.append(type.label).append(": ").append(Math.min(goal, session.kills(type))).append("/").append(goal);
-            }
-            font.draw(batch, objective.toString(), 18, 445);
-            font.setColor(session.arenaComplete() ? Color.GOLD : Color.LIGHT_GRAY);
-            font.draw(batch, session.arenaComplete() ? "PASSAGEM LIBERADA | E ou ENTER: escolher destino"
-                : "Cumpra todas as metas para liberar a passagem.", 18, 423);
-            font.setColor(Color.WHITE);
+        shapes.setProjectionMatrix(hud.getCamera().combined);batch.setProjectionMatrix(hud.getCamera().combined);
+        // Re-evaluate even while paused/resizing so a source hidden by the new viewport becomes silent.
+        if(miniBoss!=null && !miniBossVisible())game.audio().stopEmitter(miniBoss);
+        CombatHud.player(batch,shapes,font,stats);CombatHud.goals(batch,shapes,font,session);
+        FeedbackVisuals.damageBorder(shapes,feedback);
+        batch.begin();font.getData().setScale(.9f);font.setColor(Color.GOLD);
+        if(chests.nearby(player.x+8,player.y+8)!=null)font.draw(batch,"F: abrir baú",650,461);
+        if(exitNoticeTimer>0)font.draw(batch,"Passagem liberada — E para avançar",320,85);
+        if(chestFeedbackTimer>0)font.draw(batch,chestFeedback,18,79);
+        if(encounterFeedbackTimer>0)font.draw(batch,encounterFeedback,18,57);
+        if(progress.elapsed()<8) {
+            font.setColor(Color.LIGHT_GRAY);font.draw(batch,"WASD: mover | Mouse: atacar | SHIFT: dash | TAB: detalhes | ESC: pausa",230,25);
         }
-        if (!session.isDemo()) {
-            font.setColor(Color.GOLD); font.draw(batch, "Óbolos ao retornar: " + session.earnedObols() + "   |   Fragmentos guardados: " + game.profiles().profile().forgeMaterials()
-                + (game.profiles().profile().canClaimForgeMaterial(session.region().id()) ? "" : " (região já obtida)"), 18, 399);
+        if(!session.isDemo() && session.fury().warned()) {
+            font.setColor(session.fury().level()>0?Color.SALMON:Color.ORANGE);
+            font.draw(batch,session.fury().level()>0?"Fúria "+session.fury().level()+"/3 — inimigos mais fortes, XP reduzida. E: avançar"
+                :"O destino observa — avance antes da Fúria.",320,57);
         }
-        RunChests.Chest nearbyChest = chests.nearby(player.x + 8, player.y + 8);
-        font.setColor(Color.GOLD);
-        if (nearbyChest != null) font.draw(batch, "F: abrir baú", 650, 423);
-        if (chestFeedbackTimer > 0) font.draw(batch, chestFeedback, 18, 376);
-        if (encounterFeedbackTimer > 0) font.draw(batch, encounterFeedback, 18, 352);
-        if (miniBoss != null && Vector2.dst2(player.x, player.y, miniBoss.x, miniBoss.y) < 200 * 200) {
-            font.setColor(Color.ORANGE); font.draw(batch, MiniBossEncounter.NAME + "  " + CombatNumbers.format(miniBoss.health())
-                + "/" + CombatNumbers.format(miniBoss.maxHealth()) + "  |  "
-                + (miniBoss.state() == MiniBossEncounter.State.TELEGRAPH ? "AVISO: " : "")
-                + (miniBoss.attack() == MiniBossEncounter.Attack.SPIN ? "Giro de espada" : "Rajada de pedras"), 18, 328);
+        if(!session.isDemo() && !game.profiles().error().isEmpty()) {
+            font.setColor(Color.SALMON);font.draw(batch,game.profiles().error(),18,110,924,8,true);
         }
-        if (!session.isDemo() && !game.profiles().error().isEmpty()) {
-            font.setColor(Color.SALMON); font.draw(batch, game.profiles().error(), 18, 57);
-        }
-        font.setColor(Color.WHITE);
-        font.draw(batch, stats.getProfession().title + " | " + stats.getWeapon().label + " (" + stats.getWeaponRarity().label + ")   |   Sorte: " + CombatNumbers.format(stats.getLuckMultiplier()) + "x   |   F: abrir baú próximo", 18, 24);
-        batch.end();
+        font.getData().setScale(1);font.setColor(Color.WHITE);batch.end();
         if (state != State.PLAYING) drawOverlay();
+        if (boonPanel.open()) boonPanel.draw(batch, shapes, font);
+        if(audioPanel.open())audioPanel.draw(batch,shapes,font);
+    }
+    private SpriteHitbox miniHitbox() {
+        return miniHitboxes[(int) (miniTime * 4) % 2].place(miniBoss.centerX() - 16, miniBoss.centerY() - 16, 32, 32, false, false);
     }
     private void drawMiniBoss() {
         if (miniBoss == null) return;
@@ -477,12 +595,6 @@ public class GameScreen extends ScreenAdapter {
             shapes.circle(nearby.x(), nearby.y(), 14, 20); shapes.end();
         }
     }
-    private void bar(float x, float y, float fraction, Color color) {
-        shapes.setColor(Color.DARK_GRAY);
-        shapes.rect(x, y, 200, 15);
-        shapes.setColor(color);
-        shapes.rect(x, y, 200 * Math.max(0, Math.min(1, fraction)), 15);
-    }
     private void drawOverlay() {
         Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA, com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -505,7 +617,7 @@ public class GameScreen extends ScreenAdapter {
         font.getData().setScale(1);
         font.setColor(Color.WHITE);
         if (state == State.PAUSED) {
-            font.draw(batch, "ESC: continuar   |   M: voltar ao menu", 280, 270);
+            font.draw(batch, "ESC: continuar | O: áudio | TAB: dádivas | M: voltar ao menu", 280, 270);
         } else {
             for (int index = 0; index < choices.size(); index++) {
                 Upgrade upgrade = choices.get(index);
@@ -514,10 +626,11 @@ public class GameScreen extends ScreenAdapter {
                 font.draw(batch, "[" + (index + 1) + "] " + upgrade.title, card.x + 12, card.y + 130, card.width - 24, 8, true);
                 font.draw(batch, upgrade.rarity.label, card.x + 12, card.y + 100);
                 font.setColor(Color.WHITE);
-                font.draw(batch, upgrade.description, card.x + 12, card.y + 80, card.width - 24, 8, true);
+                font.draw(batch, upgrade.description(stats), card.x + 12, card.y + 80, card.width - 24, 8, true);
                 font.draw(batch, "Obtida " + session.rank(upgrade) + " vez(es)", card.x + 12, card.y + 25);
             }
-            font.draw(batch, "Clique em uma opção ou use 1, 2, 3.", 305, 135);
+            font.draw(batch, choiceGuard.notice(), 230, 135);
+            font.draw(batch, "TAB: consultar dádivas já escolhidas", 300, 105);
         }
         batch.end();
     }
@@ -532,11 +645,13 @@ public class GameScreen extends ScreenAdapter {
         atlas.dispose();
         font.dispose();
         map.dispose();
+        for (Inimigo enemy : enemies) enemy.dispose();
         enemies.clear();
+        if(miniBoss!=null)game.audio().stopEmitter(miniBoss);
         miniBoss = null;
         projectiles.clear();
         orbs.clear();
         chests.clear();
-        damageNumbers.clear();
+        damageNumbers.clear(); effects.clear(); targets.clear(); feedback.clear(); audioPanel.close();
     }
 }

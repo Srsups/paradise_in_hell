@@ -23,8 +23,10 @@
     {
       "id": "cinzas",
       "title": "Caminho das Cinzas",
-      "description": "Combate opcional: metas menores e mais oportunidades de XP antes do chefe.",
+      "description": "Rota de recuperação: menos hordas e um baú ao concluir.",
       "difficultySeconds": 60,
+      "waveIntervalMultiplier": 1.25,
+      "reward": "RECOVERY_CHEST",
       "exits": [
         "portoes"
       ],
@@ -38,8 +40,10 @@
     {
       "id": "sombras",
       "title": "Pátio das Sombras",
-      "description": "Combate opcional: hordas mais intensas para fortalecer seus poderes.",
+      "description": "Rota de risco: mais hordas por uma dádiva Rara ou superior.",
       "difficultySeconds": 120,
+      "waveIntervalMultiplier": 0.85,
+      "reward": "RARE_BOON",
       "exits": [
         "portoes"
       ],
