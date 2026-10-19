@@ -44,6 +44,8 @@ public final class MiniBossEncounter extends EnemyNavigation.Body implements Com
     public State state() { return state; }
     public Attack attack() { return attack; }
     public float aimAngle() { return angle; }
+    public float warningProgress(){return state==State.TELEGRAPH?Math.max(0,1-timer/(attack==Attack.SPIN?1:1.1f)):1;}
+    public float activeProgress(){return state==State.ACTIVE?Math.max(0,Math.min(1,1-timer/.45f)):0;}
     public boolean flashing() { return flashTimer > 0; }
     public List<Stone> stones() { return view; }
     public boolean defeated() { return state == State.DEFEATED; }

@@ -4,6 +4,28 @@ Extraia o ZIP inteiro e abra paradise-in-hell-gdx.exe.
 Mantenha o executavel, o JAR e as pastas app e runtime juntos.
 Nao e necessario instalar Java.
 
+Arte atualizada em 15/10/2026:
+Fontes incluidas, menu/molduras e retratos de Caronte e protagonista.
+Oito visuais de profissao, com armas integradas aos quadros de caminhada/ataque.
+Imagens isoladas das armas aparecem somente na melhoria com o Ferreiro Errante.
+Caminhada em oito direcoes, incluindo diagonais, seis quadros por profissao.
+Cinco vistas desenhadas geram oito direcoes por espelhamento horizontal.
+Viradas preservam a passada; quadros alinhados, caminhada e ataques mais legiveis.
+As oito classes respiram em repouso e na escolha de profissao. Mira orienta os ataques.
+Caronte, altar e travessia usam sprites animadas no refugio.
+No refugio nao e possivel atacar; caminhar, conversar e interagir continuam disponiveis.
+Corpos proprios para comum, rapido, tank, arqueiro, Carrasco e Guardiao.
+Baus de suprimentos/Cinzas com abertura animada; recompensa unica.
+Escolha de dadiva em tela inteira, icones proprios das 15 dadivas e consulta TAB.
+Arqueiro puxa/solta a corda com arco integrado. Carrasco gira espada e lanca pedras.
+Guardiao respira na espera, corre com ombrada, salta e aterrissa com joelho/punho.
+Avisos animados em imagens conservam as areas reais. Poses de dano/morte pendentes.
+
+Na conversa de Caronte:
+ENTER/E/clique revela a fala; o comando seguinte avanca uma fala.
+T alterna texto gradual/instantaneo nesta sessao. ESC fecha sem concluir.
+O presente de 5 Obolos continua unico, concedido ao terminar a primeira conversa.
+
 No menu:
 Enter ou clique em Demo: sobreviver por cinco minutos.
 C ou clique em Campanha: refugio, hordas, caminhos e chefe.
@@ -123,7 +145,7 @@ Cada meta deve ser cumprida; outro tipo nao a substitui.
 XP por inimigo: comum 1, arqueiro 3, rapido 2, tank 5.
 Hordas misturam tipos ou reunem inimigos iguais e continuam chegando.
 Rapidos: 1 s de arrancada a 70, depois 1 s de recuperacao a 24 unidades/s.
-Ciclos defasados entre inimigos; ciano na arrancada, verde-azulado na recuperacao.
+Ciclos defasados entre inimigos; novo corpo proprio para os rapidos.
 A recuperacao permite reposicionar sem depender de dadivas de velocidade.
 Ate 2 rapidos por onda e 24 ativos; excedentes viram comuns/tanks.
 O limite simultaneo nao muda a meta nem limita o total de inimigos da fase.
@@ -280,7 +302,8 @@ Falha de leitura preserva os arquivos; a campanha continua apenas na sessao.
 O tempo para durante pausa e escolhas.
 Audio/efeitos sao provisorios. Ainda faltam revisao sonora/artistica, outros encontros,
 inventario geral, proximas regioes e controles.
-O atlas foi gerado com IA. Refugio, Caronte e baus usam arte provisoria.
+Os atlas foram gerados com IA. Refugio e outros NPCs ainda precisam de arte de mundo.
+Movimento, retratos, baus e poderes foram ampliados; revisar o conjunto em partidas.
 Nome da moeda, custos e recompensas precisam de playtests.
 
 Para relatar um problema, informe seu Windows, placa de video,

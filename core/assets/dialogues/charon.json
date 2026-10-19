@@ -1,0 +1,58 @@
+{
+  "first": [
+    {
+      "speaker": "Caronte",
+      "text": "Zeus roubou sua esposa e ainda lhe deu uma maldição de retorno? Ele nunca pensa nas filas que cria."
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Então posso morrer, voltar e tentar chegar ao Olimpo de novo?"
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Pode. Mas as dádivas ficam na travessia. O que comprar no altar continua com você."
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Tome cinco óbolos para começar. Vou cobrar de Zeus. Ele deve estar acostumado a pagar pelos próprios erros."
+    }
+  ],
+  "bribe": [
+    {
+      "speaker": "Protagonista",
+      "text": "Te dou uma moeda se me devolver vivo."
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Você já vai ser devolvido vivo."
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Então me devolve perto do Olimpo."
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Uma moeda compra uma travessia, não uma mudança de endereço."
+    }
+  ],
+  "guardian": [
+    {
+      "speaker": "Caronte",
+      "text": "O Guardião perdeu? Vou precisar de outro funcionário para carimbar os mortos."
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Diga que ele está de licença por motivos de saúde."
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Ótimo. Uma licença sem prazo. Muito apropriada para o submundo."
+    }
+  ],
+  "repeat": [
+    {
+      "speaker": "Caronte",
+      "text": "Já foram {returns} retornos. Suas compras ficam; as dádivas mudam. Prepare-se e tente outra vez."
+    }
+  ]
+}

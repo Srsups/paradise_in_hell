@@ -18,8 +18,10 @@ primeira conversa entrega cinco Óbolos uma única vez. Ele oferece a conversa d
 suborno após uma morte e comenta a primeira vitória contra o Guardião. Concluir
 essas conversas registra eventos; cancelar permite retomá-las depois.
 As confirmações de conversa e compra desaparecem após 3,5 segundos; mensagens
-sobre falhas de gravação permanecem até a resolução. Textos originais provisórios
-estão em CaronteDialogue.java.
+sobre falhas de gravação permanecem até a resolução. Falas vêm de
+[charon.json](../core/assets/dialogues/charon.json), com retratos de Caronte e
+protagonista. Enter/E/clique revela o texto e depois avança uma fala; T alterna
+gradual/instantâneo na sessão. [Apresentação atual](EXPANSAO_VISUAL.md).
 
 No resultado da campanha, Enter retorna ao refúgio. M durante a pausa abandona
 a tentativa e retorna diretamente. O retorno guarda moedas e incrementa as
@@ -73,10 +75,12 @@ A demo registra métricas, mas não ganha moedas.
 
 ## Ampliação planejada do altar e das conversas
 
-O M3 do [roteiro](ROTEIRO_DE_MELHORIAS.md) cria a conversa piloto de Caronte
-com retrato, nome, caixa de diálogo e comandos consistentes; o M6 aplica o
-padrão ao Ferreiro e ao NPC de desafio. Textos/condições ficam em dados,
-consultando os eventos salvos sem conceder prêmios duas vezes.
+O [M3 implementado](MARCO_3_BASE_VISUAL.md) traz a conversa piloto de Caronte
+com retrato, nome e caixa inferior que mantém o cenário visível. Primeiro
+Enter/E/clique revela a fala; o seguinte avança. T alterna texto gradual/instantâneo,
+preferência mantida nesta sessão. Esc cancela sem concluir o evento; o presente
+de 5 Óbolos continua único. Textos ficam em JSON e eventos selecionam as conversas.
+O M6 aplicará o padrão ao Ferreiro e ao NPC de desafio.
 
 O M4 amplia as três compras atuais com propostas de reserva de estamina,
 regeneração e alcance inicial de coleta. Custos/limites serão definidos com
@@ -88,7 +92,7 @@ A dificuldade já é fixa ao criar o save, confirmada com a profissão no M2.
 O desafio que libera Fazendeiro vem de NPC sorteado por run; progresso e
 recompensa precisam de persistência explícita, com retorno ao refúgio.
 Chance/identidade/objetivos e alcance do desbloqueio ainda são propostas.
-As conversas novas, compras extras e missão do Fazendeiro continuam planejadas.
+Outros retratos/conversas, compras extras e missão do Fazendeiro continuam planejados.
 
 ## Economia provisória em Óbolos
 

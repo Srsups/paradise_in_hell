@@ -3,7 +3,8 @@
 Implementado em **14/10/2026**, após os playtests do autor.
 A base técnica está verificada; a diversão e a dificuldade final precisam de
 novas partidas completas. O M2 foi concluído na sequência: [dificuldades e economia](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
-O próximo incremento do roteiro é M3.
+O M3 piloto também foi implementado: [base visual](MARCO_3_BASE_VISUAL.md).
+O próximo incremento do roteiro é M4.
 
 ## HUD e controles
 

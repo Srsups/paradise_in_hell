@@ -22,7 +22,7 @@ public final class DifficultyScreen extends ScreenAdapter {
     private float confirmDelay = .2f;
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
+    private final BitmapFont font = UiTheme.bodyFont();
     private final ShapeRenderer shapes = new ShapeRenderer();
     private final Rectangle[] cards = {
         new Rectangle(35, 200, 285, 185), new Rectangle(337, 200, 285, 185), new Rectangle(639, 200, 285, 185)

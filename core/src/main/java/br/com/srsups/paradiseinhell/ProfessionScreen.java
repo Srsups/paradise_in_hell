@@ -16,11 +16,12 @@ public final class ProfessionScreen extends ScreenAdapter {
     private final Main game;
     private final RegionDefinition region;
     private String notice = "";
+    private float visualTime;
     private final MenuPages pages = new MenuPages();
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
-    private final BitmapFont font = new BitmapFont();
+    private final BitmapFont font = UiTheme.bodyFont();
     private final Rectangle[] cards = {
         new Rectangle(35, 265, 435, 150), new Rectangle(490, 265, 435, 150),
         new Rectangle(35, 105, 435, 150), new Rectangle(490, 105, 435, 150)
@@ -33,6 +34,7 @@ public final class ProfessionScreen extends ScreenAdapter {
             if (region == null) game.startDemo(); else game.setScreen(new RefugeScreen(game));
             return;
         }
+        visualTime = (visualTime + Math.min(Math.max(delta, 0), .05f)) % 3600;
         Vector2 pointer = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         Profession[] professions = Profession.values();
         pages.input(pointer);
@@ -69,6 +71,10 @@ public final class ProfessionScreen extends ScreenAdapter {
             Profession profession = professions[pages.index(index)];
             boolean locked = profession == Profession.NECROMANTE && !game.necromancerUnlocked();
             Rectangle card = cards[index];
+            batch.setColor(locked?Color.GRAY:Color.WHITE);
+            batch.draw(game.visuals().equipped().frame(EquippedArt.actor(profession)+"-idle",
+                ActorAnimation.Direction.DOWN,(int)(visualTime/PlayerAnimation.IDLE_FRAME_SECONDS)%4),card.x+card.width-54,card.y+101,44,44);
+            batch.setColor(Color.WHITE);
             font.setColor(locked ? Color.SALMON : Color.GOLD);
             font.draw(batch, profession.title + (profession == Profession.NECROMANTE ? "  [LENDÁRIA]" : ""), card.x + 18, card.y + 130);
             font.setColor(Color.WHITE);

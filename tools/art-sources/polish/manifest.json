@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-15",
+  "generationMode": "built-in imagegen",
+  "canonicalRows": [
+    "down",
+    "up",
+    "left",
+    "up-left",
+    "down-left"
+  ],
+  "mirrors": {
+    "right": "left",
+    "up-right": "up-left",
+    "down-right": "down-left"
+  },
+  "assets": [
+    {
+      "file": "cacador-walk-original.png",
+      "key": "cacador-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Caçador / hunter. Costume and equipment: ivory tunic, short deep-teal cloak, bronze open-faced crested helmet, leather sandals, ONE wooden recurve BOW held naturally, quiver on back. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "ferreiro-walk-original.png",
+      "key": "ferreiro-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Ferreiro / blacksmith. Costume and equipment: muscular blacksmith, burnt-orange leather apron over ivory tunic, bronze bracers, brown boots, ONE short broad bronze SWORD in right hand. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "vigilante-walk-original.png",
+      "key": "vigilante-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Vigilante / watchman. Costume and equipment: navy coat, red sash, bronze half helmet, leather boots, ONE small antique flintlock PISTOL in right hand. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "apostador-walk-original.png",
+      "key": "apostador-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Apostador / lucky brawler. Costume and equipment: loose ivory shirt, moss-green sash, brown trousers, bronze wrist wraps, bare closed FISTS in boxing guard, NO weapon. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "feiticeira-walk-original.png",
+      "key": "feiticeira-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Feiticeira / spellcaster. Costume and equipment: violet robe with ivory trim, bronze belt, shoulder-length dark hair and beard, ONE short purple-crystal WAND, not a giant orb. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "sacerdote-walk-original.png",
+      "key": "sacerdote-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "hand-repair",
+      "reference": "tools/art-sources/polish/sacerdote-walk-original.png",
+      "prompt": "Edit this exact transparent6column5row walking sheet. Preserve every pixel of pose, outfit, face, cell layout, directions and alpha except the inconsistent hand holding talisman in the FIFTH BOTTOM ROW only. Row5 DOWN-LEFT/front-left: in columns3 and4 the purple talisman is wrongly on RIGHT side of image. Fix those two frames so the purple talisman/red ribbons are held on LEFT side of IMAGE, like row5 columns1,2,5,6. The image-right hand must be EMPTY. Preserve gait and head/waist position; do not mirror the whole character. Talisman remains on image-left in every column of this bottom row. Keep all other rows completely unchanged. Fully transparent background, no text."
+    },
+    {
+      "file": "necromante-walk-original.png",
+      "key": "necromante-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Necromante / necromancer. Costume and equipment: charcoal robes, deep-green cloak, bronze clasps, ONE green-orb bone STAFF in right hand. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "guerreiro-walk-original.png",
+      "key": "guerreiro-walk",
+      "columns": 6,
+      "rows": 5,
+      "kind": "walk",
+      "reference": "tools/art-sources/polish/reference-classes.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers. Class to depict: Guerreiro / shield warrior. Costume and equipment: bronze helmet with red crest, cuirass over ivory tunic, red sash, ONE short bronze SWORD in right hand AND EXACTLY ONE round bronze SHIELD on left forearm. Never draw a second shield, disc, round buckler or round object on the back, waist or other hand. In LEFT profile the shield stays a SINGLE visible shield and the other hand holds the SWORD; do not turn sword into another shield. Canvas1536x1280. EXACT invisible grid SIX columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, legs stride toward UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror. SIX equally spaced frames of a smooth WALK cycle per row, alternating planted feet, continuous gait, not jumping. Keep the skull center and WAIST at exactly the SAME coordinates within all six cells: head center x50% y30%, waist center x50% y56%, soles around y82%. Head/torso stay stable, no left-right drifting, NO TELEPORTING, no body scaling, no changing camera, no exaggerated bounce. Animate legs and subtle arm/cloth follow-through. Body occupies central40% cell width and about64%height, weapon stays within10..90%cell. Every character fully inside its own cell."
+    },
+    {
+      "file": "guardian-cast-original.png",
+      "key": "guardian-cast",
+      "columns": 6,
+      "rows": 5,
+      "kind": "repair",
+      "reference": "tools/art-sources/polish/guardian-cast-original.png",
+      "prompt": "Repair boss casting sheet for an actual game. Same hulking Greek underworld guardian, black armour, gold trim/barred helmet, violet cape. CRITICAL remove ALL brown/purple background; fully TRANSPARENT RGBA. Exactly SIX columns and FIVE rows with generous empty gutters. ALL SIX frames in each row maintain EXACT SAME facing from windup to release/recovery. Row1 DOWN: helmet/chest face viewer throughout, magic DOWN below chest. Row2 UP: back of helmet and cape throughout, magic UP above shoulders. Row3 LEFT: true LEFT PROFILE in EVERY cell, helmet slit/face/toes point LEFT and cast LEFT of body, never right. Row4 UP-LEFT: REAR-left45 throughout, BACK cape/leftside visible, helmet and arm toward UPPER LEFT, never front/right. Row5 DOWN-LEFT: FRONT-left45 throughout, helmet/chest/arm toward LOWER LEFT, magic below-left of chest. NO right-facing poses. Six fluid stages: windup,gathering,extending,release,follow-through,settle. Head/waist/feet/root/camera size and position fixed within every cell. Single character per cell, attached hands, no ground/shadow/grid/text. Crisp game pixel-art."
+    },
+    {
+      "file": "refuge-charon-original.png",
+      "key": "refuge-charon",
+      "columns": 2,
+      "rows": 2,
+      "kind": "prop",
+      "reference": "tools/art-sources/m3/charon.png",
+      "prompt": "Use case: stylized-concept. Create a FULL-BODY GAME SPRITE version of the SAME CHARON in reference portrait: elderly weathered gray-skinned Greek ferryman, long white beard, deep teal hooded ragged cloak, bronze coin clasps, wooden OAR firmly held, knowing dry-humor expression. NOT a skeleton, no exposed ribcage or skull. Production crisp pixel-art for top-down3/4 Greek roguelite Paradise in Hell, matching bronze/slate/teal palette. ONE truly transparent RGBA PNG, EXACT invisible2columns2rows, four same-size idle breathing frames in reading order. Face FRONT slightly toward viewer, whole body and oar visible, stable feet at85%cell height and torso center fixed. Breathing moves chest1-2pixels and cloak gently sways, oar remains attached, no scaling/drift. Character fills80%cellheight. No floor, shadow, text, label, grid, background, or other props."
+    },
+    {
+      "file": "refuge-altar-original.png",
+      "key": "refuge-altar",
+      "columns": 2,
+      "rows": 2,
+      "kind": "prop",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Original production pixel-art altar sprite for the safe refuge of a Greek mythology roguelite, Paradise in Hell. Small ancient IVORY STONE ALTAR pedestal with bronze trim, Greek carved meander pattern, offering bowl, little teal-blue sacred flame, worn sculpted ram/olive relief on front. Top-down3/4 orthographic gameplay view, crisp readable pixel clusters, subtle stone texture, slate/bronze/ivory/teal palette. ONE truly transparent RGBA PNG, EXACT invisible2columns2rows. FOUR animation frames of SAME altar in reading order; ONLY flame/sparks animate, stone structure stays perfectly same shape/position, no camera changes or scaling. Centered on same baseline, full object contained with padding. No scene, ground, floor shadow, letters, text, labels or grid. Looks like a functional shrine, not a chest, grave or abstract rectangle."
+    },
+    {
+      "file": "refuge-crossing-original.png",
+      "key": "refuge-crossing",
+      "columns": 2,
+      "rows": 2,
+      "kind": "prop",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Original production pixel-art crossing GATEWAY sprite for the safe refuge of a Greek underworld roguelite Paradise in Hell. Ancient carved dark-slate GREEK STONE ARCH with bronze Greek meander details, two dim bronze lanterns, violet/teal magical mist opening between columns, a short pair of worn stone steps at base. Through arch is darkness suggesting the journey onward, no landscape. Top-down3/4 orthographic gameplay view, crisp deliberate pixel clusters, slate/bronze/violet palette. ONE truly transparent RGBA PNG, EXACT invisible2columns2rows, FOUR looping animation frames in reading order. SAME arch structure fixed perfectly, only magical mist and lantern flames move. Same size, center and baseline, fully contained in every cell. No floor outside steps, external shadow, scene, words, grid, labels, characters or logo. Open arch doorway, not a sealed wall."
+    },
+    {
+      "file": "cacador-actions-original.png",
+      "key": "cacador-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "direction-repair",
+      "reference": "tools/art-sources/polish/cacador-actions-original.png",
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: a bow: front-shot bow is horizontal across the chest, drawn arrow is foreshortened with arrowhead below chest toward viewer; back-shot points arrow UP; southwest shot arrow points diagonally LOWER LEFT, not horizontallyleft. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "file": "ferreiro-actions-original.png",
+      "key": "ferreiro-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "idle-attack",
+      "reference": "tools/art-sources/polish/ferreiro-walk-original.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers.  Class: Ferreiro / blacksmith. muscular blacksmith, burnt-orange leather apron over ivory tunic, bronze bracers, brown boots, ONE short broad bronze SWORD in right hand. Use attached WALK sheet as exact identity/outfit/proportions/directions reference, replace gait with these actions. Canvas2048x1280. EXACT invisible grid EIGHT columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, body faces UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror.  Each row exactly EIGHT frames: columns1–4 IDLE BREATHING, columns5–8 ATTACK. Columns1–4: feet PLANTED at identical places, head/waist fixed, visibly breathe: neutral chest, inhale, full chest/slightly lifted shoulders, exhale. Cloth subtly expands, no walking, no whole-body bob or sway. Columns5–8: wind-up, attack release, follow-through, recovery of winding back, slashing the bronze sword toward the facing direction and returning. Attack points in row direction. EXACT same head size, body scale/pivot across ALL8columns, solesy82%, headcenterx50%y30%, waistx50%y56%. No drift or zoom. Front diagonals show face/chest and differ clearly from profile. Equipment stays in SAME anatomical hand in all frames, never swap hands. Exactly ONE of each item. All sprite inside cell. Transparent gutters; no floor/shadow/background/checkerboard/text."
+    },
+    {
+      "file": "vigilante-actions-original.png",
+      "key": "vigilante-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "direction-repair",
+      "reference": "tools/art-sources/polish/vigilante-actions-original.png",
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one pistol: barrel in front row points DOWN toward viewer with circular muzzle opening below chest, NOT left/right; back row points UP above shoulder; southwest points diagonally DOWN-LEFT, muzzle below and left of hand. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "file": "apostador-actions-original.png",
+      "key": "apostador-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "idle-attack",
+      "reference": "tools/art-sources/polish/apostador-walk-original.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers.  Class: Apostador / lucky brawler. loose ivory shirt, moss-green sash, brown trousers, bronze wrist wraps, bare closed FISTS in boxing guard, NO weapon. Use attached WALK sheet as exact identity/outfit/proportions/directions reference, replace gait with these actions. Canvas2048x1280. EXACT invisible grid EIGHT columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, body faces UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror.  Each row exactly EIGHT frames: columns1–4 IDLE BREATHING, columns5–8 ATTACK. Columns1–4: feet PLANTED at identical places, head/waist fixed, visibly breathe: neutral chest, inhale, full chest/slightly lifted shoulders, exhale. Cloth subtly expands, no walking, no whole-body bob or sway. Columns5–8: wind-up, attack release, follow-through, recovery of punching in the facing direction and retracting to guard. Attack points in row direction. EXACT same head size, body scale/pivot across ALL8columns, solesy82%, headcenterx50%y30%, waistx50%y56%. No drift or zoom. Front diagonals show face/chest and differ clearly from profile. Equipment stays in SAME anatomical hand in all frames, never swap hands. Exactly ONE of each item. All sprite inside cell. Transparent gutters; no floor/shadow/background/checkerboard/text."
+    },
+    {
+      "file": "feiticeira-actions-original.png",
+      "key": "feiticeira-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "direction-repair",
+      "reference": "tools/art-sources/polish/feiticeira-actions-original.png",
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one short wand: front row extends wand DOWN below chest and purple magic below waist; back row casts UP above shoulders; southwest wand and glow must be diagonally DOWN-LEFT, not up-left. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "file": "sacerdote-actions-original.png",
+      "key": "sacerdote-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "idle-attack",
+      "reference": "tools/art-sources/polish/sacerdote-walk-original.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers.  Class: Sacerdote / priest. ivory robes, wine-red stole, bronze clasp, ONE purple CURSE TALISMAN with red ribbons held in hand. Use attached WALK sheet as exact identity/outfit/proportions/directions reference, replace gait with these actions. Canvas2048x1280. EXACT invisible grid EIGHT columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, body faces UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror.  Each row exactly EIGHT frames: columns1–4 IDLE BREATHING, columns5–8 ATTACK. Columns1–4: feet PLANTED at identical places, head/waist fixed, visibly breathe: neutral chest, inhale, full chest/slightly lifted shoulders, exhale. Cloth subtly expands, no walking, no whole-body bob or sway. Columns5–8: wind-up, attack release, follow-through, recovery of raising and extending the talisman in facing direction, casting a curse, recovering. Attack points in row direction. EXACT same head size, body scale/pivot across ALL8columns, solesy82%, headcenterx50%y30%, waistx50%y56%. No drift or zoom. Front diagonals show face/chest and differ clearly from profile. Equipment stays in SAME anatomical hand in all frames, never swap hands. Exactly ONE of each item. All sprite inside cell. Transparent gutters; no floor/shadow/background/checkerboard/text."
+    },
+    {
+      "file": "necromante-actions-original.png",
+      "key": "necromante-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "direction-repair",
+      "reference": "tools/art-sources/polish/necromante-actions-original.png",
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one staff: front row holds STAFF VERTICAL next to body and casts green magic with free hand DOWN below chest; back row staff vertical and free hand casts UP above shoulders; southwest free hand casts DOWN-LEFT below chest, staff stays vertical. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "file": "guerreiro-actions-original.png",
+      "key": "guerreiro-actions",
+      "columns": 8,
+      "rows": 5,
+      "kind": "idle-attack",
+      "reference": "tools/art-sources/polish/guerreiro-walk-original.png",
+      "prompt": "Use case: stylized-concept. Production pixel-art animation spritesheet for the original Greek roguelite Paradise in Hell. Reference image is ONLY identity/outfit/style reference: use the named class, correct bad poses, do not copy floating equipment. One transparent RGBA PNG, no floor, drop shadow, scenery, grid, labels, text or watermark. Crisp deliberate low-resolution pixel clusters, strong readable outline, NOT soft illustration. Adult Mediterranean mortal MAN, short dark beard, olive skin. Same head, body proportions, clothes and gear in EVERY cell. Weapons are firmly held in hands as part of the full-body illustration. No detached weapon layers.  Class: Guerreiro / shield warrior. bronze helmet with red crest, cuirass over ivory tunic, red sash, ONE short bronze SWORD in right hand AND EXACTLY ONE round bronze SHIELD on left forearm. Never draw a second shield, disc, round buckler or round object on the back, waist or other hand. In LEFT profile the shield stays a SINGLE visible shield and the other hand holds the SWORD; do not turn sword into another shield. Use attached WALK sheet as exact identity/outfit/proportions/directions reference, replace gait with these actions. Canvas2048x1280. EXACT invisible grid EIGHT columns and FIVE rows. Row1 DOWN/south: front, both eyes and chest visible. Row2 UP/north: back of head and back of clothing. Row3 LEFT/west: true left profile, face and toes point horizontally LEFT. Row4 UP-LEFT/northwest: true45-degree REAR-left, back and left side visible, body faces UPPER LEFT. Row5 DOWN-LEFT/southwest: true45-degree FRONT-left, BOTH eyes/face and chest visible, shoulders and feet point LOWER LEFT. Row5 must be clearly a FRONT diagonal, absolutely not a side-profile or rear view. Do not draw ANY right-facing rows; engine will mirror.  Each row exactly EIGHT frames: columns1–4 IDLE BREATHING, columns5–8 ATTACK. Columns1–4: feet PLANTED at identical places, head/waist fixed, visibly breathe: neutral chest, inhale, full chest/slightly lifted shoulders, exhale. Cloth subtly expands, no walking, no whole-body bob or sway. Columns5–8: wind-up, attack release, follow-through, recovery of keeping the SINGLE shield raised while striking with the SINGLE sword toward the facing direction, then returning to guard. Attack points in row direction. EXACT same head size, body scale/pivot across ALL8columns, solesy82%, headcenterx50%y30%, waistx50%y56%. No drift or zoom. Front diagonals show face/chest and differ clearly from profile. Equipment stays in SAME anatomical hand in all frames, never swap hands. Exactly ONE of each item. All sprite inside cell. Transparent gutters; no floor/shadow/background/checkerboard/text."
+    }
+  ],
+  "sourceSelection": {
+    "sacerdote-walk/down-left": [
+      0,
+      1,
+      4,
+      5,
+      4,
+      1
+    ]
+  },
+  "packed": {
+    "regions": 1002,
+    "bodyRegions": 926,
+    "propRegions": 12,
+    "effectRegions": 64,
+    "runtimeBodyPoses": 1280,
+    "rgbaBytes": 18874368
+  },
+  "tooling": [
+    "../../EquippedAtlasBaker.java",
+    "../../PolishedFrames.java"
+  ]
+}

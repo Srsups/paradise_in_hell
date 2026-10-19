@@ -9,6 +9,10 @@ public final class EnemySpawner {
     private EnemySpawner() {}
     public static Inimigo spawnInimigoForaDaTela(OrthographicCamera camera, Texture atlas, TileMap map,
                                                EnemyType type, EnemyNavigation navigation) {
+        return spawnInimigoForaDaTela(camera,atlas,map,type,navigation,null);
+    }
+    public static Inimigo spawnInimigoForaDaTela(OrthographicCamera camera,Texture atlas,TileMap map,
+                                               EnemyType type,EnemyNavigation navigation,PilotArt pilot) {
         float left = camera.position.x - camera.viewportWidth / 2;
         float bottom = camera.position.y - camera.viewportHeight / 2;
         for (int attempt = 0; attempt < 24; attempt++) {
@@ -23,7 +27,7 @@ public final class EnemySpawner {
             if (map.ehSolido(x + 1, y + 1) || map.ehSolido(x + 15, y + 1)
                 || map.ehSolido(x + 1, y + 15) || map.ehSolido(x + 15, y + 15)
                 || !navigation.reachable(x + 8, y + 8)) continue;
-            Inimigo enemy = new Inimigo(x, y, atlas);
+            Inimigo enemy = new Inimigo(x, y, atlas,pilot);
             enemy.configurarTipo(type);
             return enemy;
         }

@@ -1,0 +1,164 @@
+{
+  "tool": "Built-in image_gen via imagegen skill; no CLI/API",
+  "date": "2026-10-15",
+  "assets": [
+    {
+      "file": "cacador-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: Greek hunter, ivory knee-length tunic, short deep teal cloak, bronze open-faced helmet, leather sandals. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "ferreiro-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: burly Greek blacksmith, heavy burnt-orange leather apron over cream tunic, soot-stained bare muscular forearms, bronze bracers, dark brown boots, no helmet. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "vigilante-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: Greek watchman with a slightly anachronistic gunfighter flavor, deep navy short coat and red sash, small bronze half-helmet, dark leather boots, compact angular silhouette. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "apostador-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: lucky Greek brawler gambler, open olive-green vest over ivory shirt, rolled sleeves, cloth wraps on both fists, small gold coin charm at belt, relaxed roguish smile, no helmet. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "feiticeira-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: Greek spellcaster, rich violet short robe with warm ivory trim, shoulder cape, silver circlet and exposed short dark hair, elegant narrow silhouette, sensible boots, no oversized hat. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "sacerdote-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: renegade Greek priest, bone ivory long split robe, dark crimson stole and bronze sun clasp, bandaged forearms, shaved sides short dark hair, no helmet. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "necromante-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: legendary Greek necromancer, tattered charcoal and emerald robe, ivory bone shoulder pieces, deep green hood, pale teal face, distinctive sinister narrow silhouette. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "guerreiro-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production game character animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE transparent RGBA PNG, landscape 1536x1024, exact invisible grid of SIX equal columns and FOUR equal rows. All 24 cells show the SAME full-body character: Greek shield warrior, broad bronze segmented cuirass, crimson short cloak, bronze crested helmet, greaves and thick sandals, broad sturdy silhouette. Main character identity: ordinary adult Mediterranean mortal, olive skin, short dark beard, expressive exasperated face, slightly chibi proportions, 3/4 top-down orthographic view. Moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained bronze/slate/ivory palette with class accent, readable at 24px. SIX DISTINCT evenly spaced frames of a fluid walk cycle per direction, stable head and torso, smooth alternating legs and arms: row1 down/toward camera, row2 up/away, row3 right, row4 left. Each row six frames in exact left-to-right gait order. All sprites same size, feet exactly at 85% cell height, centered at half cell width, character fills 70% cell height, full body never crosses cell. Hands EMPTY: all weapons, spell glow and shields will be separate game layers, keep no detached accessories outside body. NO scenery, ground shadow, grid, labels, numbers, text, watermark or extra characters. No opaque background. Genuine alpha transparency.",
+      "transparent_background": true,
+      "columns": 6,
+      "rows": 4,
+      "kind": "hero"
+    },
+    {
+      "file": "common-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: undead Greek debtor footsoldier, ash grey green skin, ragged aubergine tunic, cracked bronze single shoulder plate, short hunched silhouette, pale tired eyes. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "fast-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: lean crouched Greek harpy-like runner with two arms and two clawed legs, desaturated turquoise skin, swept feather crest, ragged blue loincloth, small feathered forearms folded tightly to body, long lower legs, sharp angular narrow silhouette, NO large wings. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "tank-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: large stocky undead Greek hoplite, heavy dull bronze barrel cuirass, dark ochre tunic, massive thick forearms and broad shoulders, small closed bronze helmet, square broad silhouette, no weapon no held shield. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "archer-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: skeletal Greek underworld archer, narrow bone-white face, deep wine-red hood and short dark purple cloak, leather jerkin, small quiver on the back close to body, skinny arms, no held bow. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "carrasco-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: Carrasco das Sombras elite executioner miniboss, tall massive muscled ash-grey undead Greek executioner, orange leather waist apron, dark iron hood with two eye slits, black iron shoulder armor, heavy boots, imposing broad silhouette, no held sword. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "guardian-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production enemy animation spritesheet, original top-down Greek mythology roguelite Paradise in Hell. Exactly ONE square transparent RGBA PNG with exact invisible grid FOUR columns FOUR rows, 16 full-body sprites of the SAME enemy: Guardião do Tártaro floor boss, towering original Greek underworld jailer, dark slate and aged gold ornate heavy armor, deep royal purple short mantle, menacing closed helmet with elegant horn-like bronze crest, blue slit eyes, blocky regal imposing silhouette, no held weapon. 3/4 top-down orthographic view, original not copied game design, moderate-resolution crisp pixel art, deliberate simple pixel clusters, restrained slate/bronze palette with distinctive enemy accent. FOUR walk frames per direction with alternating legs and arms and stable torso. Row1 down/toward camera, row2 up/away, row3 right, row4 left. Each cell same size, character body fills 70% cell height, feet on exact same baseline 85% cell height, centered at half cell width. Same body volume across frames. EMPTY hands, do NOT add weapons, extended wings, spell glow, ground shadow or detached accessories, because contact masks use body alpha. No grid, no text, no labels, no watermark, no scenery. Actual transparent background. Clear recognizable silhouette at 24 pixels.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "enemy"
+    },
+    {
+      "file": "protagonist-original.png",
+      "prompt": "Use case: illustration-story. Asset type: original illustrated dialogue portrait cutout for Greek mythology roguelite Paradise in Hell, companion to a painterly Charon portrait with slate teal hood and bronze coins. ONE waist-up expressive portrait of the ordinary Greek mortal protagonist: olive Mediterranean skin, adult man early thirties, short dark tousled hair and trimmed short black beard, expressive raised eyebrow, slightly annoyed but determined and likeable comic expression, simple worn ivory tunic, dark teal shoulder cloak clasped by a bronze pin, one forearm loosely folded. No helmet so face reads clearly, no weapon. Stylized hand-painted 2D game illustration, clean controlled details, warm face highlights, subtle teal rim lighting, restrained aged bronze, navy, ivory palette. Three-quarter view, eyes looking slightly right toward dialogue text. Full head and shoulders entirely inside image with generous transparent margin. 1024x1024 actual RGBA transparency, no scenery, no frame, no text, no logo, no watermark. Original character, not any real actor.",
+      "transparent_background": true,
+      "kind": "portrait"
+    },
+    {
+      "file": "chests-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production treasure-chest animation sheet for Greek underworld 2D game, original art. ONE 1024x512 transparent PNG, exact invisible 4-column 2-row grid. Row1: same oak treasure chest with rounded lid, warm bronze bands, ivory inset panels and small Greek key lock; four consecutive states CLOSED, LID SLIGHTLY AJAR, LID HALF OPEN, FULLY OPEN with modest gold interior light. Row2 same four opening frames of a darker ash-wood chest with aged bronze bands and a modest blue Estige gem inset, for special room reward. Consistent stationary chest base in all frames, three-quarter top-down view, centered, fills 70% each equal cell, same camera/scale, full object within its cell. Polished crisp pixel art with readable large shape clusters, warm oak and bronze, no thin outlines or detached particles. No characters, no coins outside chest, no ground, no shadow, no labels, no text, no border/grid or watermark. Actual transparent background.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 2,
+      "kind": "props"
+    },
+    {
+      "file": "weapons-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production held weapon sprite atlas for original Greek roguelite. ONE square transparent RGBA PNG exact invisible 4 columns 2 rows grid. Eight isolated weapon designs, one per equal cell, ALL weapons oriented horizontally with tip/fire direction exactly RIGHT, centered on each cell with 20% margin, coherent moderate pixel art bronze/ivory/dark leather and subtle magic accents, crisp readable silhouettes at 18 pixels. Row1 left-to-right: curved Greek hunting BOW with taut string and nocked rightward arrow; short broad bronze XIPHOS SWORD pointing right with hilt at left; compact anachronistic bronze-and-black flintlock PISTOL barrel points right grip down; ONE leather-wrapped clenched FIST/punch glove pointing right. Row2: slim violet-crystal WAND with handle left tip right; dark ivory-and-crimson CURSE TALISMAN with small purple rune; emerald soul NECROMANCER STAFF lying horizontally with bone crook and green gem at right; one round bronze HOPLITE SHIELD face visible, spiral Greek motif, no sword. Each weapon one object, actual alpha, no ground shadows, no text/labels/grid, no characters, no huge glow, no background, no watermark.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 2,
+      "kind": "weapons"
+    },
+    {
+      "file": "weapon-fx-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: animated weapon VFX sheet for original top-down Greek mythology roguelite. ONE portrait RGBA PNG, exact invisible FOUR columns EIGHT rows equal cells. Each row is a FOUR-frame animation from small onset through peak to dissipating fragments. All sequences centered within cell with 15% empty margin. Crisp moderate pixel art, clean semi-transparent alpha, readable at small sizes, no characters no weapons no text no labels no grid no scenery. Row1: golden BOW RELEASE SPARK, a short pointed streak to RIGHT. Row2: bronze-white SWORD SLASH crescent arc, sweeping right. Row3: small ivory-gold PISTOL MUZZLE FLASH to right, with tiny grey smoke. Row4: warm ivory PUNCH IMPACT burst with short motion smear right. Row5: violet and cyan MAGIC SPELL ORB pulse explosion, circular centered. Row6: magenta-purple CURSE SIGIL expanding circular runes, dark transparent interior. Row7: emerald-teal SOUL WISP spectral orb with a short tail to left. Row8: blue-bronze SHIELD BLOCK flash, short fan arc facing right. Each cell only its own distinct coherent sequence. Genuine transparent background, restrained luminous colors, no fully opaque disks, no large outer clouds, no watermark.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 8,
+      "kind": "effects"
+    },
+    {
+      "file": "boon-fx-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: animated divine boon VFX sheet for original top-down Greek roguelite. ONE portrait RGBA PNG exact invisible FOUR columns EIGHT rows of equal cells, each row FOUR consecutive frames, all centered and same scale, no elements crossing cells. Crisp pixel clusters, clean readable 2D game VFX with transparent interior. Row1: circular turquoise WATER AURA ring ripples, center fully transparent, clean outer circumference; Row2: pale gold and blue spherical AEGIS SHIELD outlined bubble, interior nearly transparent; Row3: jagged yellow WHITE LIGHTNING BOLT running HORIZONTALLY left to right, four flickering frames; Row4: small ORANGE FLAMES licking upward, four flickering frames; Row5: warm bronze IMPACT SHOCKWAVE ring with a few stone chips; Row6: green-ivory RESURRECTION and HEALING column/rune, onset to bright pillar to fading; Row7: pale green HEALTH RESTORE sparkles and a small leaf spiral, onset/peak/fade; Row8: cyan CRYSTAL MAGNET spiral inward with sparse tiny blue shards. All effects have 15% empty margin. No letters or crosses, no characters, no weapons, no labels, no gridlines, no painted checkerboard, no background, no watermark. Genuine RGBA transparency, modest glow and simple uncluttered shapes.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 8,
+      "kind": "effects"
+    },
+    {
+      "file": "boon-icons-original.png",
+      "prompt": "Use case: stylized-concept. Asset type: production divine boon icon atlas for original Greek mythology roguelite. ONE square RGBA PNG, exact invisible FOUR columns FOUR rows, 16 DIFFERENT icons one per cell, every icon framed by same simple square aged bronze border and dark navy interior, crisp moderate-resolution pixel art, clear strong symbolic shape filling 65% of cell and readable at 48px. NO TEXT, labels, letters or numbers. Row1 left-to-right: muscular bronze ARM/FIST (Hercules strength); ivory BOW AND GOLD ARROW (Artemis attack rate); deep red HEART with small bull horn motif (Minotaur health); golden WINGED SANDAL (Hermes movement). Row2: BRONZE HELMET over red shield (Ares resistance); ivory OWL over open blue book (Athena XP); cyan CRYSTAL with a green harvest wheat crescent (Demeter magnet); green LAUREL with radiant golden sun (Apollo heal). Row3: dark ruby GOBLET with tiny red drop (Hades lifesteal); blue and gold round SHIELD (Aegis); turquoise TRIDENT over blue water waves (Poseidon aura); white-yellow LIGHTNING BOLT on violet clouds (Zeus chain lightning). Row4: orange FLAME over charcoal ember (Hestia burn); bronze HAMMER over small ANVIL (Hephaestus knockback); emerald SERPENT coiled around ivory staff with gold halo (Asclepius resurrection); small gold COIN with Greek spiral (currency fallback). Exact equal cells all aligned, narrow margin separating each framed icon, no background beyond icons, true transparent alpha outside their square frames, no watermark. Original designs not copied from any game.",
+      "transparent_background": true,
+      "columns": 4,
+      "rows": 4,
+      "kind": "icons"
+    }
+  ]
+}

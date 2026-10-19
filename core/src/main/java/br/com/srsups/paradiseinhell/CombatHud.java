@@ -21,6 +21,9 @@ public final class CombatHud {
         return player.canDash() ? "Dash pronto" : "Dash recarregando";
     }
     public static void player(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,PlayerState player) {
+        player(batch,shapes,font,player,null);
+    }
+    public static void player(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,PlayerState player,PilotArt art) {
         panel(shapes,14,432,250,94);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         bar(shapes,72,505,176,12,player.getVida()/player.getVidaMaxima(),Color.SCARLET);
@@ -33,7 +36,12 @@ public final class CombatHud {
         if(player.dashCooldownRemaining()>0) bar(shapes,155,438,93,3,1-player.dashCooldownRemaining(),Color.GOLD);
         shapes.end();
         batch.begin();font.getData().setScale(.85f);font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch,"Vida",25,517);font.draw(batch,"Fôlego",25,494);font.draw(batch,"XP",25,475);
+        if(art==null){font.draw(batch,"Vida",25,517);font.draw(batch,"Fôlego",25,494);font.draw(batch,"XP",25,475);}
+        else {
+            batch.draw(art.region("icon-health"),29,501,20,20);
+            batch.draw(art.region("icon-stamina"),29,480,20,20);
+            batch.draw(art.region("icon-experience"),29,461,20,20);
+        }
         font.setColor(Color.WHITE);font.draw(batch,"Nv. "+player.getNivel(),25,449);
         font.setColor(player.canDash()?Color.GOLD:Color.LIGHT_GRAY);
         font.draw(batch,dashNotice(player),99,449);

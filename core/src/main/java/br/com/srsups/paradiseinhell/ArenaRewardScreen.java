@@ -25,8 +25,8 @@ public final class ArenaRewardScreen extends ScreenAdapter {
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
-    private final BitmapFont font = new BitmapFont();
-    private float inputDelay = 0.2f;
+    private final BitmapFont font = UiTheme.bodyFont();
+    private float inputDelay = 0.2f,visualTime;
 
     public ArenaRewardScreen(Main game, RunSession session) {
         if (!session.canClaimArenaReward()) throw new IllegalStateException("No pending arena reward");
@@ -35,9 +35,11 @@ public final class ArenaRewardScreen extends ScreenAdapter {
         recovery = session.arena().reward() == ArenaReward.RECOVERY_CHEST;
         choices = recovery ? List.of() : session.arenaRewardChoices();
         int count = recovery ? 2 : Math.max(1, choices.size());
-        cards = new Rectangle[count];
-        float width = (890f - 20 * (count - 1)) / count;
-        for (int i = 0; i < count; i++) cards[i] = new Rectangle(35 + i * (width + 20), 155, width, recovery ? 125 : 190);
+        cards = recovery ? new Rectangle[count] : BoonChoiceView.cards(count);
+        if(recovery) {
+            float width=(890f-20*(count-1))/count;
+            for(int i=0;i<count;i++)cards[i]=new Rectangle(35+i*(width+20),155,width,125);
+        }
     }
     @Override public void show() { Gdx.input.setInputProcessor(null); }
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
@@ -51,7 +53,7 @@ public final class ArenaRewardScreen extends ScreenAdapter {
         }
         boolean showingPanel = panelWasOpen || boonPanel.open();
         if (!showingPanel) {
-            inputDelay -= delta;
+            inputDelay -= delta;visualTime+=delta;
             if (!recovery) choiceGuard.advance(delta, Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         }
         Vector2 pointer = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
@@ -71,17 +73,20 @@ public final class ArenaRewardScreen extends ScreenAdapter {
                 }
             }
         }
+        if(!recovery) {
+            viewport.apply();shapes.setProjectionMatrix(viewport.getCamera().combined);batch.setProjectionMatrix(viewport.getCamera().combined);
+            BoonChoiceView.draw(batch,shapes,font,game.visuals(),session,choices,cards,"RECOMPENSA DAS SOMBRAS",
+                choiceGuard.ready()?"Dádiva extra Rara ou superior.":choiceGuard.notice(),"abandonar",visualTime);
+            if(boonPanel.open())boonPanel.draw(batch,shapes,font,game.visuals());return;
+        }
         ScreenUtils.clear(0.045f, 0.055f, 0.085f, 1); viewport.apply();
         shapes.setProjectionMatrix(viewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.13f, 0.16f, 0.23f, 1);
         for (Rectangle card : cards) shapes.rect(card.x, card.y, card.width, card.height);
-        if (recovery) {
-            shapes.setColor(0.58f, 0.32f, 0.1f, 1); shapes.rect(450, 310, 60, 38);
-            shapes.setColor(Color.GOLD); shapes.rect(453, 332, 54, 5); shapes.rect(475, 320, 10, 14);
-        }
         shapes.end();
         batch.setProjectionMatrix(viewport.getCamera().combined); batch.begin();
+        batch.draw(game.visuals().expanded().effect("chest-special",Math.min(1,visualTime/.8f)),430,300,100,72);
         font.setColor(Color.GOLD); font.getData().setScale(1.6f);
         font.draw(batch, recovery ? "BAÚ DAS CINZAS" : "RECOMPENSA DAS SOMBRAS", 240, 485, 480, 1, false);
         font.getData().setScale(1); font.setColor(Color.WHITE);
@@ -121,7 +126,7 @@ public final class ArenaRewardScreen extends ScreenAdapter {
             font.setColor(Color.GOLD); font.draw(batch, choiceGuard.notice(), 180, 35);
         }
         batch.end();
-        if (boonPanel.open()) boonPanel.draw(batch, shapes, font);
+        if (boonPanel.open()) boonPanel.draw(batch, shapes, font,game.visuals());
     }
     @Override public void dispose() { batch.dispose(); shapes.dispose(); font.dispose(); }
 }

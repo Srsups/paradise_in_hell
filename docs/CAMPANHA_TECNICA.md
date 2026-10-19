@@ -41,14 +41,49 @@ efetivo. RunReport registra difficulty; perfil/relatório sem campo assumem Méd
 IDs, versões JSON e dados anteriores são preservados.
 Detalhes: [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
 
+## Marco 3 — piloto visual implementado
+
+PilotArt carrega um TextureAtlas nomeado sob demanda, compartilhado por Main e
+descartado somente no encerramento. Fontes PNG/FNT vêm de UiTheme e pertencem
+às telas. FontBaker/PilotAtlasBaker são ferramentas offline; não são runtime.
+ActorAnimation conserva direção ao parar e fase ao virar, com histerese diagonal.
+A expansão de 15/10/2026 acrescenta uma mistura de 0,10 s entre direções.
+ExpandedArt, pertencente a PilotArt, carrega o segundo atlas uma única vez:
+oito profissões (seis quadros/direção) e seis papéis de inimigo (quatro).
+Cada corpo tem máscaras posicionáveis próprias e usa a direção predominante
+durante a mistura; acessórios e efeitos não aumentam sua silhueta de contato.
+Flecha/impacto/XP/dash e os novos golpes/poderes têm sprites, sem alterar regras.
+EnemySpawner passa a referência emprestada do atlas para novos inimigos.
+
+CaronteDialogue lê JSON por classpath; DialoguePlayback cuida da revelação,
+um comando por fala, sem moeda/eventos. RefugeScreen registra a conclusão
+pelo serviço de perfil existente. T alterna texto instantâneo durante esta sessão.
+Base: [MARCO_3_BASE_VISUAL.md](MARCO_3_BASE_VISUAL.md).
+Elenco atual: [EXPANSAO_VISUAL.md](EXPANSAO_VISUAL.md).
+
+EquippedArt substitui a arma em camada por corpos equipados: 926 poses de origem em
+64×64, disponíveis em 1.280 combinações de direção/ação. Profissões e conjuração
+do chefe usam cinco direções de origem, com espelhamento horizontal das três da direita. A máscara usa alfa no recorte central de
+tronco/pernas; a extensão visual da arma fica fora do contato. Jogador conserva
+orientação de mira entre tiros e usa a passada real para locomover.
+EncounterAnimation consulta progresso de BossEncounter/MiniBossEncounter, sem
+resolver dano; TacticalVisuals desenha avisos em texturas, sem ShapeRenderer.
+WeaponVisuals limita-se à rotação de efeitos/projéteis; os ícones de arma são
+mostrados somente por BlacksmithScreen. DivineVisuals desenha poderes/impactos. FeedbackVisuals reutiliza os sprites para respostas a acertos.
+ChestVisuals mantém apenas a cauda cosmética da abertura, limitada a seis imagens;
+RunChests entrega/remove cada recompensa uma vez. BoonChoiceView concentra a
+tela inteira e os retângulos dos cartões, incluindo catálogos reduzidos.
+BoonPanel reutiliza os mesmos ícones. RefugeScreen usa o retrato ilustrado do
+protagonista, mantendo o avanço/conclusão do diálogo no serviço existente.
+
 ## Arquitetura planejada após os playtests
 
 O [roteiro de 13/10/2026](ROTEIRO_DE_MELHORIAS.md) prioriza HUD/áudio/Guardião,
 dificuldades, base visual, catálogo/altar, Fazendeiro e acabamento da região.
 As responsabilidades abaixo descrevem o sistema atual; a ampliação deverá:
 
-- Centralizar assets/fontes/estilos e estados de animação. Manter dano, navegação
-  e persistência fora da apresentação; preservar a correspondência das máscaras.
+- Expandir o piloto visual mantendo dano, navegação e persistência fora
+  da apresentação e preservando a correspondência das máscaras.
 - Definir dádivas por dados, com região de obtenção, raridade, recarga e limites;
   poderes obtidos continuam nas transições. Catalogar novas compras do altar.
 - Externalizar falas/opções/condições e modelar missão do NPC do Fazendeiro com
@@ -58,7 +93,9 @@ As responsabilidades abaixo descrevem o sistema atual; a ampliação deverá:
   atributos da ferramenta ativa e forja única; ampliar a paginação de profissões.
 
 HUD, visibilidade sonora e métricas entraram no M1; dificuldade/economia no M2.
-Missões, novas fontes e assets continuam planejados para os respectivos marcos.
+O M3 incorporou fontes e o pacote piloto; a expansão antecipou parte do M6 para
+todo o elenco atual. Missões, novas compras, futuros personagens e poses corporais
+adicionais continuam planejadas nos respectivos marcos.
 
 ## Responsabilidades
 
@@ -76,7 +113,7 @@ Missões, novas fontes e assets continuam planejados para os respectivos marcos.
 | GameDifficulty | Multiplicadores fixos de inimigos e percentuais das moedas elegíveis |
 | SaveSlots / SaveSelectionScreen | Oito perfis independentes em duas páginas e seleção de personagem |
 | EnemyType / EnemyWaves | Atributos e XP por tipo; sorteio de ondas mistas ou de um único tipo |
-| ArcherAttack / ArcherVisuals | Arqueiro comum com aviso fixo, flechas limitadas, recuo seguro, desenho provisório de arco/mira |
+| ArcherAttack / WeaponVisuals | Arqueiro com aviso fixo, flechas limitadas, recuo seguro e sprites de arco/flecha; mira tática geométrica |
 | FastPursuit | Ciclos de arrancada/recuperação defasados; janelas de reposicionamento sem bônus de velocidade |
 | EnemyDifficulty | Escala linear de vida/dano pelo tempo total e dificuldade da sala |
 | XpAttraction | Movimento e coleta dos cristais, com alcance/velocidade do ímã |
@@ -85,7 +122,11 @@ Missões, novas fontes e assets continuam planejados para os respectivos marcos.
 | GameScreen / Jogador | Combate, entrada, entidades, mapa e recursos gráficos da arena |
 | RouteScreen | Escolha de destino entre arenas |
 | BossEncounter / CombatGeometry | Máquina de estados do chefe, padrões, dano e colisão por percurso, sem OpenGL |
-| SpriteHitbox / Art | Máscaras de alfa por quadro, cache por atlas, contato e percurso de projéteis vinculados à escala do sprite |
+| SpriteHitbox / Art / ExpandedArt | Formas de alfa por quadro, posições independentes por corpo e contato/percurso vinculados à escala e direção predominante |
+| ActorAnimation / PlayerAnimation / EquippedArt | Oito direções, passada/transição, equipamento incorporado à pose e máscaras do tronco/pernas |
+| EncounterAnimation / TacticalVisuals | Seleção de poses e avisos animados usando os relógios e áreas dos modelos |
+| WeaponVisuals / DivineVisuals / ChestVisuals | Projéteis/efeitos, poderes e abertura cosmética limitada |
+| BoonChoiceView | Desenho opaco em tela inteira, ícones e retângulos compartilhados de escolha |
 | ChoiceInputGuard / BoonPanel | Espera e liberação do ataque antes de escolher; consulta paginada das dádivas com tempo congelado |
 | BossRoomScreen | Arena fechada, armas, poderes, avisos, HUD e resultado do combate com o chefe |
 | RefugeScreen / CaronteDialogue | Área segura, conversa, altar e preparação da nova tentativa |
@@ -163,8 +204,18 @@ usam as mesmas bases. Tabelas: [BALANCEAMENTO_E_SAVES.md](BALANCEAMENTO_E_SAVES.
 e alvo; projéteis verificam o percurso para evitar atravessar paredes em um quadro.
 O narrador pergunta a profissão somente na criação do save; CampaignProfile e
 ProfileService impedem alterações posteriores. As escolhas ainda não mudam
-diálogos posteriores. Nomes e valores precisam de playtests. O sprite do herói
-e o atlas são compartilhados; animações específicas de armas continuam pendentes.
+diálogos posteriores. Nomes e valores precisam de playtests. Os corpos atuais
+são distintos por profissão, com arma integrada e poses de ataque. Atlas e efeitos
+são compartilhados; poses de dano/morte continuam pendentes.
+[Revisão de animação](ANIMACOES_E_EQUIPAMENTOS.md) e
+[polimento vigente](POLIMENTO_VISUAL_E_REFUGIO.md).
+
+PlayerAnimation separa caminhada (0,135 s/quadro), respiração (0,40 s/quadro),
+ataque (0,20–0,48 s por sequência) e mistura de poses (0,08 s). Não resolve disparos:
+PlayerState mantém os ataques/s reais. Jogador.update(delta,map,false) permite
+movimento no refúgio sem consumir disparo ou animar ataques. Durante seus painéis,
+Jogador.idle(delta) apenas anima o repouso. Caronte/altar/travessia usam 12 regiões
+no atlas compartilhado; ProfessionScreen também usa o repouso animado.
 
 ## Interface e geometria de combate
 

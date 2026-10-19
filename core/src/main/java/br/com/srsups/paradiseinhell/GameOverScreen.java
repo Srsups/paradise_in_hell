@@ -17,7 +17,7 @@ public class GameOverScreen extends ScreenAdapter {
     private final float elapsed;
     private final int kills, level;
     private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
+    private final BitmapFont font = UiTheme.bodyFont();
     private final FitViewport viewport = new FitViewport(960, 540);
     private float inputDelay = 0.4f;
 

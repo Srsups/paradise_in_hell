@@ -13,6 +13,7 @@ public final class CombatEffects {
         public final Kind kind;
         public final float x, y, ox, oy;
         private float life = 0.18f;
+        public float progress() { return 1-life/.18f; }
         Flash(Kind kind, float x, float y, float ox, float oy) {
             this.kind = kind; this.x = x; this.y = y; this.ox = ox; this.oy = oy;
         }

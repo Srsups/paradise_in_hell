@@ -84,7 +84,8 @@ dos relatórios para ajustar números. Média é a referência do M1.
 Confirmar se Fácil melhora a acessibilidade sem tornar o altar lento e se a
 recompensa de Difícil compensa o risco.
 
-Próximo incremento: **M3**, base visual reutilizável e diálogo piloto de Caronte.
+Na sequência, o **M3 piloto foi implementado**: [base visual e Caronte](MARCO_3_BASE_VISUAL.md).
+Próximo incremento: **M4**, dádivas e altar.
 O Fazendeiro e o desafio do NPC continuam em M5, conforme o
 [roteiro](ROTEIRO_DE_MELHORIAS.md).
 

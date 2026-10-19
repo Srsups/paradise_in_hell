@@ -23,7 +23,8 @@ public final class BoonPanel {
     public int pageCount() { return Math.max(1, (acquired().size() + PER_PAGE - 1) / PER_PAGE); }
     public int page() { return page; }
     public void movePage(int direction) { page = Math.max(0, Math.min(pageCount() - 1, page + direction)); }
-    public void draw(SpriteBatch batch, ShapeRenderer shapes, BitmapFont font) {
+    public void draw(SpriteBatch batch, ShapeRenderer shapes, BitmapFont font) {draw(batch,shapes,font,null);}
+    public void draw(SpriteBatch batch, ShapeRenderer shapes, BitmapFont font,PilotArt art) {
         Gdx.gl.glEnable(GL20.GL_BLEND); Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0, 0, 0, .94f); shapes.rect(0, 0, 960, 540);
@@ -53,10 +54,12 @@ public final class BoonPanel {
         for (int i = page * PER_PAGE; i < Math.min(boons.size(), (page + 1) * PER_PAGE); i++) {
             Upgrade boon = boons.get(i); int slot = i % PER_PAGE;
             float x = 48 + slot % 2 * 455, y = 376 - slot / 2 * 105;
+            if(art!=null){batch.setColor(Color.WHITE);batch.draw(art.boonIcon(boon),x,y-28,32,32);x+=43;}
             font.setColor(boon.rarity.red, boon.rarity.green, boon.rarity.blue, 1);
+            font.getData().setScale(.9f);
             font.draw(batch, boon.title + " | " + boon.rarity.label, x, y);
             font.setColor(Color.WHITE); font.getData().setScale(.9f);
-            font.draw(batch, boon.description, x, y - 22, 405, 8, true);
+            font.draw(batch, boon.description, x, y - 22, art==null?405:360, 8, true);
             font.getData().setScale(1);
             String rank = boon.maxRank == Integer.MAX_VALUE ? "Escolhida " + session.rank(boon) + " vez(es)"
                 : "Nível " + session.rank(boon) + "/" + boon.maxRank;

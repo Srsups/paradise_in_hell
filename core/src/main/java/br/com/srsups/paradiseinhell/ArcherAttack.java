@@ -31,6 +31,8 @@ public final class ArcherAttack {
     private final List<Arrow> arrowView = Collections.unmodifiableList(arrows);
     private Phase phase = Phase.SEEKING;
     private float remaining, aimX, aimY;
+    private int shotsFired;
+    public int shotsFired(){return shotsFired;}
     public Phase phase() { return phase; }
     public float aimX() { return aimX; } public float aimY() { return aimY; }
     public float aimProgress() { return phase == Phase.AIMING ? 1 - remaining / AIM_SECONDS : 0; }
@@ -48,8 +50,9 @@ public final class ArcherAttack {
             }
             remaining = Math.max(0, remaining - delta);
             if (remaining == 0) {
-                if (arrows.size() < 2 && (aimX - x) * (aimX - x) + (aimY - y) * (aimY - y) > .01f)
-                    arrows.add(new Arrow(x, y, aimX - x, aimY - y, damage));
+                if (arrows.size() < 2 && (aimX - x) * (aimX - x) + (aimY - y) * (aimY - y) > .01f) {
+                    arrows.add(new Arrow(x, y, aimX - x, aimY - y, damage));shotsFired++;
+                }
                 phase = Phase.RECOVERING; remaining = RECOVERY_SECONDS;
             }
             return;

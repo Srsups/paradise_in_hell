@@ -39,7 +39,7 @@ public final class BossEncounter implements CombatTarget {
     private float x = 240, y = 172, health, timer = 1.2f, elapsed, flashTimer;
     private float startX, startY, endX, endY, aimAngle, telegraphDuration, activeDuration, activeElapsed;
     private final float maxHealth, damageMultiplier;
-    private float contactCooldown;
+    private float contactCooldown,recoveryDuration;
     private boolean poweredAttack, marksResolved, chargeResolved, leapResolved;
     private float leapX, leapY, leapElapsed;
     public static final float RECOVERY_SECONDS = .95f, ENRAGED_RECOVERY_SECONDS = .65f;
@@ -109,6 +109,8 @@ public final class BossEncounter implements CombatTarget {
     public float endX() { return endX; }
     public float endY() { return endY; }
     public float aimAngle() { return aimAngle; }
+    public float recoveryElapsed(){return state==State.RECOVERY?Math.max(0,recoveryDuration-timer):0;}
+    public float activeProgress() { return state==State.ACTIVE ? Math.min(1,attack==Attack.CHARGE ? activeElapsed/activeDuration : 1-timer/(attack==Attack.LEAP?.45f:.3f)) : 0; }
     public float warningProgress() { return state == State.TELEGRAPH ? 1 - timer / telegraphDuration : 1; }
     public void hurt(float amount) {
         if (!Float.isFinite(amount) || amount < 0) throw new IllegalArgumentException("Invalid damage");
@@ -176,7 +178,7 @@ public final class BossEncounter implements CombatTarget {
                 }
                 if (timer <= 0) {
                     state = State.RECOVERY;
-                    timer = enraged() ? ENRAGED_RECOVERY_SECONDS : RECOVERY_SECONDS;
+                    timer = recoveryDuration = enraged() ? ENRAGED_RECOVERY_SECONDS : RECOVERY_SECONDS;
                     marks.clear();
                 }
             }

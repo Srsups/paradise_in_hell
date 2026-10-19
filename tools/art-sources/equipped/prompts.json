@@ -1,0 +1,276 @@
+{
+  "tool": "Built-in image_gen via imagegen skill; no CLI/API",
+  "date": "2026-10-15",
+  "assets": [
+    {
+      "key": "cacador-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: Greek hunter in ivory tunic, deep teal short cloak, bronze open-face helmet; holds a wooden recurve BOW in left hand with right hand near the string; quiver on back. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "cacador-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "tools/art-sources/expansion/cacador-original.png"
+    },
+    {
+      "key": "ferreiro-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: burly blacksmith with burnt-orange leather apron, ivory tunic, bare muscular forearms and bronze bracers; holds a broad short bronze SWORD in his right hand. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "ferreiro-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "vigilante-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: watchman/gunfighter, deep navy short coat, red sash, bronze half helmet; holds ONE small antique flintlock PISTOL in right hand. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "vigilante-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "apostador-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: lucky Greek brawler in loose ivory shirt, moss-green sash, brown trousers, bronze wrist wraps; unarmed closed FISTS in a relaxed boxing guard. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "apostador-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "feiticeira-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: mortal spellcaster, dark violet robe with ivory trim, bronze belt, shoulder-length dark hair; holds ONE short purple-crystal WAND in right hand. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "feiticeira-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "sacerdote-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: Greek priest in ivory robes, wine-red stole, bronze clasp, dark short beard; firmly holds ONE small purple CURSE TALISMAN with red ribbons. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "sacerdote-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "necromante-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: Greek necromancer in charcoal robes, deep green cloak, bronze clasps, olive face and dark beard; holds ONE tall green-orb bone STAFF in right hand. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "necromante-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "guerreiro-walk",
+      "kind": "hero-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Canvas 1536x2048, EXACT invisible grid SIX equal columns and EIGHT equal rows, 48 cells total. Subject: Greek warrior, bronze helmet and cuirass, ivory tunic, red sash; carries a short bronze SWORD in right hand AND a round bronze SHIELD on his left forearm. Adult middle-aged Mediterranean MAN, olive skin, clearly visible short dark BEARD, ordinary masculine face, same mortal husband protagonist in every profession; not a child or teenage character. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Every row is SIX distinct evenly spaced frames of a seamless WALK cycle, alternating arms/legs and subtle cloth follow-through, holding weapon naturally, no attack. Animate feet rather than sliding the whole body. Body proportions must match between the cardinal and diagonal rows.",
+      "file": "guerreiro-walk-original.png",
+      "transparent_background": true,
+      "referenceAtGeneration": "build/smoke/visual-catalog-classes.png (galeria da primeira expansao, anterior a esta revisao)"
+    },
+    {
+      "key": "archer-walk",
+      "kind": "enemy-walk",
+      "cols": 4,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1024x2048. EXACT invisible grid FOUR columns EIGHT rows. Subject: skeletal Stygian archer, wine-purple hooded short cloak, visible ivory skull, bronze belt, quiver on back, BOTH hands actually carrying a wooden BOW, string integrated. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Each row FOUR distinct walk frames, steady alternating steps.",
+      "file": "archer-walk-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "carrasco-walk",
+      "kind": "enemy-walk",
+      "cols": 4,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1024x2048. EXACT invisible grid FOUR columns EIGHT rows. Subject: very muscular executioner miniboss, dark iron full hood/mask, broad burnt-orange leather apron, bare muscular arms, iron boots; carries a heavy broad SWORD gripped in right hand, threatening but no gore. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Each row FOUR distinct heavy walk frames, alternating steps with weight and cloth motion.",
+      "file": "carrasco-walk-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-walk",
+      "kind": "boss-walk",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x2048. EXACT invisible grid SIX columns EIGHT rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Each row SIX distinct weighty WALK frames, strong continuous alternating steps, shoulders and cloak move naturally. This is an original Greek underworld guardian, not a superhero.",
+      "file": "guardian-walk-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-idle",
+      "kind": "boss-idle",
+      "cols": 4,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1024x2048. EXACT invisible grid FOUR columns EIGHT rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Each row FOUR genuinely different BREATHING idle frames: chest expands then relaxes, shoulders rise and fall, fists clench, mantle gently swings. Feet stay planted. Distinct visible torso motion but never squash the character.",
+      "file": "guardian-idle-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-charge",
+      "kind": "boss-charge",
+      "cols": 6,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x2048. EXACT invisible grid SIX columns EIGHT rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows in this EXACT order: 1 facing DOWN (south), 2 UP (north), 3 RIGHT (east), 4 LEFT (west), 5 DOWN-RIGHT (southeast 45 degrees), 6 DOWN-LEFT (southwest 45 degrees), 7 UP-RIGHT (northeast 45 degrees), 8 UP-LEFT (northwest 45 degrees). Diagonals have genuine distinct 45-degree torso, face, legs AND equipment angles, not mirrored cardinal poses. Each row SIX distinct CHARGE attack frames in order: frames1-4 a strong fast RUN cycle leaning forward, pumping legs, cloak streaming, leading with a massive shoulder; frame5 braces and lowers the shoulder; frame6 explosive SHOULDER BASH follow-through. Feet/body remain centered because engine supplies movement. No speed lines.",
+      "file": "guardian-charge-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "carrasco-spin",
+      "kind": "mini-spin",
+      "cols": 6,
+      "rows": 4,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x1024. EXACT invisible grid SIX columns FOUR rows. Subject: very muscular executioner miniboss, dark iron full hood/mask, broad burnt-orange leather apron, bare muscular arms, iron boots; heavy broad SWORD FIRMLY GRIPPED in right hand. Rows down, up, right, left facing. Each row SIX consecutive frames of a full 360-degree SWORD SPIN: crouch/wind-up, torso twist, sword swings widely around body, follow-through, return. The WHOLE BODY turns, knees bend and arms swing WITH THE SWORD, no detached sword layer. No circles or attack trails; those are separate effects.",
+      "file": "carrasco-spin-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "carrasco-stones",
+      "kind": "mini-stones",
+      "cols": 6,
+      "rows": 4,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x1024. EXACT invisible grid SIX columns FOUR rows. Subject: very muscular executioner miniboss, dark iron full hood/mask, broad burnt-orange leather apron, bare muscular arms, iron boots; heavy broad SWORD sheathed at his waist. Rows down, up, right, left facing. Each row SIX successive STONE THROW attack poses: bends knees, scoops stones from ground, winds throwing arm back, forcefully throws a handful of small stones, follows through, returns. Stones in his hand must touch his hand, no detached projectiles.",
+      "file": "carrasco-stones-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-cast",
+      "kind": "boss-cast",
+      "cols": 6,
+      "rows": 4,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x1024. EXACT invisible grid SIX columns FOUR rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows DOWN, UP, RIGHT, LEFT. Every row SIX successive spellcasting poses: guarded stance, bends knees, both fists draw in, raises one arm, forcefully sends magic forward from the palm, follows through. Big visible torso and arm movement, cloak follows. No projectiles detached from the hand.",
+      "file": "guardian-cast-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-land",
+      "kind": "boss-land",
+      "cols": 6,
+      "rows": 4,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x1024. EXACT invisible grid SIX columns FOUR rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows DOWN, UP, RIGHT, LEFT. Every row SIX successive LANDING poses: frame1 descending knees bent, frame2 lands low with ONE KNEE and ONE FIST planted on ground and opposite arm raised behind, head tilted up in a dramatic three-point impact pose; frame3 compresses from impact; frame4 pushes up from fist; frame5 rises; frame6 returns to guarded stance. Strong shoulder and leg action. Original Greek guardian, no superhero costume or logos. No ground, crater or dust background.",
+      "file": "guardian-land-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "tactical-fx",
+      "kind": "effects",
+      "cols": 8,
+      "rows": 8,
+      "prompt": "Use case: stylized-concept. One production PIXEL ART effects spritesheet with genuine alpha transparency, canvas 2048x2048, EXACT invisible grid EIGHT columns EIGHT rows, 64 cells. No text labels frames grid or background. Each row EIGHT consecutive animation frames of ONE tactical effect, smooth pulsing magical texture, restrained bronze/ember palette, transparent center and faint translucent fill, actual pixel edges, not line art. Keep circular effects centered, outer diameter fills90%cell in EVERY frame; do not change diameter between frames, animate runes and glow inside. Row1: archer target reticle, amber segmented bronze chevrons in a circle, becomes RED last2frames. Row2: horizontal arrow firing-lane pointing RIGHT, wisps and small fletching symbols, bounds fills whole cell left-to-right. Row3: circular executioner sword warning, amber runic ring turnsred last2frames. Row4: 76-degree cone/fan pointed RIGHT with origin EXACTLY at left-center of cell and far edge at right, stone shards glowing inside, turnsred last2frames. Row5: circular dark fire ground mark, amber beginning to bright red last2frames. Row6: horizontal charge path pointing RIGHT, wide decorated rectangular floor rune with large arrowhead right, scrollwork and trailing sparks, alpha edges, fills wholecellwidth. Row7: circular leap target, amber pursuing rune becomes vivid RED last2frames, transparent center with translucent dust. Row8: circular landing impact shockwave, cracks and dust expanding from small center firstframe to wholecell lastframe, no character. Every item fully contained in own cell, no detached cells overlapping.",
+      "file": "tactical-fx-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "cacador-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/cacador-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: Greek hunter in ivory tunic, deep teal short cloak, bronze open-face helmet; holds a wooden recurve BOW in left hand with right hand near the string; quiver on back. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically drawing the bow, aiming and releasing ONE arrow. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "cacador-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "ferreiro-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/ferreiro-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: burly blacksmith with burnt-orange leather apron, ivory tunic, bare muscular forearms and bronze bracers; holds a broad short bronze SWORD in his right hand. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically winding back, slashing with the bronze sword and recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "ferreiro-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "vigilante-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/vigilante-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: watchman/gunfighter, deep navy short coat, red sash, bronze half helmet; holds ONE small antique flintlock PISTOL in right hand. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically raising the pistol, firing with tiny muzzle flash, recoil and recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "vigilante-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "apostador-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/apostador-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: lucky Greek brawler in loose ivory shirt, moss-green sash, brown trousers, bronze wrist wraps; unarmed closed FISTS in a relaxed boxing guard. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically winding back a fist, punching forward, extending and retracting his arm. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "apostador-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "feiticeira-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/feiticeira-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: mortal spellcaster, dark violet robe with ivory trim, bronze belt, shoulder-length dark hair; holds ONE short purple-crystal WAND in right hand. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically raising and pointing the wand, casting violet magic and recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "feiticeira-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "sacerdote-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/sacerdote-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: Greek priest in ivory robes, wine-red stole, bronze clasp, dark short beard; firmly holds ONE small purple CURSE TALISMAN with red ribbons. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically raising the talisman, casting a purple curse with his hand and recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "sacerdote-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "necromante-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/necromante-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: Greek necromancer in charcoal robes, deep green cloak, bronze clasps, olive face and dark beard; holds ONE tall green-orb bone STAFF in right hand. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically planting and raising his staff, releasing green soul magic and recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "necromante-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guerreiro-attack",
+      "kind": "hero-attack",
+      "cols": 4,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/guerreiro-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK animation spritesheet of the EXACT SAME adult male Greek character in the reference walk sheet. Preserve identity, beard, outfit, colors, armor, proportions and weapon. Subject: Greek warrior, bronze helmet and cuirass, ivory tunic, red sash; carries a short bronze SWORD in right hand AND a round bronze SHIELD on his left forearm. Genuine alpha transparency, no background, shadows, text, grid or watermark. Canvas1024x2048, EXACT invisible grid FOUR columns EIGHT rows. SAME row order as reference: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. Diagonal rows have distinct45-degree torso, face and equipment angles. Every row FOUR successive distinct ATTACK frames: wind-up, strike/release, follow-through, recover, specifically keeping shield raised while slashing forward with his sword, then recovering. Arms, hands AND WEAPON move TOGETHER inside EACH full-body sprite; no floating weapons, isolated icons or detached projectiles. Torso x50%cell, soles y82%, head y18%; body width central40%, weapons inside10..90%cell. Character scale/feet baseline do not change. Weapon stays visibly attached to hands. Restrained crisp pixel clusters matching reference, 3/4 overhead view. Firing direction agrees with row facing. Controlled body recoil.",
+      "file": "guerreiro-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "archer-attack",
+      "kind": "enemy-attack",
+      "cols": 6,
+      "rows": 8,
+      "reference": "tools/art-sources/equipped/archer-walk-original.png",
+      "prompt": "Use case: stylized-concept. Companion ATTACK sheet of EXACT SAME skeletal archer in reference: wine-purple hood, ivory skull, bronze belt, quiver and wooden bow. Preserve identity/outfit/proportions. Genuine transparent PNG, no background/grid/text/shadows. Canvas1536x2048, EXACT SIX columns EIGHT rows. Direction rows: DOWN, UP, RIGHT, LEFT, DOWN-RIGHT, DOWN-LEFT, UP-RIGHT, UP-LEFT. SIX successive shooting frames per row:1 reaches for arrow,2 nocks arrow,3 pulls string halfway,4 draws fully and aims,5 RELEASES string/arrow,6 follows through. Entire character, arms, hands, bowstring AND BOW are ONE integrated drawn sprite per cell, bow firmly held in both hands. No detached bow layer, no detached flying arrows. Same centered torso x50%, soles y82%, head y18% baseline, body central40%width, weapons10..90%cell. 45-degree diagonal poses different from cardinal rows. Deliberate crisp pixel clusters matching reference.",
+      "file": "archer-attack-original.png",
+      "transparent_background": true
+    },
+    {
+      "key": "guardian-jump",
+      "kind": "boss-jump",
+      "cols": 6,
+      "rows": 4,
+      "prompt": "Use case: stylized-concept. Production animation spritesheet for the original top-down Greek mythology pixel-art roguelite Paradise in Hell. Exactly one PNG with genuine RGBA TRANSPARENT background. No text, labels, grid lines, floor, shadows, detached props, scenery or watermark. Cohesive hand-painted crisp pixel clusters, bronze/slate/ivory palette, chibi 3/4 overhead orthographic view, stable character identity and stable clothing. Each grid cell contains ONE complete CHARACTER WITH WEAPON IN HAND as a SINGLE connected illustration, no floating weapon, no empty hand posing. Keep torso centered at 50% cell width, head at 20% and soles at 82% cell height in ALL frames. The body occupies x=32..68% and y=18..82%; integrated weapons can extend to x=10..90% and y=10..90%. Never cross cell boundaries. Same scale and feet baseline in every frame. Designs are original enemies for the same game. Canvas 1536x1024. EXACT invisible grid SIX columns FOUR rows. Subject: imposing armored Guardian of Tartarus, charcoal plate armor with ornate bronze/gold edges, tall angular gold faceplate, violet tattered mantle, massive bronze pauldrons, empty armored hands. Rows DOWN, UP, RIGHT, LEFT. Every row SIX successive TAKEOFF poses: stands braced, bends both knees, compresses into low crouch, forcefully pushes upward with legs, rises with one fist raised, extends upward with bent knees and flowing mantle. Visible whole-body progression and strong leg movement. No detached effects, dust or ground.",
+      "file": "guardian-jump-original.png",
+      "transparent_background": true,
+      "reference": "tools/art-sources/equipped/guardian-land-original.png"
+    }
+  ]
+}

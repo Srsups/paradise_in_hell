@@ -15,34 +15,32 @@ public final class FeedbackVisuals {
         case FISTS->Color.CORAL;case WAND->Color.SKY;case CURSE->Color.MAGENTA;
         case SOUL->Color.LIME;case SHIELD->Color.CYAN;
     };}
-    public static void pulses(ShapeRenderer shapes,CombatFeedback feedback) {
-        for(CombatFeedback.Pulse p:feedback.pulses()) {
-            Color color=color(p.weapon);
-            if(p.kind==CombatFeedback.Kind.BLOCK || p.kind==CombatFeedback.Kind.PROTECTED)color=Color.SKY;
-            float fade=.4f+.6f*(1-p.progress());
-            shapes.setColor(color.r*fade,color.g*fade,color.b*fade,1);
-            float radius=3+p.progress()*8;
-            switch(p.kind) {
-                case TRAIL -> shapes.line(p.ox,p.oy,p.x,p.y);
-                case DASH -> {shapes.circle(p.x,p.y,7*(1-p.progress()),12);shapes.line(p.x,p.y,p.ox,p.oy);}
-                case BLOCK -> {
-                    float angle=(float)Math.toDegrees(Math.atan2(p.oy-p.y,p.ox-p.x));
-                    shapes.arc(p.x,p.y,16+p.progress()*4,angle-45,90,12);
-                    shapes.line(p.x+(float)Math.cos(Math.toRadians(angle))*14,p.y+(float)Math.sin(Math.toRadians(angle))*14,
-                        p.x+(float)Math.cos(Math.toRadians(angle))*23,p.y+(float)Math.sin(Math.toRadians(angle))*23);
-                }
-                case PROTECTED -> shapes.circle(p.x,p.y,14+p.progress()*4,24);
-                case RETALIATION -> {shapes.line(p.x,p.y,p.ox,p.oy);shapes.circle(p.ox,p.oy,radius,16);}
-                case XP -> shapes.circle(p.x,p.y,radius/2,12);
-                case RESURRECTION -> shapes.circle(p.x,p.y,8+p.progress()*28,32);
-                case ATTACK,HIT -> {
-                    for(int i=0;i<4;i++) {
-                        float angle=i*(float)Math.PI/2+.35f;
-                        float dx=(float)Math.cos(angle),dy=(float)Math.sin(angle);
-                        shapes.line(p.x+dx*radius*.45f,p.y+dy*radius*.45f,p.x+dx*radius,p.y+dy*radius);
-                    }
-                }
+    public static void sprites(SpriteBatch batch,PilotArt art,CombatFeedback feedback) {
+        for(CombatFeedback.Pulse pulse:feedback.pulses()) {
+            if(pulse.kind==CombatFeedback.Kind.TRAIL)continue;
+            float progress=pulse.progress();
+            if(pulse.kind==CombatFeedback.Kind.XP || pulse.kind==CombatFeedback.Kind.DASH) {
+                String effect=pulse.kind==CombatFeedback.Kind.XP?"xp":"dash";float size=effect.equals("xp")?12:20;
+                batch.setColor(1,1,1,1-progress);
+                WeaponVisuals.sprite(batch,art.effect(effect,progress),pulse.x,pulse.y,size,size,
+                    effect.equals("dash")?(float)Math.toDegrees(Math.atan2(pulse.oy-pulse.y,pulse.ox-pulse.x)):0);
+                batch.setColor(Color.WHITE);continue;
             }
+            String key=switch(pulse.kind) {
+                case BLOCK->"attack-shield";case PROTECTED->"aegis";case RESURRECTION->"resurrect";
+                case RETALIATION->"lightning";default->"attack-"+WeaponVisuals.key(pulse.weapon);
+            };
+            float size=pulse.kind==CombatFeedback.Kind.RESURRECTION?48: pulse.kind==CombatFeedback.Kind.PROTECTED?28:16;
+            if(pulse.kind==CombatFeedback.Kind.RETALIATION) {
+                float dx=pulse.ox-pulse.x,dy=pulse.oy-pulse.y,length=(float)Math.sqrt(dx*dx+dy*dy);
+                WeaponVisuals.sprite(batch,art.expanded().effect(key,progress),(pulse.x+pulse.ox)/2,(pulse.y+pulse.oy)/2,
+                    Math.max(8,length),9,(float)Math.toDegrees(Math.atan2(dy,dx)));
+            } else {
+                batch.setColor(1,1,1,1-progress*.7f);
+                WeaponVisuals.sprite(batch,art.expanded().effect(key,progress),pulse.x,pulse.y,size,size,
+                    pulse.kind==CombatFeedback.Kind.ATTACK?(float)Math.toDegrees(Math.atan2(pulse.oy,pulse.ox)):0);
+            }
+            batch.setColor(Color.WHITE);
         }
     }
     public static void labels(SpriteBatch batch,BitmapFont font,CombatFeedback feedback) {

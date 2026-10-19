@@ -45,7 +45,10 @@ public class Lwjgl3Launcher {
                     session.enterArena("portoes");
                     setScreen(new BossRoomScreen(this, session));
                 }
-                if (frames == 8) setScreen(new RefugeScreen(this));
+                if (frames == 8) {
+                    br.com.srsups.paradiseinhell.CaronteDialogue.select(profiles().profile());
+                    setScreen(new RefugeScreen(this));
+                }
                 if (frames == 10) setScreen(new SaveSelectionScreen(this, false));
                 if (frames == 12) {
                     RegionDefinition region = RegionDefinition.fromJson(

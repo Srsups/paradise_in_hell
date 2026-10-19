@@ -28,6 +28,11 @@ public class GameScreen extends ScreenAdapter {
     private final CombatFeedback feedback;
     private final ChoiceInputGuard choiceGuard = new ChoiceInputGuard();
     private SpriteHitbox[] miniHitboxes;
+    private EquippedArt.Body miniBody;
+    private final ActorAnimation miniMotion=new ActorAnimation();
+    private final ChestVisuals chestVisuals=new ChestVisuals();
+    private float choiceTime,blessingTime;
+    private Upgrade blessing;
     private final RunProgress progress;
     private final FitViewport world = new FitViewport(480, 270);
     private final FitViewport hud = new FitViewport(960, 540);
@@ -39,11 +44,7 @@ public class GameScreen extends ScreenAdapter {
     private String chestFeedback = "";
     private float chestFeedbackTimer;
     private final List<Upgrade> choices = new ArrayList<>();
-    private final Rectangle[] cards = {
-        new Rectangle(35, 180, 280, 160),
-        new Rectangle(340, 180, 280, 160),
-        new Rectangle(645, 180, 280, 160)
-    };
+    private final Rectangle[] cards = BoonChoiceView.cards(3);
     private SpriteBatch batch;
     private ShapeRenderer shapes;
     private BitmapFont font;
@@ -80,12 +81,13 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(null);
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
-        font = new BitmapFont();
+        font = UiTheme.bodyFont();
         atlas = new Texture(Art.ATLAS);
         atlas.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         map = new TileMap(atlas);
         miniHitboxes = new SpriteHitbox[]{Art.hitbox(Art.cell(atlas, 2, 1)), Art.hitbox(Art.cell(atlas, 3, 1))};
-        player = new Jogador(100, 100, atlas, stats, this::attack);
+        miniBody=game.visuals().equipped().body("carrasco");
+        player = new Jogador(100, 100, atlas, stats, this::attack, game.visuals());
         map.gerarAreaInicialSegura(player.x, player.y, 5);
         followPlayer();
         navigation = new EnemyNavigation(map::ehSolido);
@@ -141,6 +143,7 @@ public class GameScreen extends ScreenAdapter {
     }
     private void updatePlaying(float delta) {
         session.advance(delta);
+        blessingTime=Math.max(0,blessingTime-delta);
         boolean exitWasOpen=session.arenaComplete();
         feedback.advance(delta);
         miniTime += delta; miniHitCooldown = Math.max(0, miniHitCooldown - delta);
@@ -151,6 +154,7 @@ public class GameScreen extends ScreenAdapter {
         effects.update(delta);
         Vector2 guardAim = world.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         stats.setGuard(Gdx.input.isButtonPressed(Input.Buttons.RIGHT), guardAim.x - player.x - 8, guardAim.y - player.y - 8);
+        player.aim(guardAim.x-player.x-8,guardAim.y-player.y-8);
         boolean wasDashing=stats.isDashing();float beforeX=player.x+8,beforeY=player.y+8;
         player.update(delta, map);
         feedback.dash(stats.getWeapon(),beforeX,beforeY,player.x+8,player.y+8,!wasDashing && stats.isDashing(),stats.isDashing());
@@ -249,7 +253,9 @@ public class GameScreen extends ScreenAdapter {
         }
         if (miniBoss != null) {
             MiniBossEncounter.State beforeState=miniBoss.state();
+            float beforeMiniX=miniBoss.x,beforeMiniY=miniBoss.y;
             float miniDamage = miniBoss.update(delta, player.x + 8, player.y + 8, navigation, player.hitbox().overlaps(miniHitbox()));
+            miniMotion.advance(delta,miniBoss.x-beforeMiniX,miniBoss.y-beforeMiniY);
             if(!miniBossVisible()) game.audio().stopEmitter(miniBoss);
             else if(beforeState!=MiniBossEncounter.State.TELEGRAPH && miniBoss.state()==MiniBossEncounter.State.TELEGRAPH)
                 game.audio().play(SoundCue.BOSS_WARNING,miniBoss);
@@ -288,7 +294,7 @@ public class GameScreen extends ScreenAdapter {
                     (int) enemies.stream().filter(enemy -> enemy.getType() == EnemyType.FAST).count())) {
                 // Bound simultaneous simulation work, never total enemies generated for the phase.
                 if (enemies.size() >= 160) break;
-                Inimigo enemy = EnemySpawner.spawnInimigoForaDaTela((OrthographicCamera) world.getCamera(), atlas, map, type, navigation);
+                Inimigo enemy = EnemySpawner.spawnInimigoForaDaTela((OrthographicCamera) world.getCamera(), atlas, map, type, navigation, game.visuals());
                 if (enemy != null) {
                     if (waves.archer(type, progress.elapsed(), !session.isDemo(), activeArchers, waveArchers)) {
                         enemy.configureArcher(); activeArchers++; waveArchers++;
@@ -371,11 +377,13 @@ public class GameScreen extends ScreenAdapter {
         if (found) projectile.redirect(targetX, targetY); else projectile.deveSerRemovido = true;
     }
     private void updateChests(float delta) {
+        chestVisuals.advance(delta);
         chestFeedbackTimer = Math.max(0, chestFeedbackTimer - delta);
         chests.update(delta, player.x + 8, player.y + 8, navigation, !session.isDemo());
         RunChests.Chest nearby = chests.nearby(player.x + 8, player.y + 8);
         if (nearby != null && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             chestFeedback = chests.open(nearby, session);
+            chestVisuals.open(nearby);
             game.audio().play(SoundCue.CHEST); chestFeedbackTimer = 3;
         }
     }
@@ -393,6 +401,7 @@ public class GameScreen extends ScreenAdapter {
         choices.addAll(UpgradeChoices.draw(session, 3, boonRandom));
     }
     private void updateChoices(float delta) {
+        choiceTime+=delta;
         choiceGuard.advance(delta, Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (!choiceGuard.ready()) return;
         Vector2 pointer = hud.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
@@ -403,6 +412,7 @@ public class GameScreen extends ScreenAdapter {
             if (key || click) {
                 Upgrade upgrade = choices.get(index);
                 session.applyUpgrade(upgrade);
+                blessing=upgrade;blessingTime=.8f;
                 state = State.PLAYING;
                 // All earned levels keep their own selection, even after collecting many orbs.
                 if (stats.podeSubirDeNivel()) iniciarLevelUp();
@@ -419,7 +429,7 @@ public class GameScreen extends ScreenAdapter {
         if(miniBoss!=null)game.audio().stopEmitter(miniBoss);
         miniBoss = null;
         projectiles.clear();
-        chests.clear();
+        chests.clear();chestVisuals.clear();
         effects.clear(); targets.clear(); feedback.clear();
         leavingArena = true;
         if (stats.podeSubirDeNivel()) iniciarLevelUp();
@@ -447,8 +457,8 @@ public class GameScreen extends ScreenAdapter {
                 damageNumbers.add(new DamageNumber(CombatNumbers.format(stats.getDano()), miniBoss.centerX(), miniBoss.centerY() + 22));
             }
         } else {
-            Projetil projectile = new Projetil(x, y, direction.nor(), Art.cell(atlas, 0, 3), weapon);
-            projectile.configure(stats);
+            Projetil projectile = new Projetil(x, y, direction.nor(), weapon == WeaponType.BOW ? game.visuals().region("arrow-0") : Art.cell(atlas, 0, 3), weapon);
+            projectile.configure(stats);projectile.visuals(game.visuals());
             projectiles.add(projectile);
         }
     }
@@ -473,6 +483,11 @@ public class GameScreen extends ScreenAdapter {
         }
     }
     private void draw() {
+        if(state==State.LEVEL_UP) {
+            hud.apply();shapes.setProjectionMatrix(hud.getCamera().combined);batch.setProjectionMatrix(hud.getCamera().combined);
+            if(miniBoss!=null && !miniBossVisible())game.audio().stopEmitter(miniBoss);
+            drawOverlay();if(boonPanel.open())boonPanel.draw(batch,shapes,font,game.visuals());if(audioPanel.open())audioPanel.draw(batch,shapes,font);return;
+        }
         ScreenUtils.clear(0.045f, 0.055f, 0.085f, 1);
         world.apply();
         batch.setProjectionMatrix(world.getCamera().combined);
@@ -484,10 +499,16 @@ public class GameScreen extends ScreenAdapter {
         drawExitBeacon();
         batch.begin();
         for (OrbeXP orb : orbs) orb.draw(batch);
+        DivineVisuals.player(batch,game.visuals(),stats,player.x+8,player.y+8,progress.elapsed());
+        FeedbackVisuals.sprites(batch,game.visuals(),feedback);
         player.draw(batch);
         for (Inimigo enemy : enemies) enemy.draw(batch);
-        CombatVisuals.allies(batch, atlas, session.necromancy());
+        CombatVisuals.allies(batch, game.visuals(), session.necromancy());
         for (Projetil projectile : projectiles) projectile.draw(batch);
+        for(Inimigo enemy:enemies){WeaponVisuals.arrows(batch,game.visuals(),enemy);TacticalVisuals.archer(batch,game.visuals(),enemy);}
+        DivineVisuals.effects(batch,game.visuals(),effects,targets,progress.elapsed());
+        DivineVisuals.slash(batch,game.visuals(),stats,slashX,slashY,slashAngle,slashTimer);
+        if(blessingTime>0)DivineVisuals.blessing(batch,game.visuals(),blessing,player.x+8,player.y+8,1-blessingTime/.8f);
         font.getData().setScale(0.65f);
         for (DamageNumber number : damageNumbers) number.draw(batch, font);
         FeedbackVisuals.labels(batch,font,feedback);
@@ -497,38 +518,12 @@ public class GameScreen extends ScreenAdapter {
             CombatHud.bar(shapes,miniBoss.centerX()-18,miniBoss.centerY()+20,36,3,miniBoss.health()/miniBoss.maxHealth(),Color.ORANGE);
             shapes.end();
         }
-        shapes.setProjectionMatrix(world.getCamera().combined);
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        for (Inimigo enemy : enemies) ArcherVisuals.draw(shapes, enemy);
-        FeedbackVisuals.pulses(shapes,feedback);
-        CombatVisuals.effects(shapes, effects, targets);
-        CombatVisuals.guard(shapes, stats, player.x + 8, player.y + 8);
-        if (stats.possuiImaXp()) {
-            shapes.setColor(0.4f, 0.8f, 0.7f, 1); shapes.circle(player.x + 8, player.y + 8, stats.getRaioAtracaoXp(), 48);
-        }
-        if (stats.possuiAura()) {
-            shapes.setColor(Color.CYAN);
-            shapes.circle(player.x + 8, player.y + 8, stats.getRaioAura());
-        }
-        if (stats.isEscudoAtivo()) {
-            shapes.setColor(Color.GOLD);
-            shapes.circle(player.x + 8, player.y + 8, 12);
-        }
-        if (slashTimer > 0) {
-            shapes.setColor(FeedbackVisuals.color(stats.getWeapon()));
-            if (stats.getWeapon() == WeaponType.FISTS) {
-                float angle = (float) Math.toRadians(slashAngle);
-                shapes.circle(slashX + (float) Math.cos(angle) * stats.meleeReach(),
-                    slashY + (float) Math.sin(angle) * stats.meleeReach(), 5, 12);
-            } else shapes.arc(slashX, slashY, stats.swordReach(),
-                slashAngle - WeaponAttack.HALF_ANGLE_DEGREES, WeaponAttack.HALF_ANGLE_DEGREES * 2, 18);
-        }
-        shapes.end();
+
         hud.apply();
         shapes.setProjectionMatrix(hud.getCamera().combined);batch.setProjectionMatrix(hud.getCamera().combined);
         // Re-evaluate even while paused/resizing so a source hidden by the new viewport becomes silent.
         if(miniBoss!=null && !miniBossVisible())game.audio().stopEmitter(miniBoss);
-        CombatHud.player(batch,shapes,font,stats);CombatHud.goals(batch,shapes,font,session);
+        CombatHud.player(batch,shapes,font,stats,game.visuals());CombatHud.goals(batch,shapes,font,session);
         FeedbackVisuals.damageBorder(shapes,feedback);
         batch.begin();font.getData().setScale(.9f);font.setColor(Color.GOLD);
         if(chests.nearby(player.x+8,player.y+8)!=null)font.draw(batch,"F: abrir baú",650,461);
@@ -548,91 +543,43 @@ public class GameScreen extends ScreenAdapter {
         }
         font.getData().setScale(1);font.setColor(Color.WHITE);batch.end();
         if (state != State.PLAYING) drawOverlay();
-        if (boonPanel.open()) boonPanel.draw(batch, shapes, font);
+        if (boonPanel.open()) boonPanel.draw(batch, shapes, font,game.visuals());
         if(audioPanel.open())audioPanel.draw(batch,shapes,font);
     }
     private SpriteHitbox miniHitbox() {
-        return miniHitboxes[(int) (miniTime * 4) % 2].place(miniBoss.centerX() - 16, miniBoss.centerY() - 16, 32, 32, false, false);
+        return miniBody.hitbox(EncounterAnimation.mini(miniBoss,miniMotion),miniBoss.centerX(),miniBoss.centerY(),32);
     }
     private void drawMiniBoss() {
-        if (miniBoss == null) return;
-        shapes.setProjectionMatrix(world.getCamera().combined);
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        boolean warning = miniBoss.state() == MiniBossEncounter.State.TELEGRAPH;
-        shapes.setColor(warning ? Color.ORANGE : Color.SCARLET);
-        if ((warning || miniBoss.state() == MiniBossEncounter.State.ACTIVE) && miniBoss.attack() == MiniBossEncounter.Attack.SPIN) {
-            shapes.circle(miniBoss.centerX(), miniBoss.centerY(), MiniBossEncounter.SPIN_RADIUS, 36);
-            if (!warning) {
-                float angle = miniTime * 18;
-                shapes.line(miniBoss.centerX(), miniBoss.centerY(),
-                    miniBoss.centerX() + (float) Math.cos(angle) * MiniBossEncounter.SPIN_RADIUS,
-                    miniBoss.centerY() + (float) Math.sin(angle) * MiniBossEncounter.SPIN_RADIUS);
-            }
-        }
-        if (warning && miniBoss.attack() == MiniBossEncounter.Attack.STONES) {
-            shapes.arc(miniBoss.centerX(), miniBoss.centerY(), 62, (float) Math.toDegrees(miniBoss.aimAngle()) - 38, 76, 24);
-        }
-        shapes.end();
-        shapes.begin(ShapeRenderer.ShapeType.Filled); shapes.setColor(Color.LIGHT_GRAY);
-        for (MiniBossEncounter.Stone stone : miniBoss.stones()) shapes.circle(stone.x, stone.y, 3, 8);
-        shapes.end();
-        batch.begin(); batch.setColor(miniBoss.flashing() ? Color.WHITE : Color.ORANGE);
-        batch.draw(Art.cell(atlas, (int) (miniTime * 4) % 2 + 2, 1), miniBoss.centerX() - 16, miniBoss.centerY() - 16, 32, 32);
-        batch.setColor(Color.WHITE); batch.end();
+        if(miniBoss==null)return;
+        batch.begin();
+        TacticalVisuals.mini(batch,game.visuals(),miniBoss);
+        for(MiniBossEncounter.Stone stone:miniBoss.stones())batch.draw(Art.cell(atlas,3,2),stone.x-3,stone.y-3,6,6);
+        batch.setColor(miniBoss.flashing()?Color.SALMON:Color.WHITE);
+        if(miniBoss.state()==MiniBossEncounter.State.RECOVERY)miniBody.draw(batch,miniMotion,miniBoss.centerX(),miniBoss.centerY(),32);
+        else miniBody.draw(batch,EncounterAnimation.mini(miniBoss,miniMotion),miniBoss.centerX(),miniBoss.centerY(),32);
+        batch.setColor(Color.WHITE);
+        if(miniBoss.state()==MiniBossEncounter.State.ACTIVE&&miniBoss.attack()==MiniBossEncounter.Attack.SPIN)
+            WeaponVisuals.sprite(batch,game.visuals().expanded().effect("attack-sword",miniBoss.activeProgress()),
+                miniBoss.centerX(),miniBoss.centerY(),MiniBossEncounter.SPIN_RADIUS*2,MiniBossEncounter.SPIN_RADIUS*2,miniBoss.activeProgress()*360);
+        batch.end();
     }
     private void drawChests() {
-        shapes.setProjectionMatrix(world.getCamera().combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        for (RunChests.Chest chest : chests.chests()) {
-            shapes.setColor(0.15f, 0.09f, 0.04f, 1); shapes.rect(chest.x() - 10, chest.y() - 7, 20, 14);
-            shapes.setColor(0.58f, 0.32f, 0.1f, 1); shapes.rect(chest.x() - 9, chest.y() - 6, 18, 12);
-            shapes.setColor(Color.GOLD); shapes.rect(chest.x() - 8, chest.y(), 16, 2); shapes.rect(chest.x() - 2, chest.y() - 3, 4, 6);
-        }
-        shapes.end();
-        RunChests.Chest nearby = chests.nearby(player.x + 8, player.y + 8);
-        if (nearby != null) {
-            shapes.begin(ShapeRenderer.ShapeType.Line); shapes.setColor(Color.GOLD);
-            shapes.circle(nearby.x(), nearby.y(), 14, 20); shapes.end();
-        }
+        batch.begin();chestVisuals.draw(batch,game.visuals(),chests.chests());batch.end();
     }
+
     private void drawOverlay() {
+        if(state==State.LEVEL_UP) {
+            BoonChoiceView.draw(batch,shapes,font,game.visuals(),session,choices,cards,"ESCOLHA UMA DÁDIVA",
+                choiceGuard.ready()?"Escolha disponível — compare os efeitos.":choiceGuard.notice(),"pausa",choiceTime);
+            return;
+        }
         Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA, com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0, 0, 0, 0.85f);
-        shapes.rect(0, 0, 960, 458);
-        if (state == State.LEVEL_UP) {
-            shapes.setColor(0.13f, 0.16f, 0.23f, 1);
-            for (int index = 0; index < choices.size(); index++) {
-                Rectangle card = cards[index];
-                shapes.rect(card.x, card.y, card.width, card.height);
-            }
-        }
-        shapes.end();
+        Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA,com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(0,0,0,.88f);shapes.rect(0,0,960,540);shapes.end();
         Gdx.gl.glDisable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
-        batch.begin();
-        font.getData().setScale(1.5f);
-        font.setColor(Color.GOLD);
-        font.draw(batch, state == State.PAUSED ? "PAUSA" : "ESCOLHA UMA DÁDIVA", 300, 405);
-        font.getData().setScale(1);
-        font.setColor(Color.WHITE);
-        if (state == State.PAUSED) {
-            font.draw(batch, "ESC: continuar | O: áudio | TAB: dádivas | M: voltar ao menu", 280, 270);
-        } else {
-            for (int index = 0; index < choices.size(); index++) {
-                Upgrade upgrade = choices.get(index);
-                Rectangle card = cards[index];
-                font.setColor(upgrade.rarity.red, upgrade.rarity.green, upgrade.rarity.blue, 1);
-                font.draw(batch, "[" + (index + 1) + "] " + upgrade.title, card.x + 12, card.y + 130, card.width - 24, 8, true);
-                font.draw(batch, upgrade.rarity.label, card.x + 12, card.y + 100);
-                font.setColor(Color.WHITE);
-                font.draw(batch, upgrade.description(stats), card.x + 12, card.y + 80, card.width - 24, 8, true);
-                font.draw(batch, "Obtida " + session.rank(upgrade) + " vez(es)", card.x + 12, card.y + 25);
-            }
-            font.draw(batch, choiceGuard.notice(), 230, 135);
-            font.draw(batch, "TAB: consultar dádivas já escolhidas", 300, 105);
-        }
-        batch.end();
+        batch.begin();font.getData().setScale(1.5f);font.setColor(Color.GOLD);font.draw(batch,"PAUSA",420,325);
+        font.getData().setScale(1);font.setColor(Color.WHITE);
+        font.draw(batch,"ESC: continuar | O: áudio | TAB: dádivas | M: voltar ao menu",250,270);batch.end();
     }
     @Override public void pause() {
         if (state != State.PAUSED) { beforePause = state; state = State.PAUSED; }

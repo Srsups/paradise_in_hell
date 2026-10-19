@@ -120,6 +120,9 @@ public final class DemoSmokeTest {
         verifyAudioAndFeedback();
         verifyMilestoneOne();
         verifyMilestoneTwo();
+        verifyMilestoneThree();
+        verifyExpandedVisuals();
+        verifyEquippedVisuals();
     }
     @SuppressWarnings("unchecked")
     private static void verifyCampaign(Main game) throws Exception {
@@ -133,7 +136,7 @@ public final class DemoSmokeTest {
         game.getScreen().render(0); screenshot("refuge");
         press(game.getScreen(), Input.Keys.C);
         screenshot("caronte");
-        for (int line = 0; line < 4; line++) press(game.getScreen(), Input.Keys.ENTER);
+        finishDialogue((RefugeScreen)game.getScreen());
         check(game.profiles().profile().has(CampaignProfile.Event.CARONTE_MET)
             && game.profiles().profile().obols() == 5, "Caronte must give his first gift once");
         check(!field(game.getScreen(), "notice").toString().isEmpty(), "Conversation must show a brief acknowledgement");
@@ -441,10 +444,10 @@ public final class DemoSmokeTest {
         refuge.resize(800, 600); refuge.render(0); refuge.resize(960, 540);
         press(refuge, Input.Keys.ESCAPE);
         press(refuge, Input.Keys.C); screenshot("caronte-return");
-        for (int line = 0; line < 4; line++) press(refuge, Input.Keys.ENTER);
+        finishDialogue(refuge);
         check(game.profiles().profile().has(CampaignProfile.Event.BRIBE_JOKE), "Caronte must recognize death");
         press(refuge, Input.Keys.C);
-        for (int line = 0; line < 3; line++) press(refuge, Input.Keys.ENTER);
+        finishDialogue(refuge);
         check(game.profiles().profile().has(CampaignProfile.Event.GUARDIAN_RECOGNIZED), "Caronte must recognize boss victory");
         CampaignProfile reloaded = new ProfileService(TEST_SAVES.store(game.activeSlot())).profile();
         check(reloaded.bonuses().vitality() == 1 && reloaded.has(CampaignProfile.Event.BRIBE_JOKE),
@@ -1070,6 +1073,8 @@ public final class DemoSmokeTest {
         var enemies=(java.util.List<Inimigo>)field(room,"enemies");
         Jogador actor=(Jogador)field(room,"player");
         Inimigo archer=new Inimigo(actor.x+64,actor.y,atlas); archer.configureArcher(); enemies.add(archer);
+        // This test observes an evaded arrow for a full second; random cover must not consume it first.
+        ((TileMap)field(room,"map")).gerarAreaInicialSegura(actor.x,actor.y,20);
         archer.applyDifficulty(new EnemyDifficulty(2,1.5f));
         check(archer.maxHealth()==28 && archer.getDano()==9 && archer.arrowDamage()==15,
             "Scaling must affect archer health, contact and arrows");
@@ -1589,6 +1594,369 @@ public final class DemoSmokeTest {
         } finally { retryGame.dispose(); }
     }
 
+    @SuppressWarnings("unchecked")
+    private static void verifyMilestoneThree() throws Exception {
+        Main game=new Main(SaveSlots.memory(),AudioSettingsStore.memory(),new RecordedAudio());
+        PilotArt art=null;
+        try {
+            game.create();game.getScreen().render(0);screenshot("m3-menu");
+            game.profiles().chooseProfession(Profession.CACADOR);game.selectSave(0,false);
+            RefugeScreen refuge=(RefugeScreen)game.getScreen();
+            var font=(com.badlogic.gdx.graphics.g2d.BitmapFont)field(refuge,"font");
+            for(char glyph:"áàâãéêíóôõúüçÁÉÍÓÚÇ×—".toCharArray())
+                check(font.getData().hasGlyph(glyph),"Bundled body font must support Portuguese and interface symbols: "+glyph);
+            art=game.visuals();check(art==game.visuals(),"Visuals must be shared across screens");
+            press(refuge,Input.Keys.C);refuge.render(.1f);
+            DialoguePlayback playback=(DialoguePlayback)field(refuge,"playback");
+            check(!playback.complete() && playback.visibleText().length()>0,"Dialogue must type progressively");
+            Input actual=Gdx.input;
+            Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},(proxy,method2,args)-> {
+                if(method2.getName().equals("isButtonJustPressed"))return (int)args[0]==Input.Buttons.LEFT;
+                if(method2.getName().equals("isKeyJustPressed"))return false;
+                return method2.invoke(actual,args);
+            });
+            try {refuge.render(0);}finally {Gdx.input=actual;}
+            check(playback.line()==0 && playback.complete(),"First click reveals without advancing");
+            refuge.render(0);screenshot("m3-charon");
+            float previewX=((Jogador)field(refuge,"player")).x;
+            refuge.render(.5f);check(((Jogador)field(refuge,"player")).x==previewX,"Dialogue does not move the refuge player");
+            press(refuge,Input.Keys.ENTER);check(playback.line()==1,"Second action advances one line");
+            refuge.render(5);screenshot("m3-protagonist");
+            check(game.profiles().profile().obols()==0,"Reading a partial conversation must not credit the gift");
+            press(refuge,Input.Keys.ESCAPE);press(refuge,Input.Keys.C);
+            playback=(DialoguePlayback)field(refuge,"playback");check(playback.line()==0,"Reopening starts from the beginning");
+            press(refuge,Input.Keys.T);check(playback.complete() && game.instantDialogue(),"Instant-text option reveals without skipping");
+            for(var line:CaronteDialogue.select(game.profiles().profile()).lines()) {
+                var layout=new com.badlogic.gdx.graphics.g2d.GlyphLayout(font,line.text(),com.badlogic.gdx.graphics.Color.WHITE,670,com.badlogic.gdx.utils.Align.left,true);
+                check(layout.height<95,"Dialogue copy must fit its panel");
+            }
+            refuge.resize(800,600);refuge.render(0);screenshot("m3-charon-800");
+            refuge.resize(960,540);finishDialogue(refuge);
+            check(game.profiles().profile().obols()==5,"Finishing credits the first gift once");
+            press(refuge,Input.Keys.C);finishDialogue(refuge);check(game.profiles().profile().obols()==5,"Repeat dialogue cannot grant another gift");
+            press(refuge,Input.Keys.ENTER);
+            GameScreen room=(GameScreen)game.getScreen();
+            Jogador player=(Jogador)field(room,"player");
+            check(field(player,"pilot")==art,"Caçador uses the shared pilot atlas");
+            var actors=(java.util.List<Inimigo>)field(room,"enemies");
+            var oldAtlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            Inimigo common=new Inimigo(player.x+40,player.y+8,oldAtlas,art);actors.add(common);
+            room.render(.05f);check(field(common,"pilot")==art,"Common enemy uses the pilot");
+            screenshot("m3-combat");
+            ActorAnimation motion=(ActorAnimation)field(player,"motion");
+            motion.advance(.13f,1,0);float phase=motion.phase();motion.advance(0,0,1);
+            check(motion.phase()==phase && motion.direction()==ActorAnimation.Direction.UP,"Turning must preserve gait phase");
+            motion.advance(1,0,0);check(motion.direction()==ActorAnimation.Direction.UP,"Idle retains facing");
+            PilotArt stableArt=art;
+            var texture=art.region("hero-down-0").getTexture();var data=texture.getTextureData();
+            if(!data.isPrepared())data.prepare();Pixmap pixels=data.consumePixmap();
+            try {
+                for(boolean hero:new boolean[]{true,false}) {
+                    SpriteHitbox[] masks=art.actorMasks(hero);
+                    for(ActorAnimation.Direction direction:java.util.Arrays.copyOf(ActorAnimation.Direction.values(),4))for(int frame=0;frame<4;frame++) {
+                        String name=(hero?"hero":"common")+"-"+direction.name().toLowerCase(java.util.Locale.ROOT)+"-"+frame;
+                        var region=art.region(name);
+                        SpriteHitbox mask=masks[direction.ordinal()*4+frame].place(0,0,32,32,false,false);
+                        for(int y=0;y<32;y++)for(int x=0;x<32;x++)
+                            check(mask.contains(x+.5f,31-y+.5f)==((pixels.getPixel(region.getRegionX()+x,region.getRegionY()+y)&255)>=96),
+                                "Body contact mask must follow the exact rendered pixels in "+name);
+                    }
+                }
+            } finally {if(data.disposePixmap())pixels.dispose();}
+            CombatFeedback feedback=(CombatFeedback)field(room,"feedback");
+            feedback.hit(WeaponType.BOW,player.x+22,player.y+10,5);feedback.xp(player.x+8,player.y+20);
+            feedback.dash(WeaponType.BOW,player.x,player.y,player.x+15,player.y,true,true);
+            room.render(0);screenshot("m3-effects");
+            press(room,Input.Keys.TAB);float time=((RunSession)field(room,"session")).progress().elapsed();
+            room.render(.5f);check(((RunSession)field(room,"session")).progress().elapsed()==time,"Visuals must not unpause combat");
+            press(room,Input.Keys.TAB);
+            ((RunSession)field(room,"session")).player().ganharXP(10);room.render(.01f);screenshot("m3-boon-cards");
+            game.startDemo();room=(GameScreen)game.getScreen();set(room,"spawnTimer",2f);room.render(0);
+            actors=(java.util.List<Inimigo>)field(room,"enemies");
+            check(!actors.isEmpty() && field(actors.getFirst(),"pilot")==art,"Production spawning must attach the pilot atlas");
+            game.setScreen(new MenuScreen(game));game.getScreen().render(0);
+            check(game.visuals()==stableArt && !art.disposed(),"Changing screens must not dispose shared visuals");
+        } finally {game.dispose();}
+        check(art!=null && art.disposed(),"Application shutdown must dispose the pilot atlas once");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyExpandedVisuals() throws Exception {
+        Main game=new Main(SaveSlots.memory(),AudioSettingsStore.memory(),new RecordedAudio());
+        try {
+            game.create();game.profiles().chooseProfession(Profession.CACADOR);
+            PilotArt art=game.visuals();ExpandedArt expanded=art.expanded();
+            var texture=expanded.region("class-cacador-down-0").getTexture();var data=texture.getTextureData();
+            if(!data.isPrepared())data.prepare();Pixmap pixels=data.consumePixmap();
+            try {
+                var names=new java.util.ArrayList<String>();
+                for(Profession profession:Profession.values())names.add(ExpandedArt.actor(profession));
+                names.addAll(java.util.List.of(ExpandedArt.ENEMIES));
+                for(String name:names) {
+                    int count=name.startsWith("class-")?6:4;ExpandedArt.Body body=expanded.body(name);
+                    ActorAnimation motion=new ActorAnimation();
+                    for(ActorAnimation.Direction direction:java.util.Arrays.copyOf(ActorAnimation.Direction.values(),4))for(int frame=0;frame<count;frame++) {
+                        set(motion,"direction",direction);set(motion,"previous",direction);set(motion,"turn",ActorAnimation.TURN_SECONDS);
+                        set(motion,"moving",true);set(motion,"phase",(frame+.1f)*.09f);
+                        var region=expanded.frame(name,direction.ordinal(),frame);int size=region.getRegionWidth();
+                        SpriteHitbox mask=body.hitbox(motion,size/2f,size/2f,size);
+                        for(int y=0;y<size;y++)for(int x=0;x<size;x++)
+                            check(mask.contains(x+.5f,size-y-.5f)==((pixels.getPixel(region.getRegionX()+x,region.getRegionY()+y)&255)>=96),
+                                "Expanded contact must match the dominant body pixels: "+name);
+                    }
+                }
+                var hashes=new java.util.HashSet<Long>();
+                for(Upgrade boon:Upgrade.values()) {
+                    var region=art.boonIcon(boon);java.util.zip.CRC32 hash=new java.util.zip.CRC32();
+                    for(int y=0;y<region.getRegionHeight();y++)for(int x=0;x<region.getRegionWidth();x++) {
+                        int color=pixels.getPixel(region.getRegionX()+x,region.getRegionY()+y);
+                        hash.update(color);hash.update(color>>>8);hash.update(color>>>16);hash.update(color>>>24);
+                    }
+                    check(hashes.add(hash.getValue()),"Each boon must have its own icon: "+boon);
+                }
+            } finally {if(data.disposePixmap())pixels.dispose();}
+            for(Profession profession:Profession.values()) {
+                RunSession run=RunSession.demo(profession);GameScreen room=new GameScreen(game,run);game.setScreen(room);
+                Jogador player=(Jogador)field(room,"player");
+                check(field(player,"body")!=null,"Every class uses its own animated body");
+                var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+                var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+                for(EnemyType type:EnemyType.values()) {
+                    Inimigo enemy=new Inimigo(player.x+45+type.ordinal()*35,player.y+15,atlas,art);
+                    enemy.configurarTipo(type);enemies.add(enemy);
+                    check(enemy.visualKind().equals(type.name().toLowerCase(java.util.Locale.ROOT)),"Enemy roles use distinct sheets");
+                }
+                Inimigo archer=new Inimigo(player.x-55,player.y+20,atlas,art);archer.configureArcher();enemies.add(archer);
+                check(archer.visualKind().equals("archer"),"Archer uses a unique body");
+                fire(room);screenshot("visual-class-"+profession.name().toLowerCase(java.util.Locale.ROOT));
+            }
+            RunSession run=RunSession.campaign(game.campaignRegion(),Profession.SACERDOTE);
+            GameScreen room=new GameScreen(game,run);game.setScreen(room);
+            Jogador player=(Jogador)field(room,"player");RunChests chests=(RunChests)field(room,"chests");
+            var chestList=(java.util.List<RunChests.Chest>)field(chests,"chests");
+            chestList.add(new RunChests.Chest(player.x+22,player.y+8,RunChests.Reward.OBOLS));set(chests,"timer",10f);
+            room.render(0);screenshot("visual-chest-closed");press(room,Input.Keys.F);
+            check(run.earnedObols()==3 && chests.chests().isEmpty(),"Opening keeps exactly one reward and removes the model");
+            check(((ChestVisuals)field(room,"chestVisuals")).active()==1,"Opening animation persists independently of the reward");
+            for(int i=0;i<5;i++)room.render(.05f);screenshot("visual-chest-opening");press(room,Input.Keys.F);
+            check(run.earnedObols()==3,"Opening animation must not duplicate the chest reward");
+            for(Upgrade boon:Upgrade.values())run.applyUpgrade(boon);
+            var atlas=(com.badlogic.gdx.graphics.Texture)field(room,"atlas");
+            var enemies=(java.util.List<Inimigo>)field(room,"enemies");
+            Inimigo first=new Inimigo(player.x+36,player.y,atlas,art),second=new Inimigo(player.x+55,player.y+10,atlas,art);
+            first.vida=second.vida=10000;enemies.add(first);enemies.add(second);
+            for(int i=0;i<10;i++)fire(room);
+            room.render(0);screenshot("visual-divine-effects");
+            press(room,Input.Keys.TAB);room.render(0);screenshot("visual-boon-list");press(room,Input.Keys.TAB);
+            run.player().ganharXP(10);room.render(.01f);
+            check(field(room,"state").toString().equals("LEVEL_UP"),"XP still opens protected choices");
+            room.render(0);screenshot("visual-boon-fullscreen");
+            Pixmap frame=Pixmap.createFromFrameBuffer(90,510,1,1);
+            try {check((frame.getPixel(0,0)>>>24)<40,"Opaque boon selection must cover the health bar");} finally {frame.dispose();}
+            var cards=(com.badlogic.gdx.math.Rectangle[])field(room,"cards");
+            check(cards[0].width>800 && cards[0].y>cards[1].y && !cards[0].overlaps(cards[1]),"Choice hit areas match full-width rows");
+            room.resize(800,600);room.render(0);screenshot("visual-boon-fullscreen-800");room.resize(960,540);
+            RunSession late=RunSession.demo();
+            for(Upgrade boon:Upgrade.values())if(boon!=Upgrade.CURA)for(int i=0;i<boon.maxRank;i++)late.applyUpgrade(boon);
+            room=new GameScreen(game,late);game.setScreen(room);late.player().ganharXP(4);room.render(.01f);
+            check(((java.util.List<?>)field(room,"choices")).size()==1,"Late-run selection can contain only the remaining heal");
+            room.render(0);screenshot("visual-boon-single-choice");press(room,Input.Keys.NUM_1);
+            check(late.rank(Upgrade.CURA)==1,"The remaining single row stays selectable");
+            makeVisualCatalogs(art);
+        } finally {game.dispose();}
+    }
+    private static void makeVisualCatalogs(PilotArt art) {
+        var viewport=new com.badlogic.gdx.utils.viewport.FitViewport(960,540);viewport.update(960,540,true);viewport.apply();
+        var batch=new com.badlogic.gdx.graphics.g2d.SpriteBatch();var font=UiTheme.bodyFont();
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+        try {
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();font.setColor(com.badlogic.gdx.graphics.Color.GOLD);
+            font.getData().setScale(1.6f);font.draw(batch,"PROFISSÕES E EQUIPAMENTOS",35,510);font.getData().setScale(1);
+            for(Profession profession:Profession.values()) {
+                int i=profession.ordinal();float x=30+i%4*235,y=420-i/4*200;
+                font.setColor(com.badlogic.gdx.graphics.Color.GOLD);font.draw(batch,profession.title,x,y);
+                batch.draw(art.equipped().frame(EquippedArt.actor(profession)+"-walk",ActorAnimation.Direction.DOWN,1),x+35,y-135,112,112);
+                font.setColor(com.badlogic.gdx.graphics.Color.LIGHT_GRAY);font.draw(batch,profession.weapon.label,x,y-150);
+            }
+            batch.end();screenshot("visual-catalog-classes");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();font.setColor(com.badlogic.gdx.graphics.Color.GOLD);
+            font.getData().setScale(1.6f);font.draw(batch,"INIMIGOS DO SUBMUNDO",35,510);font.getData().setScale(1);
+            String[] labels={"Comum","Rápido","Tank","Arqueiro","Carrasco","Guardião do Tártaro"};
+            for(int i=0;i<ExpandedArt.ENEMIES.length;i++) {
+                float x=45+i%3*310,y=420-i/3*200;font.draw(batch,labels[i],x,y);
+                float size=i==5?110:i==4?90:i==2?75:65;
+                if(i>=3)batch.draw(art.equipped().frame(ExpandedArt.ENEMIES[i]+"-walk",ActorAnimation.Direction.DOWN,1),x+80-size*.65f,y-145,size*1.3f,size*1.3f);
+                else batch.draw(art.expanded().frame(ExpandedArt.ENEMIES[i],0,1),x+80-size/2,y-125,size,size);
+            }
+            batch.end();screenshot("visual-catalog-enemies");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();
+            for(Upgrade boon:Upgrade.values()) {
+                int i=boon.ordinal();float x=15+i%5*190,y=505-i/5*165;
+                batch.draw(art.boonIcon(boon),x+48,y-84,70,70);font.setColor(com.badlogic.gdx.graphics.Color.WHITE);
+                font.draw(batch,boon.title,x,y-105,175,com.badlogic.gdx.utils.Align.center,true);
+            }
+            batch.end();screenshot("visual-catalog-boons");
+        } finally {batch.dispose();font.dispose();}
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void verifyEquippedVisuals() throws Exception {
+        Main game=new Main(SaveSlots.memory(),AudioSettingsStore.memory(),new RecordedAudio());
+        try {
+            game.create();game.profiles().chooseProfession(Profession.CACADOR);
+            PilotArt art=game.visuals();EquippedArt equipped=art.equipped();
+            var sources=(java.util.Map<String,?>)field(equipped,"clips");
+            var pixels=new java.util.IdentityHashMap<com.badlogic.gdx.graphics.Texture,Pixmap>();
+            var bodies=new java.util.HashMap<String,EquippedArt.Body>();int frames=0,outside=0;
+            try {
+                for(var entry:sources.entrySet()){
+                    String name=entry.getKey(),actor=name.substring(0,name.lastIndexOf('-'));
+                    int count=(int)field(entry.getValue(),"count"),directions=(int)field(entry.getValue(),"directions");
+                    EquippedArt.Body body=bodies.computeIfAbsent(actor,equipped::body);
+                    for(int d=0;d<directions;d++)for(int f=0;f<count;f++){
+                        var direction=ActorAnimation.Direction.values()[d];var region=equipped.frame(name,direction,f);
+                        var texture=region.getTexture();Pixmap image=pixels.get(texture);
+                        if(image==null){var data=texture.getTextureData();if(!data.isPrepared())data.prepare();image=data.consumePixmap();pixels.put(texture,image);}
+                        int width=region.getRegionWidth();check(width==64,"Equipped masks retain exact pixel resolution");
+                        var mask=body.hitbox(new EquippedArt.Pose(name,direction,f),32,32,64/EquippedArt.DRAW_SCALE);
+                        int core=0;
+                        for(int y=0;y<64;y++)for(int x=0;x<64;x++){
+                            boolean opaque=(regionPixel(region,image,x,y)&255)>=96;
+                            boolean expected=opaque&&EquippedArt.bodyPixel(region.isFlipX()?63-x:x,y,64,64);
+                            check(mask.contains(x+.5f,63-y+.5f)==expected,"Equipped body mask excludes weapon/margins and follows its pose: "+name);
+                            if(expected)core++;else if(opaque)outside++;
+                        }
+                        check(core>10,"Every pose needs a visible physical body: "+name);frames++;
+                    }
+                }
+                check(frames==1280 && outside>1000,"All original and mirrored poses and equipment must be verified");
+                for(Profession profession:Profession.values()){
+                    var hashes=new java.util.HashSet<Long>();
+                    for(var direction:ActorAnimation.Direction.values()){
+                        var region=equipped.frame(EquippedArt.actor(profession)+"-walk",direction,1);
+                        check(hashes.add(regionHash(region,pixels.get(region.getTexture()))),"Diagonals must be distinct authored frames: "+profession);
+                    }
+                    var breathing=new java.util.HashSet<Long>();
+                    for(int f=0;f<4;f++){
+                        var region=equipped.frame(EquippedArt.actor(profession)+"-idle",ActorAnimation.Direction.DOWN,f);
+                        breathing.add(regionHash(region,pixels.get(region.getTexture())));
+                    }
+                    check(breathing.size()>=3,"Every profession needs visible breathing: "+profession);
+                    var left=equipped.frame(EquippedArt.actor(profession)+"-walk",ActorAnimation.Direction.DOWN_LEFT,1);
+                    var right=equipped.frame(EquippedArt.actor(profession)+"-walk",ActorAnimation.Direction.DOWN_RIGHT,1);
+                    check(!left.isFlipX()&&right.isFlipX()&&left.getTexture()==right.getTexture()
+                        &&Math.min(left.getU(),left.getU2())==Math.min(right.getU(),right.getU2()),"SE must mirror the same SW sprite without swapping rows");
+                }
+                var idleHashes=new java.util.HashSet<Long>();
+                for(int f=0;f<4;f++){var region=equipped.frame("guardian-idle",ActorAnimation.Direction.DOWN,f);idleHashes.add(regionHash(region,pixels.get(region.getTexture())));}
+                check(idleHashes.size()>=3,"The guardian must visibly breathe between attacks");
+            } finally {for(var entry:pixels.entrySet())if(entry.getKey().getTextureData().disposePixmap())entry.getValue().dispose();}
+            makeEquippedCatalogs(art);
+            verifyPeacefulRefuge(game);
+            RunSession run=bossSession(Profession.CACADOR);BossRoomScreen room=new BossRoomScreen(game,run);game.setScreen(room);
+            BossEncounter boss=(BossEncounter)field(room,"boss");
+            room.render(0);screenshot("equipped-boss-breath-a");
+            for(int i=0;i<8;i++)room.render(.05f);screenshot("equipped-boss-breath-b");
+            press(room,Input.Keys.TAB);
+            var motion=(ActorAnimation)field(room,"bossMotion");var pose=EncounterAnimation.boss(boss,motion);float elapsed=boss.elapsed();
+            room.render(.5f);check(boss.elapsed()==elapsed&&EncounterAnimation.boss(boss,motion).equals(pose),"Tab freezes breathing and encounter animation");
+            press(room,Input.Keys.TAB);
+            renderUntil(game,room,boss,BossEncounter.Attack.CHARGE,BossEncounter.State.ACTIVE);room.render(0);screenshot("equipped-boss-run");
+            renderUntil(game,room,boss,BossEncounter.Attack.CHARGE,BossEncounter.State.RECOVERY);room.render(0);screenshot("equipped-boss-shoulder");
+            run.player().curar(10000);
+            renderUntil(game,room,boss,BossEncounter.Attack.LEAP,BossEncounter.State.TELEGRAPH);room.render(0);screenshot("equipped-boss-takeoff");
+            run.player().curar(10000);
+            renderUntil(game,room,boss,BossEncounter.Attack.LEAP,BossEncounter.State.ACTIVE);room.render(0);screenshot("equipped-boss-landing");
+        } finally {game.dispose();}
+    }
+    private static int regionPixel(com.badlogic.gdx.graphics.g2d.TextureRegion region,Pixmap image,int x,int y){
+        int left=Math.round(Math.min(region.getU(),region.getU2())*image.getWidth());
+        int top=Math.round(Math.min(region.getV(),region.getV2())*image.getHeight());
+        return image.getPixel(left+(region.isFlipX()?region.getRegionWidth()-1-x:x),
+            top+(region.isFlipY()?region.getRegionHeight()-1-y:y));
+    }
+    private static void verifyPeacefulRefuge(Main game)throws Exception{
+        RefugeScreen refuge=new RefugeScreen(game);game.setScreen(refuge);
+        Jogador player=(Jogador)field(refuge,"player");PlayerState stats=(PlayerState)field(refuge,"stats");
+        PlayerAnimation animation=(PlayerAnimation)field(player,"visual");
+        float beforeX=player.x;Input actual=Gdx.input;
+        Gdx.input=(Input)Proxy.newProxyInstance(Input.class.getClassLoader(),new Class<?>[]{Input.class},(proxy,method,args)->{
+            if(method.getName().equals("isButtonPressed"))return (int)args[0]==Input.Buttons.LEFT;
+            if(method.getName().equals("isKeyPressed"))return (int)args[0]==Input.Keys.D;
+            if(method.getName().equals("isButtonJustPressed")||method.getName().equals("isKeyJustPressed"))return false;
+            return method.invoke(actual,args);
+        });
+        try{refuge.render(.05f);}finally{Gdx.input=actual;}
+        check(player.x>beforeX,"Refuge movement remains enabled while holding attack");
+        check(!animation.attacking()&&animation.current().clip().endsWith("-walk")&&stats.tryShoot(),
+            "Held mouse in refuge cannot attack, animate attacks or consume attack cooldown");
+        for(int i=0;i<10;i++)refuge.render(.05f);
+        check(animation.current().clip().endsWith("-idle"),"Stationary refuge player must breathe");
+        screenshot("polish-refuge");
+        press(refuge,Input.Keys.C);float x=player.x,y=player.y;
+        fire(refuge);
+        check(player.x==x&&player.y==y&&!animation.attacking(),"Dialogue clicks cannot fire or move the player");
+        finishDialogue(refuge);
+    }
+    private static long regionHash(com.badlogic.gdx.graphics.g2d.TextureRegion region,Pixmap image){
+        var hash=new java.util.zip.CRC32();
+        for(int y=0;y<region.getRegionHeight();y++)for(int x=0;x<region.getRegionWidth();x++){
+            int color=regionPixel(region,image,x,y);
+            hash.update(color);hash.update(color>>>8);hash.update(color>>>16);hash.update(color>>>24);
+        }
+        return hash.getValue();
+    }
+    private static void makeEquippedCatalogs(PilotArt art){
+        var view=new com.badlogic.gdx.utils.viewport.FitViewport(960,540);view.update(960,540,true);view.apply();
+        var batch=new com.badlogic.gdx.graphics.g2d.SpriteBatch();var font=UiTheme.bodyFont();batch.setProjectionMatrix(view.getCamera().combined);
+        try{
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();font.setColor(com.badlogic.gdx.graphics.Color.GOLD);
+            String[] labels={"S","N","L","O","SE","SO","NE","NO"};
+            for(int d=0;d<8;d++)font.draw(batch,labels[d],179+d*96,515);
+            for(Profession profession:Profession.values()){
+                float y=434-profession.ordinal()*54;font.draw(batch,profession.title,12,y+29);
+                for(var direction:ActorAnimation.Direction.values())
+                    batch.draw(art.equipped().frame(EquippedArt.actor(profession)+"-walk",direction,1),150+direction.ordinal()*96,y,72,72);
+            }
+            batch.end();screenshot("equipped-eight-directions");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();
+            for(Profession profession:Profession.values()){
+                float y=434-profession.ordinal()*54;font.draw(batch,profession.title,12,y+29);
+                for(int f=0;f<4;f++)batch.draw(art.equipped().frame(EquippedArt.actor(profession)+"-idle",
+                    ActorAnimation.Direction.DOWN,f),180+f*180,y,72,72);
+            }
+            batch.end();screenshot("polish-idle-classes");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();
+            for(var direction:ActorAnimation.Direction.values()){
+                int col=direction.ordinal()%4,row=direction.ordinal()/4;float x=30+col*235,y=265-row*245;
+                font.draw(batch,direction.key(),x+35,y+220);
+                batch.draw(art.equipped().frame("guardian-cast",direction,4),x,y,215,215);
+            }
+            batch.end();screenshot("polish-boss-cast-directions");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();
+            String[] clips={"guardian-idle","guardian-charge","guardian-cast","guardian-jump","guardian-land"};
+            String[] titles={"Respiração","Corrida / ombrada","Conjuração","Salto","Aterrissagem"};
+            for(int row=0;row<clips.length;row++){
+                float y=420-row*98;font.draw(batch,titles[row],12,y+40);
+                for(int f=0;f<(row==0?4:6);f++)batch.draw(art.equipped().frame(clips[row],ActorAnimation.Direction.DOWN,f),180+f*125,y,96,96);
+            }
+            batch.end();screenshot("equipped-guardian-actions");
+            com.badlogic.gdx.utils.ScreenUtils.clear(.035f,.052f,.075f,1);batch.begin();
+            String[] attacks={"archer-attack","carrasco-spin","carrasco-stones"};
+            String[] names={"Arqueiro: disparo","Carrasco: giro","Carrasco: pedras"};
+            for(int row=0;row<attacks.length;row++){
+                float y=375-row*145;font.draw(batch,names[row],12,y+50);
+                for(int f=0;f<6;f++)batch.draw(art.equipped().frame(attacks[row],ActorAnimation.Direction.DOWN,f),180+f*125,y,96,96);
+            }
+            batch.end();screenshot("equipped-enemy-actions");
+        }finally{batch.dispose();font.dispose();}
+    }
+
+    private static void finishDialogue(RefugeScreen refuge) throws Exception {
+        for(int count=0;count<70 && field(refuge,"state").toString().equals("DIALOGUE");count++)
+            press(refuge,Input.Keys.ENTER);
+        check(!field(refuge,"state").toString().equals("DIALOGUE"),"Conversation must end without repeated actions granting extra rewards");
+    }
     private static void confirmCharacter(Main game) throws Exception {
         check(game.getScreen() instanceof DifficultyScreen, "Profession must lead to difficulty confirmation");
         check(!game.profiles().profile().professionChosen(), "Pending choices must not create the save");

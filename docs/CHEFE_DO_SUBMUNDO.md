@@ -86,9 +86,14 @@ avançar e não cresce na luta. Regras: [CLASSES_SINERGIAS_E_DESTINO.md](CLASSES
 A segunda fase começa com metade da vida ou menos. Os próximos ataques usam
 avisos de 0,75 s para marcas, investida e rajada e recuperação de 0,65 s,
 contra 0,95 s e 0,95 s da fase inicial. A queda conserva seus 3 s de aviso e 1 s vermelho.
-O HUD mostra fase, vida e padrão. O chefe usa temporariamente a animação existente
-do atlas, ampliada e tingida. Avisos sonoros, sons de combate e trilha provisória
-foram adicionados; arte própria e revisão sonora continuam pendentes.
+O HUD mostra fase, vida e padrão. Desde a expansão de 15/10/2026, o Guardião
+tem corpo próprio em oito direções, armadura escura/dourada e manto violeta.
+A revisão seguinte acrescentou respiração, corrida/ombrada, conjuração, salto e
+aterrissagem com joelho e punho no chão.
+Projéteis, efeitos e marcadores de perigo usam sprites animados, indicando as
+áreas e tempos existentes. Poses de dano/morte e revisão sonora continuam
+pendentes. [Arte atual](ANIMACOES_E_EQUIPAMENTOS.md).
+Avisos sonoros, sons de combate e trilha provisória foram adicionados.
 Regras e origem: [AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
 
 ## Ajuste implementado após os playtests

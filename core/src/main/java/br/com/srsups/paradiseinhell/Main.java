@@ -5,6 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 
 public class Main extends Game {
+    private PilotArt visuals;
+    private boolean instantDialogue;
+    public boolean instantDialogue() { return instantDialogue; }
+    public void instantDialogue(boolean value) { instantDialogue=value; }
+    public PilotArt visuals() { if(visuals==null)visuals=new PilotArt();return visuals; }
     private final SaveSlots saves;
     private final ProfileService[] profiles = new ProfileService[SaveSlots.COUNT];
     private int activeSlot;
@@ -114,5 +119,5 @@ public class Main extends Game {
             if(next!=null)audio.music(next instanceof GameScreen || next instanceof BossRoomScreen ? AudioBackend.Track.COMBAT : AudioBackend.Track.REFUGE);
         }
     }
-    @Override public void dispose() { setScreen(null); if(audio!=null)audio.dispose(); }
+    @Override public void dispose() { setScreen(null); if(audio!=null)audio.dispose(); if(visuals!=null)visuals.dispose(); }
 }

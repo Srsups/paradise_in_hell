@@ -27,7 +27,8 @@ public final class RefugeScreen extends ScreenAdapter {
         savesButton = new Rectangle(485, 42, 215, 45), startButton = new Rectangle(715, 42, 220, 45);
     private SpriteBatch batch;
     private ShapeRenderer shapes;
-    private BitmapFont font;
+    private BitmapFont font, titleFont;
+    private DialoguePlayback playback;
     private Texture atlas;
     private TileMap map;
     private Jogador player;
@@ -36,26 +37,26 @@ public final class RefugeScreen extends ScreenAdapter {
     private CaronteDialogue.Conversation conversation;
     private int line;
     private String notice = "";
-    private float noticeTimer;
+    private float noticeTimer, visualTime;
     private boolean disposed;
 
     public RefugeScreen(Main game) { this.game = game; }
     @Override public void show() {
         Gdx.input.setInputProcessor(null);
-        batch = new SpriteBatch(); shapes = new ShapeRenderer(); font = new BitmapFont();
+        batch = new SpriteBatch(); shapes = new ShapeRenderer(); font = UiTheme.bodyFont(); titleFont = UiTheme.titleFont();
         atlas = new Texture(Art.ATLAS);
         atlas.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         map = new TileMap(atlas); map.gerarAreaInicialSegura(240, 135, 64);
         map.setBounds(24, 58, 432, 160);
         refreshPlayer();
-        player = new Jogador(232, 92, atlas, stats, (x, y) -> {});
+        player = new Jogador(232, 92, atlas, stats, (x, y) -> {}, game.visuals());
         world.getCamera().position.set(240, 135, 0); world.getCamera().update(); map.update(world.getCamera());
     }
     private void refreshPlayer() {
         stats = new PlayerState(game.profiles().profile().profession());
         game.profiles().profile().bonuses().apply(stats);
         if (game.profiles().profile().weaponRarity() == WeaponRarity.RARE) stats.forgeWeapon();
-        if (player != null) player = new Jogador(player.x, player.y, atlas, stats, (x, y) -> {});
+        if (player != null) player = new Jogador(player.x, player.y, atlas, stats, (x, y) -> {}, game.visuals());
     }
     @Override public void resize(int width, int height) {
         world.update(width, height); hud.update(width, height, true);
@@ -67,6 +68,9 @@ public final class RefugeScreen extends ScreenAdapter {
         if(state==State.WALKING && Gdx.input.isKeyJustPressed(Input.Keys.O)) {
             game.setScreen(new AudioSettingsScreen(game,()->new RefugeScreen(game)));return;
         }
+        float visualDelta = Math.min(Math.max(delta, 0), .05f);
+        visualTime = (visualTime + visualDelta) % 3600;
+        if (state != State.WALKING) player.idle(visualDelta);
         noticeTimer = Math.max(0, noticeTimer - delta);
         if (noticeTimer == 0) notice = "";
         Vector2 pointer = hud.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
@@ -77,13 +81,18 @@ public final class RefugeScreen extends ScreenAdapter {
         }
         switch (state) {
             case DIALOGUE -> {
+                playback.advance(delta);
+                if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+                    game.instantDialogue(!game.instantDialogue()); playback.instant(game.instantDialogue());
+                }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) state = State.WALKING;
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.E) || clicked) {
-                    if (line + 1 < conversation.lines().size()) line++;
-                    else if (game.profiles().finishConversation(conversation.event())) {
+                    if(playback.accept()==DialoguePlayback.Action.FINISHED
+                        && game.profiles().finishConversation(conversation.event())) {
                         notify(conversation.event() == CampaignProfile.Event.CARONTE_MET ? "Caronte entregou 5 óbolos." : "Conversa registrada.");
                         state = State.WALKING;
                     }
+                    line=playback.line();
                 }
             }
             case SHOP -> {
@@ -98,7 +107,7 @@ public final class RefugeScreen extends ScreenAdapter {
                     if(game.latestReport()==null) notify("Nenhuma tentativa recente deste personagem.");
                     else { game.openLastReport(); return; }
                 }
-                player.update(Math.min(delta, 0.05f), map);
+                player.update(visualDelta, map, false);
                 boolean interact = Gdx.input.isKeyJustPressed(Input.Keys.E);
                 if (Gdx.input.isKeyJustPressed(Input.Keys.C) || clicked && talkButton.contains(pointer)
                     || interact && near(120, 145)) talk();
@@ -118,7 +127,8 @@ public final class RefugeScreen extends ScreenAdapter {
     }
     private boolean near(float x, float y) { return Vector2.dst2(player.x + 8, player.y + 8, x, y) < 38 * 38; }
     private void notify(String text) { notice = text; noticeTimer = 3.5f; }
-    private void talk() { notice = ""; noticeTimer = 0; conversation = CaronteDialogue.select(game.profiles().profile()); line = 0; state = State.DIALOGUE; }
+    private void talk() { notice = ""; noticeTimer = 0; conversation = CaronteDialogue.select(game.profiles().profile()); line = 0;
+        playback = new DialoguePlayback(conversation,game.instantDialogue()); state = State.DIALOGUE; }
     private void unlockLegendary() {
         if (game.necromancerUnlocked()) { notify("Necromante já disponível para novos personagens."); return; }
         if (!game.shared().progress().canUnlockNecromancer()) { notify("Você precisa de "+SharedProgress.necromancerCostText()+" compartilhadas."); return; }
@@ -141,15 +151,17 @@ public final class RefugeScreen extends ScreenAdapter {
         shapes.setColor(0.03f, 0.04f, 0.07f, 1);
         shapes.rect(0, 0, 480, 58); shapes.rect(0, 218, 480, 52);
         shapes.rect(0, 58, 24, 160); shapes.rect(456, 58, 24, 160);
-        shapes.setColor(0.12f, 0.34f, 0.44f, 1); shapes.rect(95, 130, 50, 24);
-        shapes.setColor(0.55f, 0.4f, 0.15f, 1); shapes.rect(335, 130, 30, 25);
-        shapes.setColor(0.35f, 0.2f, 0.45f, 1); shapes.rect(215, 185, 50, 25);
         shapes.end();
         batch.begin();
-        batch.setColor(Color.CYAN); batch.draw(Art.cell(atlas, 2, 1), 111, 136, 18, 25); batch.setColor(Color.WHITE);
-        player.draw(batch);
+        batch.setColor(Color.WHITE);
+        EquippedArt refugeArt = game.visuals().equipped();
+        batch.draw(refugeArt.prop("refuge-crossing", visualTime), 212, 160, 56, 56);
+        if (player.y > 127) player.draw(batch);
+        batch.draw(refugeArt.prop("refuge-charon", visualTime), 103, 127, 34, 34);
+        batch.draw(refugeArt.prop("refuge-altar", visualTime), 326, 120, 48, 48);
+        if (player.y <= 127) player.draw(batch);
         font.getData().setScale(0.65f); font.setColor(Color.WHITE);
-        font.draw(batch, "Caronte", 101, 177); font.draw(batch, "Altar", 338, 177); font.draw(batch, "Travessia", 220, 216);
+        font.draw(batch, "Caronte", 101, 177); font.draw(batch, "Altar", 338, 177); font.draw(batch, "Travessia", 220, 156);
         String nearby = near(120, 145) ? "E: conversar com Caronte" : near(350, 145) ? "E: comprar atributos"
             : near(240, 190) ? "E: iniciar a travessia" : "Um intervalo entre desastres divinos.";
         font.draw(batch, nearby, 145, 76);
@@ -172,27 +184,21 @@ public final class RefugeScreen extends ScreenAdapter {
         text("Almas compartilhadas: " + game.shared().progress().souls() + " | Fragmentos: " + profile.forgeMaterials(), 540, 459, 1, Color.GOLD);
         text("C: conversar", 62, 71, 1, Color.WHITE); text("L: altar", 321, 71, 1, Color.WHITE);
         text("P: saves", 536, 71, 1, Color.WHITE); text("ENTER: partir", 755, 71, 1, Color.GOLD);
-        text("WASD/setas: mover | E: interagir | R: tentativa | O: áudio | ESC: menu", 25, 25, 1, Color.LIGHT_GRAY);
+        if(state!=State.DIALOGUE)text("WASD/setas: mover | E: interagir | R: tentativa | O: áudio | ESC: menu", 25, 25, 1, Color.LIGHT_GRAY);
         batch.end();
         if (state != State.WALKING) drawOverlay();
         batch.begin();
         String message = !game.shared().error().isEmpty()?game.shared().error():game.profiles().error().isEmpty()?notice:game.profiles().error();
-        if (!message.isEmpty()) text(message, 30, state == State.WALKING ? 119 : 109, 0.95f, game.profiles().error().isEmpty() && game.shared().error().isEmpty() ? Color.GOLD : Color.SALMON);
+        if (!message.isEmpty()) text(message, 30, state == State.DIALOGUE ? 255 : state == State.WALKING ? 119 : 109, 0.95f, game.profiles().error().isEmpty() && game.shared().error().isEmpty() ? Color.GOLD : Color.SALMON);
         batch.end();
     }
     private void drawOverlay() {
+        if(state==State.DIALOGUE){drawDialogue();return;}
         Gdx.gl.glEnable(GL20.GL_BLEND); Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapes.begin(ShapeRenderer.ShapeType.Filled); shapes.setColor(0, 0, 0, 0.9f); shapes.rect(0, 92, 960, 348);
         if (state == State.SHOP) { shapes.setColor(0.13f, 0.16f, 0.23f, 1); for (Rectangle card : shopCards) rect(card); }
         shapes.end(); Gdx.gl.glDisable(GL20.GL_BLEND);
         batch.begin();
-        if (state == State.DIALOGUE) {
-            CaronteDialogue.Line current = conversation.lines().get(line);
-            text(current.speaker(), 70, 365, 1.5f, Color.GOLD);
-            font.getData().setScale(1.2f); font.setColor(Color.WHITE);
-            font.draw(batch, current.text(), 70, 312, 820, 8, true);
-            text("ENTER / E / clique: continuar   |   ESC: fechar", 240, 165, 1, Color.LIGHT_GRAY);
-        } else {
             text("ALTAR: ATRIBUTOS PERMANENTES", 210, 425, 1.4f, Color.GOLD);
             text(game.necromancerUnlocked() ? "Necromante lendário disponível para novos personagens."
                 : "[N / clique] Desbloquear Necromante: "+SharedProgress.necromancerCostText()+" (saldo compartilhado)", 65, 395, 1, Color.MAGENTA);
@@ -207,7 +213,26 @@ public final class RefugeScreen extends ScreenAdapter {
                 text(price, card.x + 18, card.y + 50, 1.2f, profile.canBuy(attribute) ? Color.GREEN : Color.LIGHT_GRAY);
             }
             text("Clique ou 1, 2, 3: comprar   |   ESC / L: fechar", 250, 133, 1, Color.WHITE);
-        }
+        batch.end();
+    }
+    private void drawDialogue() {
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        UiTheme.panel(shapes,20,18,920,214,true);
+        UiTheme.panel(shapes,34,32,180,184,false);
+        shapes.end();
+        batch.begin();
+        boolean charon=playback.current().speaker().equals("Caronte");
+        batch.setColor(Color.WHITE);
+        batch.draw(charon?game.visuals().region("portrait-charon"):game.visuals().expanded().region("portrait-protagonist"),43,34,162,178);
+        batch.setColor(Color.WHITE);
+        titleFont.getData().setScale(.65f);titleFont.setColor(UiTheme.IVORY);
+        titleFont.draw(batch,playback.current().speaker(),236,207);
+        text((line+1)+" / "+conversation.lines().size(),870,206,.85f,Color.LIGHT_GRAY);
+        font.getData().setScale(1.25f);font.setColor(UiTheme.IVORY);
+        font.draw(batch,playback.visibleText(),236,166,670,com.badlogic.gdx.utils.Align.left,true);
+        text(playback.complete()?"ENTER / E / clique: continuar":"ENTER / E / clique: revelar fala",236,70,.9f,UiTheme.TEAL);
+        text("T: texto "+(game.instantDialogue()?"instantâneo":"gradual")+" | ESC: fechar",236,45,.85f,Color.LIGHT_GRAY);
+        if(playback.complete())text(">",899,55,1.2f,Color.GOLD);
         batch.end();
     }
     private void rect(Rectangle r) { shapes.rect(r.x, r.y, r.width, r.height); }
@@ -216,6 +241,6 @@ public final class RefugeScreen extends ScreenAdapter {
     }
     @Override public void dispose() {
         if (disposed) return;
-        disposed = true; batch.dispose(); shapes.dispose(); font.dispose(); atlas.dispose(); map.dispose();
+        disposed = true; batch.dispose(); shapes.dispose(); font.dispose(); titleFont.dispose(); atlas.dispose(); map.dispose();
     }
 }

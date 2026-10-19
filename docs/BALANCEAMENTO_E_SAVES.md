@@ -35,6 +35,26 @@ são entregas seguintes. Comparar classes/builds em personagens novos e evoluíd
 com/sem Atena e forja, nas rotas direta/opcionais e nas três dificuldades.
 As seções seguintes descrevem as regras já implementadas.
 
+## Base visual e expansão do elenco atual
+
+Fontes e diálogo do M3 foram ampliados em 15/10/2026 com os visuais das oito
+profissões, seis papéis de inimigo, armas, baús, poderes e retrato do protagonista.
+Movimento separado da mira; viradas do protagonista misturam quadros por 0,08 s (inimigos: 0,10 s) e o contato usa
+o quadro predominante. As profissões, arqueiro e encontros têm oito direções
+com armas integradas. EquippedArt usa alfa do recorte central de tronco/pernas
+nos quadros de 64×64; comuns/rápidos/tanks conservam as formas anteriores.
+[Revisão visual vigente](POLIMENTO_VISUAL_E_REFUGIO.md).
+Repouso das oito classes usa quatro quadros de respiração. A caminhada passa a
+0,135 s/quadro; o tempo visual do ataque não altera ataques/s, dano ou recarga.
+O refúgio permite caminhar e interagir, com combate desativado.
+As máscaras são específicas de cada pose;
+acessórios/brilhos ficam fora da colisão. Cartões de dádiva cobrem toda a tela
+e usam ícones próprios, também presentes em Tab. Espera de 1,5 s preservada.
+Dano, XP, moedas, probabilidades e multiplicadores continuam nos modelos de M2.
+[Detalhes e capturas](EXPANSAO_VISUAL.md).
+T alterna texto instantâneo no diálogo; confirmar uma fala não concede moeda.
+Detalhes: [MARCO_3_BASE_VISUAL.md](MARCO_3_BASE_VISUAL.md).
+
 ## Profissão fixa por personagem
 
 O menu oferece oito saves em duas páginas (setas ou Anterior/Próxima). Em um save vazio, o narrador pergunta a profissão.

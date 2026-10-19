@@ -26,6 +26,8 @@ public final class BossRoomScreen extends ScreenAdapter {
     private final AudioPanel audioPanel;
     private final CombatFeedback feedback;
     private SpriteHitbox[] hitboxes;
+    private EquippedArt.Body bossBody;
+    private final ActorAnimation bossMotion=new ActorAnimation();
     private final BossEncounter boss;
     private final CombatEffects effects;
     private final java.util.Random combatRandom = new java.util.Random();
@@ -54,17 +56,18 @@ public final class BossRoomScreen extends ScreenAdapter {
     }
     @Override public void show() {
         Gdx.input.setInputProcessor(null);
-        batch = new SpriteBatch(); shapes = new ShapeRenderer(); font = new BitmapFont();
+        batch = new SpriteBatch(); shapes = new ShapeRenderer(); font = UiTheme.bodyFont();
         atlas = new Texture(Art.ATLAS);
         atlas.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         animation = new Animation<>(0.25f, Art.cell(atlas, 2, 1), Art.cell(atlas, 3, 1));
         animation.setPlayMode(Animation.PlayMode.LOOP);
         hitboxes = new SpriteHitbox[]{Art.hitbox(animation.getKeyFrames()[0]), Art.hitbox(animation.getKeyFrames()[1])};
+        bossBody=game.visuals().equipped().body("guardian");
         map = new TileMap(atlas);
         map.gerarAreaInicialSegura(240, 112, 64);
         map.setBounds(BossEncounter.MIN_X, BossEncounter.MIN_Y,
             BossEncounter.MAX_X - BossEncounter.MIN_X, BossEncounter.MAX_Y - BossEncounter.MIN_Y);
-        player = new Jogador(232, 48, atlas, stats, this::attack);
+        player = new Jogador(232, 48, atlas, stats, this::attack, game.visuals());
         navigation = new EnemyNavigation(map::ehSolido);
         session.necromancy().enterRoom(player.x + 8, player.y + 8);
         world.getCamera().position.set(240, 135, 0); world.getCamera().update();
@@ -111,6 +114,7 @@ public final class BossRoomScreen extends ScreenAdapter {
         effects.update(delta);
         Vector2 guardAim = world.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         stats.setGuard(Gdx.input.isButtonPressed(Input.Buttons.RIGHT), guardAim.x - player.x - 8, guardAim.y - player.y - 8);
+        player.aim(guardAim.x-player.x-8,guardAim.y-player.y-8);
         boolean wasDashing=stats.isDashing();float motionX=player.x+8,motionY=player.y+8;
         player.update(delta,map);
         feedback.dash(stats.getWeapon(),motionX,motionY,player.x+8,player.y+8,!wasDashing && stats.isDashing(),stats.isDashing());
@@ -132,7 +136,9 @@ public final class BossRoomScreen extends ScreenAdapter {
             }
         }
         session.necromancy().update(delta, player.x + 8, player.y + 8, java.util.List.of(boss), map::ehSolido, navigation::clearLine);
+        float beforeBossX=boss.x(),beforeBossY=boss.y();
         float damage = boss.update(delta, player.x + 8, player.y + 8, player.hitbox().overlaps(bossHitbox()));
+        bossMotion.advance(delta,boss.x()-beforeBossX,boss.y()-beforeBossY);
         stats.setWalkingSpeedLimit(boss.walkingSpeedLimit());
         if(beforeState!=BossEncounter.State.TELEGRAPH && boss.state()==BossEncounter.State.TELEGRAPH || !wasEnraged && boss.enraged())
             game.audio().play(SoundCue.BOSS_WARNING);
@@ -163,8 +169,8 @@ public final class BossRoomScreen extends ScreenAdapter {
             closest.nor().scl(Math.max(0, distance - BossEncounter.RADIUS));
             if (WeaponAttack.meleeHits(x, y, direction.x, direction.y, x + closest.x, y + closest.y, stats.meleeReach(), weapon.halfAngle())) hurtBoss(stats.getDano());
         } else {
-            Projetil projectile = new Projetil(x, y, direction.nor(), Art.cell(atlas, 0, 3), weapon);
-            projectile.configure(stats); projectiles.add(projectile);
+            Projetil projectile = new Projetil(x, y, direction.nor(), weapon == WeaponType.BOW ? game.visuals().region("arrow-0") : Art.cell(atlas, 0, 3), weapon);
+            projectile.configure(stats);projectile.visuals(game.visuals()); projectiles.add(projectile);
         }
     }
     private void hurtBoss(float damage) {
@@ -183,8 +189,7 @@ public final class BossRoomScreen extends ScreenAdapter {
         game.finishRun(session, victory ? RunOutcome.VICTORY : RunOutcome.DEATH);
     }
     private SpriteHitbox bossHitbox() {
-        return hitboxes[animation.getKeyFrameIndex(stateTime)].place(boss.x() - BossEncounter.DRAW_SIZE / 2,
-            boss.y() - BossEncounter.DRAW_SIZE / 2, BossEncounter.DRAW_SIZE, BossEncounter.DRAW_SIZE, false, false);
+        return bossBody.hitbox(EncounterAnimation.boss(boss,bossMotion),boss.x(),boss.y(),BossEncounter.DRAW_SIZE);
     }
     private void draw() {
         ScreenUtils.clear(0.045f, 0.055f, 0.085f, 1);
@@ -200,94 +205,35 @@ public final class BossRoomScreen extends ScreenAdapter {
         shapes.rect(0, BossEncounter.MAX_Y, 480, 270 - BossEncounter.MAX_Y);
         shapes.rect(0, BossEncounter.MIN_Y, BossEncounter.MIN_X, BossEncounter.MAX_Y - BossEncounter.MIN_Y);
         shapes.rect(BossEncounter.MAX_X, BossEncounter.MIN_Y, 480 - BossEncounter.MAX_X, BossEncounter.MAX_Y - BossEncounter.MIN_Y);
-        boolean warning = boss.state() == BossEncounter.State.TELEGRAPH;
-        if (warning) shapes.setColor(1, 0.65f, 0.1f, 0.22f);
-        else shapes.setColor(1, 0.15f, 0.1f, 0.38f);
-        for (BossEncounter.Mark mark : boss.marks()) shapes.circle(mark.x(), mark.y(), mark.radius(), 32);
-        if (boss.leapVisible()) {
-            if (boss.leapLocked() || !boss.airborne()) shapes.setColor(1, 0.08f, 0.04f, 0.38f);
-            else shapes.setColor(1, 0.65f, 0.1f, 0.18f);
-            shapes.circle(boss.leapX(), boss.leapY(), boss.leapRadius(), 48);
-        }
         shapes.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        FeedbackVisuals.pulses(shapes,feedback);
-        CombatVisuals.effects(shapes, effects, java.util.List.of(boss));
-        CombatVisuals.guard(shapes, stats, player.x + 8, player.y + 8);
-        shapes.setColor(Color.SLATE);
-        shapes.rect(BossEncounter.MIN_X, BossEncounter.MIN_Y, BossEncounter.MAX_X - BossEncounter.MIN_X, BossEncounter.MAX_Y - BossEncounter.MIN_Y);
-        shapes.setColor(warning ? Color.ORANGE : Color.SCARLET);
-        for (BossEncounter.Mark mark : boss.marks()) {
-            shapes.circle(mark.x(), mark.y(), mark.radius(), 32);
-            if (warning) shapes.circle(mark.x(), mark.y(), mark.radius() * boss.warningProgress(), 32);
-        }
-        if (boss.leapVisible()) {
-            shapes.setColor(boss.leapLocked() || !boss.airborne() ? Color.SCARLET : Color.ORANGE);
-            shapes.circle(boss.leapX(), boss.leapY(), boss.leapRadius(), 48);
-            if (boss.leapLocked()) {
-                shapes.circle(boss.leapX(), boss.leapY(), boss.leapRadius() * boss.leapSecondsRemaining(), 48);
-                shapes.line(boss.leapX() - 5, boss.leapY(), boss.leapX() + 5, boss.leapY());
-                shapes.line(boss.leapX(), boss.leapY() - 5, boss.leapX(), boss.leapY() + 5);
-            }
-        }
-        if ((warning || boss.state() == BossEncounter.State.ACTIVE) && boss.attack() == BossEncounter.Attack.CHARGE)
-            drawChargeLane();
-        if (warning && boss.attack() == BossEncounter.Attack.VOLLEY) {
-            float angle = (float) Math.toDegrees(boss.aimAngle());
-            shapes.arc(boss.x(), boss.y(), 58, angle - 55, 110, 24);
-            float directionX = (float) Math.cos(boss.aimAngle()), directionY = (float) Math.sin(boss.aimAngle());
-            shapes.line(boss.x(), boss.y(), boss.x() + directionX * 82, boss.y() + directionY * 82);
-        }
-        if (stats.possuiAura()) {
-            shapes.setColor(Color.CYAN); shapes.circle(player.x + 8, player.y + 8, stats.getRaioAura(), 32);
-        }
-        if (stats.isEscudoAtivo()) {
-            shapes.setColor(Color.GOLD); shapes.circle(player.x + 8, player.y + 8, 12, 20);
-        }
-        if (slashTimer > 0) {
-            shapes.setColor(FeedbackVisuals.color(stats.getWeapon()));
-            if (stats.getWeapon() == WeaponType.FISTS) {
-                float angle = (float) Math.toRadians(slashAngle);
-                shapes.circle(slashX + (float) Math.cos(angle) * stats.meleeReach(),
-                    slashY + (float) Math.sin(angle) * stats.meleeReach(), 5, 12);
-            } else shapes.arc(slashX, slashY, stats.swordReach(), slashAngle - WeaponAttack.HALF_ANGLE_DEGREES,
-                WeaponAttack.HALF_ANGLE_DEGREES * 2, 18);
-        }
-        shapes.end();
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(Color.SCARLET);
-        for (BossEncounter.Shot shot : boss.shots()) shapes.circle(shot.x, shot.y, 3.5f, 12);
-        shapes.end();
         batch.begin();
-        batch.setColor(boss.flashing() ? Color.WHITE : boss.enraged() ? Color.SCARLET : Color.GOLD);
-        if (boss.spriteVisible()) batch.draw(animation.getKeyFrame(stateTime),
-            boss.spriteX() - BossEncounter.DRAW_SIZE / 2, boss.spriteY() - BossEncounter.DRAW_SIZE / 2,
-            BossEncounter.DRAW_SIZE, BossEncounter.DRAW_SIZE);
+        TacticalVisuals.boss(batch,game.visuals(),boss);
+        for(BossEncounter.Shot shot:boss.shots()) {
+            batch.setColor(boss.enraged()?Color.SALMON:Color.WHITE);
+            batch.draw(game.visuals().expanded().effect("attack-wand",(stateTime*5)%1),shot.x-5,shot.y-5,10,10);
+        }
+        batch.setColor(boss.flashing()?Color.SALMON:Color.WHITE);
+        if(boss.spriteVisible())bossBody.draw(batch,EncounterAnimation.boss(boss,bossMotion),boss.spriteX(),boss.spriteY(),BossEncounter.DRAW_SIZE);
         batch.setColor(Color.WHITE);
+        DivineVisuals.player(batch,game.visuals(),stats,player.x+8,player.y+8,stateTime);
+        FeedbackVisuals.sprites(batch,game.visuals(),feedback);
         player.draw(batch);
-        CombatVisuals.allies(batch, atlas, session.necromancy());
+        CombatVisuals.allies(batch, game.visuals(), session.necromancy());
         for (Projetil projectile : projectiles) projectile.draw(batch);
+        DivineVisuals.effects(batch,game.visuals(),effects,java.util.List.of(boss),stateTime);
+        DivineVisuals.slash(batch,game.visuals(),stats,slashX,slashY,slashAngle,slashTimer);
         font.getData().setScale(0.65f); font.setColor(Color.WHITE);
         for (DamageNumber number : damageNumbers) number.draw(batch, font);
         FeedbackVisuals.labels(batch,font,feedback);
         batch.end();
         drawHud();
     }
-    private void drawChargeLane() {
-        float dx = boss.endX() - boss.startX(), dy = boss.endY() - boss.startY();
-        float length = Math.max(0.001f, (float) Math.sqrt(dx * dx + dy * dy));
-        float sideX = -dy / length * (BossEncounter.RADIUS + BossEncounter.PLAYER_RADIUS);
-        float sideY = dx / length * (BossEncounter.RADIUS + BossEncounter.PLAYER_RADIUS);
-        shapes.line(boss.startX() + sideX, boss.startY() + sideY, boss.endX() + sideX, boss.endY() + sideY);
-        shapes.line(boss.startX() - sideX, boss.startY() - sideY, boss.endX() - sideX, boss.endY() - sideY);
-        shapes.line(boss.endX() - sideX, boss.endY() - sideY, boss.endX() + sideX, boss.endY() + sideY);
-    }
     private void drawHud() {
         hud.apply();
         shapes.setProjectionMatrix(hud.getCamera().combined);
         batch.setProjectionMatrix(hud.getCamera().combined);
-        CombatHud.player(batch,shapes,font,stats);CombatHud.boss(batch,shapes,font,boss);
+        CombatHud.player(batch,shapes,font,stats,game.visuals());CombatHud.boss(batch,shapes,font,boss);
         FeedbackVisuals.damageBorder(shapes,feedback);
         String cue=boss.state()==BossEncounter.State.INTRO?"Guardião: Credencial de morto, por favor."
             :boss.state()==BossEncounter.State.TELEGRAPH?boss.attack().label:"";
@@ -310,7 +256,7 @@ public final class BossRoomScreen extends ScreenAdapter {
             font.getData().setScale(1); font.setColor(Color.WHITE); font.draw(batch, "ESC: continuar | O: áudio | M: menu", 345, 265);
             batch.end();
         }
-        if (boonPanel.open()) boonPanel.draw(batch, shapes, font);
+        if (boonPanel.open()) boonPanel.draw(batch, shapes, font,game.visuals());
         if(audioPanel.open())audioPanel.draw(batch,shapes,font);
     }
     @Override public void pause() { paused = true; }

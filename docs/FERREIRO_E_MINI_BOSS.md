@@ -38,10 +38,15 @@ Gera um cristal de 20 XP e encerra seus perigos. Pausa e dádivas congelam o
 encontro. A saída permanece dependente somente das metas existentes; não obriga
 caçar um mini-boss fora da tela. Sair descarta o encontro.
 
-Sprite ampliado/tingido e formas dos ataques são provisórios; áudio foi
-acrescentado em um incremento posterior. O playtest de 13/10/2026 identificou
-avisos do Carrasco fora da tela. A correção de visibilidade sonora foi implementada
-no M1 em 14/10/2026; sprite/animação de giro/pedras próprios entram nos M3/M6.
+O Carrasco recebeu corpo próprio na expansão de 15/10/2026, ampliado para oito
+direções e ataques corporais de giro/lançamento na revisão seguinte:
+capuz de ferro, avental alaranjado e silhueta musculosa. Giro e pedras usam
+sprites; círculos e leques agora são imagens animadas, com áreas/tempos preservados.
+Poses de dano/morte e a arte de mundo do Ferreiro Errante continuam pendentes.
+Na forja, o ícone isolado mostra a arma que será melhorada.
+[Entrega visual](ANIMACOES_E_EQUIPAMENTOS.md).
+O playtest de 13/10/2026 identificou avisos do Carrasco fora da tela; a correção
+de visibilidade sonora foi implementada no M1 em 14/10/2026 e foi preservada.
 Regras e critérios: [ROTEIRO_DE_MELHORIAS.md](ROTEIRO_DE_MELHORIAS.md) e
 [AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
 

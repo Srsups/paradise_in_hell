@@ -32,7 +32,8 @@ playtests. Este documento descreve a campanha planejada, ainda em desenvolviment
 Essas novas direções foram confirmadas em 13/10/2026. O M1 foi implementado
 em 14/10/2026: HUD essencial, visibilidade sonora do Carrasco, revisão do Guardião
 e métricas do encontro. O M2 também está implementado: dificuldade fixa e moedas
-por modo. M3–M7 continuam planejados.
+por modo. O M3 piloto entrou em 15/10/2026 com fontes, sprites direcionais,
+efeitos e conversa com retrato de Caronte. M4–M7 continuam planejados.
 A dificuldade fixa e o desbloqueio por NPC foram esclarecidos pelo autor.
 Multiplicadores iniciais estão em [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
 Conteúdo da missão, efeitos e direção artística final continuam
@@ -332,7 +333,7 @@ anteriores permanece registrada no plano de lançamento; os próximos marcos sã
 | --- | --- | --- |
 | M1 — implementado; playtests pendentes | HUD essencial, áudio do mini-boss e chefe mais exigente | Barra de XP/Tab, visibilidade por máscara/câmera, padrões variados e novas métricas |
 | M2 — implementado; playtests pendentes | Três dificuldades fixas por save | Migração para Média, moedas fracionárias e modos distintos; 222 testes/OpenGL |
-| M3 | Base visual e conversa piloto | Fonte, atlas, animações e diálogo de Caronte revisados |
+| M3 — piloto implementado; revisão do autor pendente | Base visual e conversa piloto | Noto Sans/Cinzel, atlas, caminhada direcional e Caronte; 228 testes/OpenGL |
 | M4 | Catálogo de dádivas e altar | Seis gerais + uma regional e três compras como primeiro lote proposto |
 | M5 | Desafio de NPC e Fazendeiro Épico | Encontro por run, progresso/recompensa persistentes e duas ferramentas úteis |
 | M6 | Arte de toda a primeira região | Classes/inimigos distintos, VFX por sprites e direção suave |
@@ -359,7 +360,7 @@ os testes manuais de equilíbrio continuam pendentes.
 - Identidade/chance do NPC, condições/persistência do desafio e escopo compartilhado do acesso ao Fazendeiro.
 - Bases, alcance, recarga de troca e poder de forja de ancinho/foice.
 - Novas dádivas gerais/regionais e limites/preços do altar.
-- Estilo/fontes do piloto visual e custo das animações direcionais.
+- Revisão do estilo piloto em escala real antes de expandir a arte do elenco.
 
 - Condições da maldição, impedimento para Zeus revogá-la e seu estado após o resgate.
 - Função do item ou poder buscado no submundo.

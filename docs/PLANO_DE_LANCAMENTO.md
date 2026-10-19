@@ -84,6 +84,15 @@ relatou chefe fácil, HUD carregado e necessidade de variedade/acabamento.
 A matriz completa de profissões, dificuldades e progressão continua pendente;
 o feedback recebido orienta o [roteiro atualizado](ROTEIRO_DE_MELHORIAS.md).
 
+## Expansão artística antecipada
+
+Em 15/10/2026, antes do M4, foram integrados oito visuais de profissão, seis
+papéis de inimigo, armas/golpes, baús animados, retrato do protagonista e ícones
+das 15 dádivas em tela inteira. Parte do M6 foi antecipada; poses adicionais,
+NPCs e futuros conteúdos permanecem no roteiro. A expansão tem 232 testes
+unitários aprovados e integração OpenGL para máscaras, escolhas e efeitos.
+[Entrega e limites](EXPANSAO_VISUAL.md).
+
 ## Critério para divulgar a demo publicamente
 
 - [x] Recolher o primeiro parecer do autor em partidas práticas e registrar prioridades.
@@ -117,7 +126,7 @@ de ordem, propostas e critérios de aceite.
 | --- | --- | --- |
 | M1 — implementado; playtests pendentes | HUD, áudio visível do Carrasco e Guardião | Barras/Tab, máscaras/culling, 500 de vida, rajada reforçada, recuperações menores e novas métricas |
 | M2 — implementado; playtests pendentes | Dificuldades fixas e economia | 222 testes/OpenGL, três modos, migração, frações e crédito único verificados |
-| M3 | Base visual e diálogo de Caronte | Fontes, atlas/animação, molduras e conversa piloto reutilizáveis |
+| M3 — piloto implementado; revisão artística pendente | Base visual e diálogo de Caronte | 228 testes/OpenGL; fontes, atlas/animação, molduras e conversa piloto |
 | M4 | Dádivas e altar | Mais escolhas, poder regional e três novas compras candidatas |
 | M5 | NPC de desafio e Fazendeiro Épico | Desbloqueio narrativo e troca ancinho/foice com funções distintas |
 | M6 | Arte/animação em todo o conteúdo | Profissões/inimigos próprios, efeitos por sprites e conversas polidas |
@@ -187,7 +196,8 @@ Atena recebeu +150% de XP, categoria Épica e limite de uma escolha, com testes
 de retorno da escolha e preservação de relatórios antigos. O feedback seguinte
 motivou o M1, implementado em 14/10/2026. O M2 também foi implementado:
 [dificuldade fixa por save e economia](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
-O próximo incremento é M3, base visual e conversa piloto. A matriz de partidas
+O M3 piloto foi implementado em 15/10/2026: [base visual e Caronte](MARCO_3_BASE_VISUAL.md).
+O próximo incremento é M4, dádivas regionais/gerais e altar. A matriz de partidas
 continua medindo rotas, builds e progresso do altar, agora também por dificuldade.
 O Fazendeiro amplia a matriz quando implementado; a arte e narrativa seguem
 os mesmos critérios de travessia e produção de conteúdo.

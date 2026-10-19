@@ -3,7 +3,10 @@
 Revisado após os testes práticos de **13/10/2026**; M1/M2 implementados em **14/10/2026**.
 Este documento orienta os próximos incrementos e substitui a sequência de prioridades
 anterior. M1/M2 têm implementação e verificação automática/gráfica; a validação humana
-de dificuldade continua. **M3–M7 permanecem planejados**.
+de dificuldade continua. M3 e a expansão visual do elenco atual foram implementados
+em **15/10/2026**. Parte do M6 foi antecipada a pedido do autor antes do M4:
+[entrega visual e capturas](EXPANSAO_VISUAL.md).
+**M4/M5/M7 permanecem planejados; M6 está parcialmente antecipado**.
 
 ## Base existente e objetivo
 
@@ -51,10 +54,10 @@ salas do mesmo Submundo.
 | --- | --- | --- | --- |
 | M1 — implementado; playtests pendentes | HUD limpo, áudio do Carrasco e Guardião mais exigente | Base atual | 211 testes/OpenGL aprovados; confirmar ritmo/diversão em partidas completas |
 | M2 — implementado; playtests pendentes | Dificuldade fixa por save e recompensas ajustadas | M1 como referência de combate | 222 testes/OpenGL; três modos, migração e crédito único verificados; confirmar economia em partidas |
-| M3 | Base visual: fontes, atlas, animações e conversa de Caronte | M1; migração visual gradual | Uma classe, um inimigo, uma habilidade e um diálogo com qualidade que possa ser repetida |
+| M3 — implementado e ampliado | Fontes, atlas, animações e conversa com retratos | M1; migração visual gradual | 241 testes/OpenGL após expansão; revisar movimento e leitura na escala real |
 | M4 | Novas dádivas, primeira dádiva regional e novas compras do altar | M2; ícones/fontes de M3 | Escolhas mudam a forma de jogar e mantêm chefe/economia viáveis |
 | M5 | NPC de desafio e Fazendeiro desbloqueável | M2–M4 | Desafio persiste corretamente; duas ferramentas têm utilidade; desbloqueio permite criar novo personagem |
-| M6 | Aplicar a direção visual a todas as classes, inimigos, poderes e NPCs | M3; catálogo de M4/M5 | Animações, efeitos, colisões e telas consistentes na travessia inteira |
+| M6 — parte antecipada | Elenco atual, repouso, armas, efeitos, baús, ícones e três elementos do refúgio entregues; poses/novos conteúdos e outros NPCs pendentes | M3; completar após catálogo de M4/M5 | Animações, efeitos, colisões e telas consistentes na travessia inteira |
 | M7 | Fechar Submundo, variedade narrativa e preparação da expansão | M1–M6 | Região completa aprovada em playtests; custos de produzir outra região conhecidos |
 
 Cada marco deve gerar um build jogável e um registro curto dos resultados.
@@ -172,6 +175,10 @@ de moedas, desbloqueios ou fragmentos.
 
 ## M3 — Base visual e conversa piloto
 
+Piloto implementado em 15/10/2026: [MARCO_3_BASE_VISUAL.md](MARCO_3_BASE_VISUAL.md).
+A direção abaixo foi aplicada ao Caçador/comum, efeitos básicos e diálogo de Caronte;
+a revisão artística pelo autor continua necessária antes de estender o conjunto.
+
 As duas imagens anexadas são referências de composição: menu com título forte,
 botões e molduras consistentes; conversa com retrato lateral, nome e caixa escura
 que deixa o cenário visível. Aplicar essa organização à identidade grega e ao humor
@@ -192,7 +199,8 @@ oferece organização de sprites em [TextureAtlas/TexturePacker](https://libgdx.
 e recursos de fonte/moldura/cor em [Skin](https://libgdx.com/wiki/graphics/2d/scene2d/skin).
 Para fontes, usar tamanhos pré-gerados ou avaliar
 [gdx-freetype](https://libgdx.com/wiki/extensions/gdx-freetype), que gera BitmapFont
-a partir de TTF. Essas fontes/ferramentas ainda não foram incorporadas ao build.
+a partir de TTF. O piloto adotou PNG/FNT pré-gerados com FontBaker, incluindo licenças OFL,
+sem extensão nativa nova. PilotAtlasBaker produz o atlas nomeado; Main controla sua vida útil.
 
 Criar um pacote piloto: Caçador, comum, flecha/impacto, ícones das três barras,
 cartão de dádiva e conversa de Caronte. Centralizar carregamento e descarte;
@@ -307,22 +315,32 @@ para nove profissões, mantendo os oito slots de save existentes.
 
 ## M6 — Arte e animação da travessia inteira
 
-Prioridade: piloto do M3 → rápidos/tanks/arqueiro → Carrasco e Guardião →
-demais profissões/Fazendeiro → demais poderes, NPCs e cenários.
-As diferenças de silhueta, equipamento e postura devem identificar cada papel;
-cores continuam complementares, sem serem a única distinção.
+**Parte antecipada em 15/10/2026**, por solicitação do autor antes do M4.
+Oito profissões com roupa/arma próprias, oito direções e seis quadros de
+caminhada; seis papéis de inimigo com quatro quadros/direção, incluindo Carrasco
+e Guardião. Há transição de 0,08 s no protagonista e 0,10 s nos inimigos ao virar, preservando a passada e a mira
+independente. Máscaras por corpo/quadro acompanham a orientação predominante.
+Baús têm quatro estados, o protagonista tem retrato ilustrado e as 15 dádivas
+têm ícones próprios em cartões de tela inteira e na consulta por Tab.
+[Implementação, origens e verificação](EXPANSAO_VISUAL.md).
 
-Definir pivô nos pés, escala do corpo, estados de repouso/locomoção/ataque/dano
-e ritmo de quadros. Prototipar oito direções ou quatro com transições próprias
-antes de decidir o custo de todas as folhas de sprites. Resolver movimento
-e mira separadamente para caminhar mirando; evitar tremor nas fronteiras das
-direções e reiniciar a caminhada a cada pequena mudança de ângulo.
+A revisão seguinte integrou as armas aos quadros, criou as quatro diagonais,
+poses de ataque das oito profissões, disparo do arqueiro, giro/pedras do Carrasco
+e respiração/corrida/ombrada/conjuração/salto/aterrissagem do Guardião.
+[Estado vigente](POLIMENTO_VISUAL_E_REFUGIO.md). As armas isoladas aparecem na forja.
 
-Substituir visualmente socos, cortes, feitiços, maldição, aura, escudo, raios,
-pedras, flechas, marcas e queda por sprites/efeitos animados. Áreas de perigo
-continuam nítidas, com preenchimento e borda texturizados e estado de aviso;
-decoração não altera o raio real. Vetores/geometria seguem nos cálculos de
-movimento e colisão; desenhos de depuração ficam ocultos na apresentação normal.
+As oito classes agora respiram; Caronte, altar e travessia do refúgio têm sprites
+animadas, e o refúgio bloqueia ataques. Cinco vistas desenhadas geram oito direções,
+com alinhamento dos quadros e cadência revista.
+
+Ainda faltam poses de dano/morte, expressões adicionais, outros NPCs/cenários
+e arte do futuro Fazendeiro/dádivas de M4. Preservar escala, continuidade da passada
+e orientação da mira ao ampliar as folhas. Avaliar as oito direções em partidas.
+
+Socos, cortes, feitiços, maldição, aura, escudo, raios, pedras e flechas já usam
+sprites/efeitos. Marcas, mira, giro, leque, investida e queda também têm avisos
+animados por imagens, usando centros/raios/tempos dos modelos. ShapeRenderer
+permanece nas interfaces; a geometria de cálculo segue no movimento e colisão.
 
 Atualizar máscaras para os novos quadros de corpo e manter a navegação separada
 de acessórios/brilhos da arma. Efeitos não podem adicionar contato invisível.
@@ -367,15 +385,20 @@ por dificuldade; produção de nova região reutiliza dados/assets e os mesmos s
 
 ## Próxima entrega concreta e decisões restantes
 
-**Próximo incremento de código: M3**, base visual e conversa piloto.
-M1/M2 já permitem novas partidas com HUD limpo, chefe revisado e dificuldade
-por personagem; usar os relatórios para confirmar ritmo e economia dos três modos.
+**Entrega artística antecipada concluída para o elenco atual**:
+[EXPANSAO_VISUAL.md](EXPANSAO_VISUAL.md). Revisar caminhada/viradas, distinção dos
+inimigos, armas, poderes, baús e o menu de dádivas numa travessia completa.
+Os 241 testes e a integração gráfica verificam regras/recursos; o parecer do
+autor orienta o próximo acabamento.
 
-Antes de implementar os respectivos marcos, confirmar: estilo visual do piloto/fontes;
-chance/identidade do NPC;
+**Após a revisão, retomar M4**, novas dádivas, primeira dádiva regional e altar.
+Usar os relatórios para comparar economia, dificuldades e builds.
+
+Antes de implementar os respectivos marcos, revisar as animações com o autor;
+confirmar chance/identidade do NPC;
 condições e persistência do desafio; alcance/dano/forja das duas ferramentas;
 efeitos das novas dádivas e custos/limites do altar. São decisões localizadas,
-não impedem medir as partidas do M1/M2 e preparar o M3.
+não impedem medir as partidas do M1–M3 e preparar o M4.
 
 Documentos relacionados: [design](DESIGN_DO_JOGO.md),
 [balanceamento e saves](BALANCEAMENTO_E_SAVES.md), [arte](ARTE_DA_DEMO.md),

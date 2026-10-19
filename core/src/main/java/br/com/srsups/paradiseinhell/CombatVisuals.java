@@ -27,13 +27,12 @@ final class CombatVisuals {
         shapes.setColor(Color.SKY);
         shapes.arc(x, y, 15, player.guardAngle() - 60, 120, 24);
     }
-    static void allies(SpriteBatch batch, Texture atlas, Necromancy necromancy) {
-        batch.setColor(Color.LIME);
-        for (Necromancy.Ally ally : necromancy.allies()) {
-            float size = Math.min(24, 16 + (float) Math.sqrt(ally.strength));
-            batch.draw(Art.cell(atlas, 2 + (int) (ally.remaining * 4) % 2, 1), ally.x - (size - 16) / 2, ally.y - (size - 16) / 2, size, size);
+    static void allies(SpriteBatch batch, PilotArt art, Necromancy necromancy) {
+        batch.setColor(.65f,1,.75f,1);
+        for(Necromancy.Ally ally:necromancy.allies()) {
+            float size=Math.min(24,16+(float)Math.sqrt(ally.strength));
+            batch.draw(art.expanded().frame("common",0,(int)(ally.remaining*8)%4),ally.x+8-size/2,ally.y+8-size/2,size,size);
         }
         batch.setColor(Color.WHITE);
     }
 }
-

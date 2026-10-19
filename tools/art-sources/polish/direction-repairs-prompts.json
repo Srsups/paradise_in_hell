@@ -1,0 +1,38 @@
+{
+  "mode": "built-in imagegen",
+  "created": "2026-10-15",
+  "assets": [
+    {
+      "key": "cacador-actions",
+      "reference": "tools/art-sources/polish/cacador-actions-original.png",
+      "kind": "direction-repair",
+      "cols": 8,
+      "rows": 5,
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: a bow: front-shot bow is horizontal across the chest, drawn arrow is foreshortened with arrowhead below chest toward viewer; back-shot points arrow UP; southwest shot arrow points diagonally LOWER LEFT, not horizontallyleft. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "key": "vigilante-actions",
+      "reference": "tools/art-sources/polish/vigilante-actions-original.png",
+      "kind": "direction-repair",
+      "cols": 8,
+      "rows": 5,
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one pistol: barrel in front row points DOWN toward viewer with circular muzzle opening below chest, NOT left/right; back row points UP above shoulder; southwest points diagonally DOWN-LEFT, muzzle below and left of hand. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "key": "feiticeira-actions",
+      "reference": "tools/art-sources/polish/feiticeira-actions-original.png",
+      "kind": "direction-repair",
+      "cols": 8,
+      "rows": 5,
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one short wand: front row extends wand DOWN below chest and purple magic below waist; back row casts UP above shoulders; southwest wand and glow must be diagonally DOWN-LEFT, not up-left. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    },
+    {
+      "key": "necromante-actions",
+      "reference": "tools/art-sources/polish/necromante-actions-original.png",
+      "kind": "direction-repair",
+      "cols": 8,
+      "rows": 5,
+      "prompt": "Edit this exact transparent8-column5-row spritesheet. Keep identity, outfit, colours, head/waist root, camera size, all FOUR IDLE frames (columns1–4) unchanged. Fix attack direction ONLY in columns5–7; column8 is recovery. Rows still DOWN,UP,LEFT,UP-LEFT,DOWN-LEFT. Current front attack points sideways and is WRONG. In Row1 keep face/chest pointing at viewer in ALL frames: attack POINTS DOWN toward bottom edge of cell, with FORESHORTENING toward camera. In Row2 back view ALL frames and attack UP toward top edge of cell. Row3 trueLEFT profile castsLEFT. Row4 staysREAR-left45 and castsUP-LEFT. Row5 staysFRONT-left45 and castsDOWN-LEFT, clearly not horizontal. Equipment: one staff: front row holds STAFF VERTICAL next to body and casts green magic with free hand DOWN below chest; back row staff vertical and free hand casts UP above shoulders; southwest free hand casts DOWN-LEFT below chest, staff stays vertical. Never turn torso into a side view in frontal attacks. No long floating projectile, beam, or streak; only small release effect at weapon/hand tip. Hands firmly grasp equipment. EXACT same8by5 grid, transparent background/gutters, no shadows/text. Preserve the4-stage attack progression and smooth body pivot. This is directional gameplay art, every row aims precisely its designated direction."
+    }
+  ]
+}

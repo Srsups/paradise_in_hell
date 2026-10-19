@@ -11,6 +11,22 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     private ArcherAttack archer;
     private EnemyType type = EnemyType.COMMON;
     private float stateTime, attackTimer, flashTimer;
+    private final PilotArt pilot;
+    private final ActorAnimation motion = new ActorAnimation();
+    private ExpandedArt.Body body;
+    private EquippedArt.Body archerBody;
+    private float releaseAnimation;
+    private String visualKind;
+    public String visualKind() { return visualKind; }
+    private void refreshBody() {
+        if(pilot==null)return;
+        String kind=isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);
+        if(!kind.equals(visualKind)){
+            visualKind=kind;body=pilot.expanded().body(kind);
+            archerBody=isArcher()?pilot.equipped().body("archer"):null;releaseAnimation=0;
+        }
+    }
+    private boolean usesPilot() { return pilot != null; }
     private final float pursuitOffset;
     private float speed = 30, size = 16;
     private float damage = 8, maxHealth = 10;
@@ -18,8 +34,10 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     private final SpriteHitbox[] hitboxes;
     private final Color tint = new Color(Color.WHITE);
 
-    public Inimigo(float x, float y, Texture atlas) {
+    public Inimigo(float x, float y, Texture atlas) { this(x,y,atlas,null); }
+    public Inimigo(float x, float y, Texture atlas, PilotArt pilot) {
         super(x, y);
+        this.pilot=pilot;
         pursuitOffset = FastPursuit.offset(x, y);
         configurarTipo(EnemyType.COMMON);
         animation = new Animation<>(0.25f, Art.cell(atlas, 2, 1), Art.cell(atlas, 3, 1));
@@ -33,12 +51,13 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
         archer = null;
         speed = type.speed; vida = maxHealth = type.health; damage = type.damage; size = type.size;
         tint.set(type == EnemyType.FAST ? Color.CYAN : type == EnemyType.TANK ? Color.GOLD : Color.WHITE);
+        refreshBody();
     }
     public void configureArcher() {
         configurarTipo(EnemyType.COMMON);
         archer = new ArcherAttack();
         speed = ArcherAttack.SPEED; vida = maxHealth = ArcherAttack.HEALTH;
-        damage = ArcherAttack.CONTACT_DAMAGE; tint.set(.75f, .55f, 1, 1);
+        damage = ArcherAttack.CONTACT_DAMAGE; tint.set(.75f, .55f, 1, 1);refreshBody();
     }
     public boolean isArcher() { return archer != null; }
     public ArcherAttack archer() { return archer; }
@@ -68,19 +87,41 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public int getXpDrop() { return isArcher() ? ArcherAttack.XP : type.xp; }
     public void update(float delta, EnemyNavigation navigation) { update(delta, navigation, true); }
     public void update(float delta, EnemyNavigation navigation, boolean visible) {
-        stateTime += delta; attackTimer -= delta; flashTimer -= delta;
+        stateTime += delta; attackTimer -= delta; flashTimer -= delta;releaseAnimation=Math.max(0,releaseAnimation-delta);
+        float beforeX=x,beforeY=y;
         if (estaMorto()) { if (archer != null) archer.clear(); return; }
         if (archer == null) navigation.move(this, type == EnemyType.FAST ? FastPursuit.speed(stateTime, pursuitOffset) : speed, delta);
-        else archer.update(delta, this, navigation.targetX(), navigation.targetY(), visible, navigation, arrowDamage());
+        else {
+            int fired=archer.shotsFired();
+            archer.update(delta,this,navigation.targetX(),navigation.targetY(),visible,navigation,arrowDamage());
+            if(archer.shotsFired()!=fired)releaseAnimation=.22f;
+        }
+        if(usesPilot())motion.advance(delta,x-beforeX,y-beforeY);
     }
     public float arrowDamage() { return isArcher() ? damage / ArcherAttack.CONTACT_DAMAGE * ArcherAttack.ARROW_DAMAGE : 0; }
+    private boolean archerActing(){return isArcher()&&(archer.phase()==ArcherAttack.Phase.AIMING||releaseAnimation>0);}
+    private EquippedArt.Pose archerPose(){
+        if(!archerActing())return archerBody.walk(motion);
+        var facing=ActorAnimation.facing(archer.aimX()-centerX(),archer.aimY()-centerY());
+        float progress=archer.phase()==ArcherAttack.Phase.AIMING?archer.aimProgress()*4f/6:4f/6+(1-releaseAnimation/.22f)*2f/6;
+        return archerBody.pose("attack",facing,progress);
+    }
     public SpriteHitbox hitbox() {
+        if(archerBody!=null)return archerBody.hitbox(archerPose(),centerX(),centerY(),size+2);
+        if(usesPilot())return body.hitbox(motion,centerX(),centerY(),size+2);
         return hitboxes[animation.getKeyFrameIndex(stateTime)].place(x - (size - 16) / 2, y - (size - 16) / 2, size, size, false, false);
     }
     public void draw(SpriteBatch batch) {
         batch.setColor(flashTimer > 0 ? Color.SALMON
             : type == EnemyType.FAST && FastPursuit.speed(stateTime,pursuitOffset) == FastPursuit.RECOVERY_SPEED ? Color.TEAL : tint);
-        batch.draw(animation.getKeyFrame(stateTime), x - (size - 16) / 2, y - (size - 16) / 2, size, size);
+        if(usesPilot()) {
+            batch.setColor(flashTimer>0?Color.SALMON:Color.WHITE);
+            if(archerBody!=null){
+                if(archerActing())archerBody.draw(batch,archerPose(),centerX(),centerY(),size+2);
+                else archerBody.draw(batch,motion,centerX(),centerY(),size+2);
+            }else body.draw(batch,motion,centerX(),centerY(),size+2);
+        }
+        else batch.draw(animation.getKeyFrame(stateTime), x - (size - 16) / 2, y - (size - 16) / 2, size, size);
         batch.setColor(Color.WHITE);
     }
     public boolean podeAtacar() { return attackTimer <= 0; }

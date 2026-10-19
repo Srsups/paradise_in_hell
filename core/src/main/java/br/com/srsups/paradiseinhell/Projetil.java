@@ -10,6 +10,8 @@ public class Projetil {
     public float dano = 5;
     private final TextureRegion textura;
     private final WeaponType weapon;
+    private PilotArt visuals;
+    public void visuals(PilotArt value) {visuals=value;}
     public float beforeX, beforeY;
     private float angulo;
     private final float width, height;
@@ -57,6 +59,13 @@ public class Projetil {
         }
     }
     public void draw(SpriteBatch batch) {
+        if(visuals!=null && weapon!=WeaponType.BOW) {
+            float cycle=((3-remainingLife)*8)%1;
+            float size=weapon==WeaponType.PISTOL?8:Math.max(width,height)*1.5f;
+            WeaponVisuals.sprite(batch,visuals.expanded().effect("attack-"+WeaponVisuals.key(weapon),cycle),
+                x,y,size,weapon==WeaponType.PISTOL?4:size,angulo+90);
+            return;
+        }
         if (weapon == WeaponType.WAND) batch.setColor(com.badlogic.gdx.graphics.Color.SKY);
         else if (weapon == WeaponType.CURSE) batch.setColor(com.badlogic.gdx.graphics.Color.MAGENTA);
         else if (weapon == WeaponType.SOUL) batch.setColor(com.badlogic.gdx.graphics.Color.LIME);

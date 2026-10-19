@@ -15,9 +15,26 @@ mais exigente. Detalhes: [docs/MARCO_1_LEITURA_E_CHEFE.md](docs/MARCO_1_LEITURA_
 O **marco 2 também está implementado**: Fácil, Média e Difícil ficam fixas na criação
 do personagem. Saves antigos assumem Média; inimigos e moedas usam multiplicadores
 por modo. Detalhes: [docs/MARCO_2_DIFICULDADES_E_ECONOMIA.md](docs/MARCO_2_DIFICULDADES_E_ECONOMIA.md).
-Próximo: base visual/fontes/diálogos (M3), depois novas dádivas e altar,
-Fazendeiro Épico por desafio de NPC, arte própria e conclusão do Submundo.
-Esses próximos marcos são planejados; as listas abaixo descrevem o build atual.
+O **M3 e a expansão visual do elenco atual estão implementados**: fontes
+Noto Sans/Cinzel, oito profissões com armas próprias, seis visuais de inimigos,
+baús animados, retrato do protagonista e poderes em sprites. A caminhada tem
+oito direções a partir de cinco vistas desenhadas e três espelhadas, seis posições
+na caminhada e transição curta ao virar. As oito profissões têm respiração em repouso,
+inclusive na seleção de classe. Caronte, altar e travessia têm sprites animadas no refúgio,
+onde os ataques ficam desativados. As armas
+fazem parte dos quadros de caminhada/ataque; seus ícones isolados ficam na forja.
+A escolha de dádiva cobre a tela inteira e cada uma das 15 dádivas tem seu ícone.
+Caronte e protagonista usam retratos no diálogo: Enter/E/clique revela ou avança
+uma fala; T alterna texto gradual/instantâneo.
+[Entrega inicial](docs/EXPANSAO_VISUAL.md) e
+[revisão de armas e ataques](docs/ANIMACOES_E_EQUIPAMENTOS.md) e
+[polimento de movimento e refúgio](docs/POLIMENTO_VISUAL_E_REFUGIO.md).
+Arqueiro, Carrasco e Guardião têm poses próprias de ataque; avisos usam imagens
+animadas. O Guardião respira na espera, corre, dá ombrada e aterrissa apoiado no punho.
+
+Parte do M6 foi antecipada para esta revisão artística. Próximo: novas dádivas e
+altar (M4), Fazendeiro Épico por desafio de NPC (M5) e acabamento do Submundo.
+Poses de dano/morte e arte dos próximos conteúdos continuam planejadas.
 
 ## Direção da versão completa
 
@@ -51,7 +68,9 @@ estão em [docs/DESIGN_DO_JOGO.md](docs/DESIGN_DO_JOGO.md).
 - Navegação compartilhada para contornar estruturas, com colisão nos quatro
   cantos e verificação do caminho percorrido.
 - Pausa, menu, reinício e resultado com tempo, abates e nível.
-- Atlas novo gerado para a demo; os três placeholders antigos não entram no pacote.
+- Oito visuais de profissões, inimigos distintos e golpes/poderes em sprites.
+- Baús com abertura animada, retratos de diálogo e dádivas com ícones em tela inteira.
+- Atlas gerados para o projeto; os três placeholders antigos não entram no pacote.
 
 Outras armas/profissões, novos chefes, economia final, identidade sonora final, suporte nativo
 a controles e integração Steamworks continuam no roadmap.
@@ -139,7 +158,8 @@ Nomes, balanceamento e arte das profissões são provisórios. Tabelas e fórmul
 
 Cada nova escolha de dádiva espera **1,5 segundo** e exige soltar o botão de ataque
 antes de aceitar um clique, evitando escolhas acidentais durante o combate.
-**Tab** consulta as dádivas já escolhidas, com raridade e nível; setas trocam
+A escolha usa cartões largos em tela inteira, ícones distintos e informação de raridade.
+**Tab** consulta as dádivas já escolhidas, com os mesmos ícones, raridade e nível; setas trocam
 páginas. A lista pausa o combate e Esc ou Tab a fecha.
 
 As dádivas são classificadas pela força do efeito. No primeiro sorteio com todas
@@ -160,7 +180,9 @@ Choque, queimadura e impacto têm recargas próprias e combinam com maldição/a
 Regras das classes, forja e sinergias: [docs/CLASSES_SINERGIAS_E_DESTINO.md](docs/CLASSES_SINERGIAS_E_DESTINO.md).
 
 Contato e acertos de projéteis usam a silhueta visível dos quadros dos inimigos,
-acompanhando sua escala e evitando colisão nas margens transparentes.
+acompanhando sua escala e evitando colisão nas margens transparentes. Durante a
+transição de direção, a máscara acompanha o quadro predominante; armas e brilhos
+não fazem parte do corpo.
 
 Vida e dano dos inimigos crescem linearmente com o tempo total da tentativa e a
 dificuldade da sala, incluindo o chefe. Os valores são definidos no nascimento

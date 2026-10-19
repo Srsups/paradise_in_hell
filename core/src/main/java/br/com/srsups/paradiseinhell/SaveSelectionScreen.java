@@ -19,7 +19,7 @@ public final class SaveSelectionScreen extends ScreenAdapter {
     private final MenuPages pages = new MenuPages();
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
+    private final BitmapFont font = UiTheme.bodyFont();
     private final ShapeRenderer shapes = new ShapeRenderer();
     private int pendingDelete = -1;
     private float confirmDelay, noticeTimer;

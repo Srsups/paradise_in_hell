@@ -1,0 +1,8 @@
+{
+  "key": "sacerdote-walk",
+  "reference": "tools/art-sources/polish/sacerdote-walk-original.png",
+  "kind": "hand-repair",
+  "cols": 6,
+  "rows": 5,
+  "prompt": "Edit this exact transparent6column5row walking sheet. Preserve every pixel of pose, outfit, face, cell layout, directions and alpha except the inconsistent hand holding talisman in the FIFTH BOTTOM ROW only. Row5 DOWN-LEFT/front-left: in columns3 and4 the purple talisman is wrongly on RIGHT side of image. Fix those two frames so the purple talisman/red ribbons are held on LEFT side of IMAGE, like row5 columns1,2,5,6. The image-right hand must be EMPTY. Preserve gait and head/waist position; do not mirror the whole character. Talisman remains on image-left in every column of this bottom row. Keep all other rows completely unchanged. Fully transparent background, no text."
+}

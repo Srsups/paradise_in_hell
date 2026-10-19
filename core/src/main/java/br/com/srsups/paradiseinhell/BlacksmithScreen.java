@@ -19,7 +19,7 @@ public final class BlacksmithScreen extends ScreenAdapter {
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
-    private final BitmapFont font = new BitmapFont();
+    private final BitmapFont font = UiTheme.bodyFont();
     private final Rectangle forge = new Rectangle(120, 95, 350, 55), leave = new Rectangle(490, 95, 350, 55);
     private String notice = "";
     private float inputDelay = 0.2f, noticeTimer;
@@ -55,9 +55,7 @@ public final class BlacksmithScreen extends ScreenAdapter {
         shapes.setColor(0.13f, 0.16f, 0.23f, 1); shapes.rect(80, 180, 800, 220);
         shapes.setColor(0.55f, 0.35f, 0.12f, 1); shapes.rect(forge.x, forge.y, forge.width, forge.height);
         shapes.setColor(0.12f, 0.25f, 0.33f, 1); shapes.rect(leave.x, leave.y, leave.width, leave.height);
-        // Provisional anvil, drawn without adding another external asset.
-        shapes.setColor(Color.SLATE); shapes.rect(690, 265, 100, 14); shapes.triangle(790, 265, 820, 275, 790, 279);
-        shapes.rect(725, 240, 25, 25); shapes.rect(710, 225, 55, 15);
+
         shapes.end();
         batch.setProjectionMatrix(viewport.getCamera().combined); batch.begin();
         font.setColor(Color.GOLD); font.getData().setScale(1.6f);
@@ -65,6 +63,9 @@ public final class BlacksmithScreen extends ScreenAdapter {
         font.setColor(Color.WHITE);
         font.draw(batch, "Não conserto casamentos. Armas, talvez.", 110, 370);
         PlayerState player = session.player();
+        batch.setColor(player.getWeaponRarity()==WeaponRarity.RARE?Color.GOLD:Color.WHITE);
+        batch.draw(game.visuals().expanded().region("weapon-"+WeaponVisuals.key(player.getWeapon())),692,225,110,110);
+        batch.setColor(Color.WHITE);
         font.draw(batch, player.getProfession().title + " | " + player.getWeapon().label + " | Raridade: " + player.getWeaponRarity().label, 110, 330);
         font.draw(batch, "Fragmentos guardados: " + game.profiles().profile().forgeMaterials(), 110, 300);
         font.draw(batch, "Custo: 1 Fragmento de Forja\nRara: +25% do dano base da arma e +10% de cadência.\n"

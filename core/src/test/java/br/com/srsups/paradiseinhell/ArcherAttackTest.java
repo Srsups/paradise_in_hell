@@ -23,8 +23,10 @@ class ArcherAttackTest {
         attack.update(.99f, body, 108, 88, true, nav, 10);
         assertEquals(108, attack.aimX()); assertEquals(8, attack.aimY());
         assertTrue(attack.arrows().isEmpty()); assertEquals(0, body.x); assertEquals(0, body.y);
+        assertEquals(0, attack.shotsFired(), "Aiming must not trigger the release animation");
         attack.update(.011f, body, 108, 88, true, nav, 10);
         assertEquals(1, attack.arrows().size());
+        assertEquals(1, attack.shotsFired(), "Only the real shot triggers a release");
         assertEquals(0, attack.arrows().getFirst().directionY(), .0001f);
         assertTrue(attack.advanceArrows(1, nav, circle(108, 88)).isEmpty(), "A dash must not redirect the arrow");
     }
@@ -68,11 +70,13 @@ class ArcherAttackTest {
         attack.update(.01f, body, 108, 8, true, nav, 10);
         attack.update(1, body, 108, 8, false, nav, 10);
         assertTrue(attack.arrows().isEmpty()); assertEquals(ArcherAttack.Phase.RECOVERING, attack.phase());
+        assertEquals(0, attack.shotsFired(), "Leaving view cancels the draw without a release");
         attack.clear(); body.x=0;
         attack.update(.01f, body, 108, 8, true, nav, 10);
         var wall = new EnemyNavigation((x,y) -> x >= 48 && x < 64);
         attack.update(1, body, 108, 8, true, wall, 10);
         assertTrue(attack.arrows().isEmpty());
+        assertEquals(0, attack.shotsFired(), "Obstructed aim must not show a false release");
     }
     @Test void retreatsAlongASafeSideWhenTheWallBlocksBackingUp() {
         ArcherAttack attack = new ArcherAttack(); var body = new EnemyNavigation.Body(0, 0);
