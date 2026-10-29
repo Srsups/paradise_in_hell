@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-23",
+  "tool": "built-in image_gen",
+  "mode": "generate and targeted image edits; transparent_background=true",
+  "prompts": "prompts.json",
+  "sourceSelection": {
+    "farmer-rake-walk": "farmer-rake-walk-original.png",
+    "farmer-rake-idle/attack": "farmer-rake-actions-original.png",
+    "farmer-scythe-walk": "farmer-scythe-walk-original.png",
+    "farmer-scythe-idle/attack": "farmer-scythe-actions-original.png",
+    "portrait-camponesa/npc-camponesa/weapon-rake/weapon-scythe": "farmer-extras-clean.png (first row only)",
+    "fx-rake/fx-scythe": "farmer-fx-clean.png"
+  },
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "up-left",
+    "down-left"
+  ],
+  "logicalDirections": 8,
+  "animationFrames": {
+    "walk": 6,
+    "idle": 4,
+    "attack": 4
+  },
+  "tools": [
+    "rake",
+    "scythe"
+  ],
+  "bodyIntegration": "Both tools are drawn in the character's hands in every body pose. Detached icons are for the forge only.",
+  "registration": "registration.csv; shared head/upper torso pivot anchored to first rake walk frame of each direction; crop to authored connected island bounds excludes neighboring cells; nearest-neighbor resizing; no painting or alpha recoloring.",
+  "preservedAlpha": true,
+  "generatedRevisions": "Extras and FX received targeted image_gen edits to reduce unwanted red/yellow matte fringes. Original variants retained as provenance. Remaining low-alpha generated edges preserved.",
+  "packed": {
+    "atlas": "../../../core/assets/visual/m5.atlas",
+    "page": "../../../core/assets/visual/m5.png",
+    "regions": 152,
+    "bodyRegions": 140,
+    "extraRegions": 12,
+    "logicalBodyPoses": 224,
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "rgbaBytes": 4194304,
+    "bodySize": [
+      64,
+      64
+    ],
+    "portraitSize": [
+      256,
+      256
+    ],
+    "rakeFxSize": [
+      64,
+      24
+    ],
+    "scytheFxSize": [
+      64,
+      64
+    ]
+  },
+  "runtime": "ExpandedArt owns FarmerArt. PilotArt passes the same resource to EquippedArt; standalone EquippedArt owns its separate resource. All textures disposed once by their owner.",
+  "tooling": "../../MilestoneFiveAtlasBaker.java (uses technical helpers EquippedAtlasBaker and PolishedFrames)",
+  "review": "../../../build/smoke/m5-farmer-walk-contact-sheet.png",
+  "sha256": {
+    "tools/art-sources/m5/farmer-extras-clean.png": "a7dddd2f8b0b58831a727b45a29eb26cec3c404423c2b3e6595180f2e5f0d8cb",
+    "tools/art-sources/m5/farmer-extras-original.png": "c998b26c3f1aa23a3764acf97ac4136c6084d28749ba117ebc3ad3722574f7e5",
+    "tools/art-sources/m5/farmer-fx-clean.png": "126a543419c3ea1623dcefdaa04d17df50d8c5db17df6f124cb877f9a8dfcc3d",
+    "tools/art-sources/m5/farmer-fx-original.png": "0bdd1007543f9b2ff8c2855b2ee251a7bbf449527cd8759b5ca2bd68a848ff5a",
+    "tools/art-sources/m5/farmer-rake-actions-original.png": "046a4ae6b11d55d85b25574b828d38a3673d7aa5fb2550f6aec43dc3ce197c07",
+    "tools/art-sources/m5/farmer-rake-walk-original.png": "c6bbf662d8c09d695a49744eb9ffadda46efb802b706c7327bd20cbeb2a90b2c",
+    "tools/art-sources/m5/farmer-scythe-actions-original.png": "2931bcd8668c7d1a918012f915f9a991bebceddf846f31a56974f1ebb2be8676",
+    "tools/art-sources/m5/farmer-scythe-walk-original.png": "444add6fa75534d3dae633d80fb64d54e4059e1b3f747a38ffd427131e735c39",
+    "core/assets/visual/m5.png": "3b9aa0ca11238b2441d17cd542499c3b3260310193df3050cdfe0bfe582404a4"
+  }
+}

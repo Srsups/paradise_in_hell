@@ -22,7 +22,7 @@ public enum SoundCue {
     }
     public String asset() { return "audio/" + name().toLowerCase(Locale.ROOT) + ".wav"; }
     public static SoundCue attack(WeaponType weapon) { return switch(weapon) {
-        case BOW -> ATTACK_BOW; case SWORD -> ATTACK_SWORD; case PISTOL -> ATTACK_PISTOL;
+        case BOW -> ATTACK_BOW; case SWORD, RAKE, SCYTHE -> ATTACK_SWORD; case PISTOL -> ATTACK_PISTOL;
         case FISTS -> ATTACK_FISTS; case WAND -> ATTACK_WAND; case CURSE -> ATTACK_CURSE;
         case SOUL -> ATTACK_SOUL; case SHIELD -> ATTACK_SHIELD;
     }; }

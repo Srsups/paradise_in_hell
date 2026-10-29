@@ -7,7 +7,10 @@ import java.util.Map;
 
 /** Dialogue text lives in data; permanent events still select and settle conversations. */
 public final class CaronteDialogue {
-    public record Line(String speaker, String text) {}
+    public record Line(String speaker,String text,DialoguePortrait portrait) {
+        public Line(String speaker,String text) { this(speaker,text,DialoguePortrait.defaultFor(speaker)); }
+        public Line { new DialogueLine(speaker,text,portrait); }
+    }
     public record Conversation(CampaignProfile.Event event, List<Line> lines) {
         public Conversation { lines=List.copyOf(lines); if(lines.isEmpty())throw new IllegalArgumentException("Empty dialogue"); }
     }
@@ -21,16 +24,11 @@ public final class CaronteDialogue {
     }
     static Map<String,List<Line>> parse(String json) {
         JsonValue root=new JsonReader().parse(json); var result=new java.util.HashMap<String,List<Line>>();
-        for(String key:List.of("first","bribe","guardian","repeat")) {
+        for(String key:List.of("first","bribe","guardian","repeat","questAccepted","questSeed","questComplete","forged")) {
+            if(!root.has(key)&&List.of("questAccepted","questSeed","questComplete","forged").contains(key))continue;
             JsonValue array=root.require(key);
-            if(!array.isArray() || array.size<1 || array.size>32)throw new IllegalArgumentException("Invalid dialogue");
-            var lines=new java.util.ArrayList<Line>();
-            for(JsonValue value:array) {
-                String speaker=RunReport.string(value,"speaker"),text=RunReport.string(value,"text");
-                if(speaker.isBlank()||text.isBlank()||text.length()>600)throw new IllegalArgumentException("Invalid line");
-                lines.add(new Line(speaker,text));
-            }
-            result.put(key,List.copyOf(lines));
+            result.put(key,DialogueLine.parseLines(array,32,600).stream()
+                .map(line->new Line(line.speaker(),line.text(),line.portrait())).toList());
         }
         return Map.copyOf(result);
     }
@@ -38,7 +36,11 @@ public final class CaronteDialogue {
         if(!profile.has(CampaignProfile.Event.CARONTE_MET))return new Conversation(CampaignProfile.Event.CARONTE_MET,CATALOG.get("first"));
         if(profile.deaths()>0&&!profile.has(CampaignProfile.Event.BRIBE_JOKE))return new Conversation(CampaignProfile.Event.BRIBE_JOKE,CATALOG.get("bribe"));
         if(profile.victories()>0&&!profile.has(CampaignProfile.Event.GUARDIAN_RECOGNIZED))return new Conversation(CampaignProfile.Event.GUARDIAN_RECOGNIZED,CATALOG.get("guardian"));
-        return new Conversation(null,CATALOG.get("repeat").stream()
-            .map(line->new Line(line.speaker(),line.text().replace("{returns}",Integer.toString(profile.attempts())))).toList());
+        String key=switch(profile.farmerQuest()) {
+            case ACCEPTED->"questAccepted";case SEED_FOUND->"questSeed";case COMPLETED->"questComplete";
+            case NOT_STARTED->profile.weaponRarity()==WeaponRarity.RARE?"forged":"repeat";
+        };
+        return new Conversation(null,CATALOG.getOrDefault(key,CATALOG.get("repeat")).stream()
+            .map(line->new Line(line.speaker(),line.text().replace("{returns}",Integer.toString(profile.attempts())),line.portrait())).toList());
     }
 }

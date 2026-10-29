@@ -8,7 +8,14 @@ import java.util.Map;
 /** Bounded status effects shared by arenas and guardians, independent of rendering. */
 public final class CombatEffects {
     @FunctionalInterface public interface LineOfSight { boolean clear(float x, float y, float ox, float oy); }
-    public enum Kind { FIRE, CURSE, SHOCK, SPELL, IMPACT }
+    public enum Kind { FIRE, CURSE, SHOCK, SPELL, IMPACT, AMBUSH, CONVERGENCE, ECHO }
+    public static final float ECHO_DELAY=.35f,ECHO_RADIUS=44,CONVERGENCE_RADIUS=28;
+    public static final class Echo {
+        public final float x,y,damage;
+        private float remaining=ECHO_DELAY;
+        Echo(float x,float y,float damage){this.x=x;this.y=y;this.damage=damage;}
+        public float progress(){return 1-remaining/ECHO_DELAY;}
+    }
     public static final class Flash {
         public final Kind kind;
         public final float x, y, ox, oy;
@@ -27,6 +34,28 @@ public final class CombatEffects {
     public CombatEffects(DamageSink damageSink) { this.damageSink=java.util.Objects.requireNonNull(damageSink); }
     private final Map<CombatTarget, Dot> dots = new IdentityHashMap<>();
     private final List<Flash> flashes = new ArrayList<>();
+    private final List<Echo> echoes=new ArrayList<>();
+    public List<Echo> echoes(){return java.util.Collections.unmodifiableList(echoes);}
+    public void dash(PlayerState player,float originX,float originY){
+        float damage=player.boons().takeEcho();
+        if(damage>0&&echoes.size()<4)echoes.add(new Echo(originX,originY,damage));
+    }
+    public void weaponBonus(CombatTarget target,WeaponBonus bonus){
+        float damage=bonus.take();
+        if(damage<=0)return;
+        if(target.targetable())damageSink.deal(target,damage,DamageSource.AMBUSH);
+        flash(Kind.AMBUSH,target.centerX(),target.centerY(),12,0);
+    }
+    public void update(float delta,List<? extends CombatTarget> targets,LineOfSight line){
+        update(delta);
+        var iterator=echoes.iterator();
+        while(iterator.hasNext()){
+            Echo echo=iterator.next();echo.remaining-=delta;
+            if(echo.remaining>0)continue;
+            area(echo.x,echo.y,ECHO_RADIUS,echo.damage,targets,line,DamageSource.STYGIAN_ECHO);
+            flash(Kind.ECHO,echo.x,echo.y,ECHO_RADIUS,0);iterator.remove();
+        }
+    }
     public List<Flash> flashes() { return java.util.Collections.unmodifiableList(flashes); }
     public boolean burning(CombatTarget target) { Dot d = dots.get(target); return d != null && d.fireTime > 0; }
     public boolean cursed(CombatTarget target) { Dot d = dots.get(target); return d != null && d.curseTime > 0; }
@@ -46,10 +75,16 @@ public final class CombatEffects {
         flashes.removeIf(f -> (f.life -= delta) <= 0);
     }
     public void forget(CombatTarget target) { dots.remove(target); }
-    public void clear() { dots.clear(); flashes.clear(); }
+    public void clear() { dots.clear(); flashes.clear(); echoes.clear(); }
     public void onHit(PlayerState player, CombatTarget target, List<? extends CombatTarget> targets,
                       float playerX, float playerY, LineOfSight line, boolean weaponHit) {
         float dps = player.dps();
+        boolean existingStatus=burning(target)||cursed(target);
+        if(weaponHit&&existingStatus&&player.boons().tryConvergence()){
+            area(target.centerX(),target.centerY(),CONVERGENCE_RADIUS,
+                dps*.30f*player.boons().rank(Upgrade.CONVERGENCIA),targets,line,DamageSource.CONVERGENCE);
+            flash(Kind.CONVERGENCE,target.centerX(),target.centerY(),CONVERGENCE_RADIUS,0);
+        }
         if (weaponHit && player.getWeapon() == WeaponType.CURSE) {
             if (target.targetable()) curse(player, target);
             // The impact remains the center even if its direct damage kills the first target.
@@ -109,6 +144,14 @@ public final class CombatEffects {
     }
     private void flash(Kind kind, float x, float y, float ox, float oy) {
         if (flashes.size() < 64) flashes.add(new Flash(kind, x, y, ox, oy));
+    }
+    private void area(float x,float y,float radius,float damage,List<? extends CombatTarget> targets,
+                      LineOfSight line,DamageSource source){
+        for(CombatTarget target:targets){
+            float dx=target.centerX()-x,dy=target.centerY()-y;
+            if(target.targetable()&&dx*dx+dy*dy<=radius*radius&&line.clear(x,y,target.centerX(),target.centerY()))
+                damageSink.deal(target,damage,source);
+        }
     }
     private static float distance(CombatTarget a, CombatTarget b) {
         float dx = a.centerX() - b.centerX(), dy = a.centerY() - b.centerY(); return dx * dx + dy * dy;

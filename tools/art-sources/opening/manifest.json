@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-27",
+  "tool": "built-in image_gen",
+  "prompts": "prompts.json",
+  "contract": "contract.json",
+  "selectedSources": {
+    "background-home-original.png": {"size": [1672, 941], "opaque": true, "minimumAlpha": 255, "maximumAlpha": 255, "sha256": "e4cde011dab4bffe04b637cc270d26d46fc2fb4168c4d65ce835fa2477dfe4e9"},
+    "background-styx-original.png": {"size": [1672, 941], "opaque": true, "minimumAlpha": 255, "maximumAlpha": 255, "sha256": "727e8083b6c28bead75bf1443b3e4fe7dd41d700756e6d55625a2f3abd2aee0e"},
+    "foreground-home-original.png": {"size": [1672, 941], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 255, "sha256": "534918cab8bd3ebdd46090a2fd3765d140c5e902d5e9a52a1b8c950a7517b617"},
+    "foreground-styx-original.png": {"size": [1672, 941], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 255, "sha256": "e42b5e2df8a6189e1b82876544c093a310895a8beb953c88c0d27b071abeba98"},
+    "hero-poses-original.png": {"size": [1536, 1024], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 254, "sha256": "1d3c02d53d42d9d12da2741b9c2f61aba4aa5c332e990f966bc8d682587f3547"},
+    "wife-poses-original.png": {"size": [1536, 1024], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 254, "sha256": "32990b8ae509f540c03f76ea539094c35385ebe85014556c0a5e8c011caf35c9"},
+    "zeus-poses-original.png": {"size": [1536, 1024], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 254, "sha256": "d1e7b4d4e9c761028ae38c24824d1351829d92103cfb005c9a366b93afb881cd"},
+    "charon-original.png": {"size": [1024, 1536], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 254, "sha256": "a6adcdac86f4848515388b1101ef470a3f8d4c8e6a87379056812b9f5a09906e"},
+    "portal-original.png": {"size": [1536, 1024], "opaque": false, "minimumAlpha": 0, "maximumAlpha": 253, "sha256": "8217cc15fd465119a91a916899e7a3e36dbbe9cc4492a9e066b46dde56bf7a2c"}
+  },
+  "registration": "registration.csv",
+  "actorPoseCropSeams": {"hero": 750, "wife": 760, "zeus": 674, "charon": 1024},
+  "actorCell": [432,480],
+  "actorFeetPivot": [216,464],
+  "filter": "Linear",
+  "operations": ["technical crop at actual pose gutter", "nearest-neighbor uniform scaling per actor group", "foot-pivot registration per pose", "atlas packing"],
+  "paintOrRecolor": false,
+  "preserveGeneratedAlphaAndColors": true,
+  "packed": {"atlas": "../../../core/assets/cutscenes/opening.atlas", "page": "../../../core/assets/cutscenes/opening.png", "regions": 15, "size": [2048,2048], "rgbaBytes": 16777216, "sha256": "da03d551f381765d298a2ee67f24621d528d76dfb4781f28c236481af44a0712"}
+}

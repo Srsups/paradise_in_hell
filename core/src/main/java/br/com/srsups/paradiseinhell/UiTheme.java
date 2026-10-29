@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /** Shared typography and panel styling; each returned font belongs to its screen. */
@@ -16,6 +17,14 @@ public final class UiTheme {
     private UiTheme() {}
     public static BitmapFont bodyFont() { return font("body"); }
     public static BitmapFont titleFont() { return font("title"); }
+    /** A small outline keeps contextual text readable on both light and dark scenery. */
+    public static void caption(SpriteBatch batch,BitmapFont font,String text,float x,float y,Color color) {
+        float outline=Math.max(.5f,font.getData().scaleX);
+        font.setColor(INK);
+        font.draw(batch,text,x-outline,y);font.draw(batch,text,x+outline,y);
+        font.draw(batch,text,x,y-outline);font.draw(batch,text,x,y+outline);
+        font.setColor(color);font.draw(batch,text,x,y);
+    }
     private static BitmapFont font(String name) {
         BitmapFont font = new BitmapFont(Gdx.files.internal("ui/fonts/" + name + ".fnt"));
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);

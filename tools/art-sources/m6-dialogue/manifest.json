@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-23",
+  "tool": "built-in image_gen",
+  "prompts": "prompts.json",
+  "selection": {
+    "charon": {"source": "charon-expressions-original.png", "sha256": "5970cc9e7d90916886ba720effded61f7e4e1deb66f9db5e34356064da72d90d"},
+    "blacksmith": {"source": "blacksmith-expressions-original.png", "sha256": "40086d53793ea3770c33f8ab0663d9eefd2c14d5b6e248021844cac194c5ef11"},
+    "camponesa": {"source": "camponesa-expressions-original.png", "sha256": "2b88a9b0204a38620ea501ccc0180e55c6cab3d2b0a820837aa2c2a8088661e4"}
+  },
+  "expressions": ["neutral", "amused", "concerned", "pleased"],
+  "sourceGrid": [2, 2],
+  "registration": "registration.csv; fixed uniform bust crop and root/scale for each actor across all expressions",
+  "operations": ["crop", "registration", "nearest-neighbor reduction", "atlas packing"],
+  "preserveGeneratedAlpha": true,
+  "paintOrRecolor": false,
+  "packed": {"atlas": "../../../core/assets/visual/m6-dialogue.atlas", "page": "../../../core/assets/visual/m6-dialogue.png", "regions": 12, "portraitSize": [256, 256], "dimensions": [1024, 1024], "rgbaBytes": 4194304, "sha256": "83558cffa307a01310ee3bb0930acca953f526c41cf6218e282404b363b0b4f7"},
+  "runtime": "ExpandedArt shares the atlas across dialogue screens and disposes it once. Existing world sprites and protagonist portrait remain unchanged.",
+  "tooling": "../../DialoguePortraitAtlasBaker.java"
+}

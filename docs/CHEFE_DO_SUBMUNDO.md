@@ -91,8 +91,8 @@ tem corpo próprio em oito direções, armadura escura/dourada e manto violeta.
 A revisão seguinte acrescentou respiração, corrida/ombrada, conjuração, salto e
 aterrissagem com joelho e punho no chão.
 Projéteis, efeitos e marcadores de perigo usam sprites animados, indicando as
-áreas e tempos existentes. Poses de dano/morte e revisão sonora continuam
-pendentes. [Arte atual](ANIMACOES_E_EQUIPAMENTOS.md).
+áreas e tempos existentes. Poses de dano/morte foram acrescentadas no M6; revisão
+humana das animações e do som continua em partidas. [Arte atual](ANIMACOES_E_EQUIPAMENTOS.md).
 Avisos sonoros, sons de combate e trilha provisória foram adicionados.
 Regras e origem: [AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).
 
@@ -139,7 +139,36 @@ compreensíveis, se a espada consegue atacar e recuar, se o dash ajuda e se a lu
 continua interessante sem uma dádiva específica. Registrar duração, vida ao entrar,
 nível e poderes escolhidos. Os testes automáticos não comprovam esse balanceamento.
 
-O resultado retorna ao refúgio com Enter e guarda a recompensa em Óbolos.
-Refúgio, Caronte, compras, perfil e recompensas de rota já estão implementados.
-Novos encontros/desafios e a revisão da travessia seguem o roteiro atualizado.
+O resultado retorna ao refúgio com Enter; a recompensa já foi guardada uma vez
+na liquidação da tentativa. Refúgio, Caronte, compras, perfil e recompensas de
+rota estão implementados. Novos encontros e revisão em partidas seguem o roteiro.
 Consulte [REFUGIO_E_PROGRESSAO.md](REFUGIO_E_PROGRESSAO.md).
+
+## Fechamento da primeira travessia — M7
+
+Em **27/10/2026**, o primeiro incremento do M7 acrescentou o desfecho da
+**Centelha da Insurgência**, implementado e verificado. O autor aprovou que esse poder permitirá
+ferir deuses. Neste lote ele é uma conquista narrativa permanente por personagem,
+sem alterar dano, atributos ou padrões do Guardião. Não encerra o resgate nem a
+história de Zeus, e não é concedido por demo, morte ou abandono.
+
+Após a vitória real do Submundo, a queda do Guardião termina antes da conversa;
+perfil, moedas e relatório já estão liquidados. Sete falas de Caronte e
+protagonista distinguem a Centelha da maldição e escolhem retornar voluntariamente
+ao refúgio para preparar a ascensão. Depois segue o resultado. O rodapé informa
+que a continuação está em desenvolvimento.
+
+Uma proteção de 1,5 s e soltura do ataque evita avançar por acidente. Enter/E/
+Espaço/clique na fala revela ou avança; T alterna o modo; Esc adia sem marcar
+a leitura. V no refúgio e C no resultado permitem consultar o desfecho conquistado.
+Depois de concluído, ele não abre automaticamente nas próximas vitórias.
+Rever não concede prêmios ou conta outra tentativa. Conquista/leitura são
+pessoais, persistem após morte e podem ser gravadas novamente por S no refúgio
+se o autosave falhar.
+
+F1 também abre o guia na luta e pausa a simulação; H controla dicas pessoais.
+As dicas duram até sete segundos ativos e cedem espaço aos avisos do chefe.
+Os 372 testes de lógica passaram sem falhas, com 36 novos (18 de persistência,
+11 do guia e sete da história). OpenGL e execução nativa do pacote Windows foram
+aprovados em 27/10. Playtests humanos de clareza, ritmo e dificuldade continuam pendentes.
+[Regras e persistência do incremento](MARCO_7_TUTORIAL_E_CENTELHA.md).

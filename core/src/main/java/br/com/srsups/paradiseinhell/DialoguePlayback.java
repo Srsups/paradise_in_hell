@@ -3,18 +3,23 @@ package br.com.srsups.paradiseinhell;
 /** One input reveals or advances exactly one line. No timers auto-advance a conversation. */
 public final class DialoguePlayback {
     public enum Action { REVEALED, ADVANCED, FINISHED }
-    private final CaronteDialogue.Conversation conversation;
+    private final java.util.List<DialogueLine> lines;
     private int line;
     private float revealed;
     private boolean instant;
     public DialoguePlayback(CaronteDialogue.Conversation conversation,boolean instant) {
-        this.conversation=java.util.Objects.requireNonNull(conversation);this.instant=instant;
-        if(conversation.lines().isEmpty())throw new IllegalArgumentException("Empty conversation");
+        this(java.util.Objects.requireNonNull(conversation).lines().stream()
+            .map(line->new DialogueLine(line.speaker(),line.text(),line.portrait())).toList(),instant);
     }
-    public CaronteDialogue.Line current() { return conversation.lines().get(line); }
+    public DialoguePlayback(java.util.List<DialogueLine> lines,boolean instant) {
+        this.lines=java.util.List.copyOf(lines);this.instant=instant;
+        if(this.lines.isEmpty())throw new IllegalArgumentException("Empty conversation");
+    }
+    public DialogueLine current() { return lines.get(line); }
     public int line() { return line; }
+    public int lineCount() { return lines.size(); }
     public boolean instant() { return instant; }
-    public void instant(boolean value) { instant=value; if(value)reveal(); }
+    public void instant(boolean value) { if(instant||value)reveal();instant=value; }
     private int length() { return current().text().codePointCount(0,current().text().length()); }
     public boolean complete() { return instant || revealed >= length(); }
     public void advance(float delta) {
@@ -28,7 +33,7 @@ public final class DialoguePlayback {
     }
     public Action accept() {
         if(!complete()){reveal();return Action.REVEALED;}
-        if(line+1==conversation.lines().size())return Action.FINISHED;
+        if(line+1==lines.size())return Action.FINISHED;
         line++;revealed=0;return Action.ADVANCED;
     }
 }

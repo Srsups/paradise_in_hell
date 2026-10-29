@@ -1,0 +1,68 @@
+{
+  "ready": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "Vejo {weapon} e um Fragmento de Forja. Finalmente alguém trouxe o que pedi, em vez de uma desculpa.",
+      "portrait": "BLACKSMITH_NEUTRAL"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "As desculpas estão reservadas para Zeus. Pode começar."
+    }
+  ],
+  "readyBlacksmith": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "Um colega de forja com {weapon}! Hoje você descansa o braço. Deixe o martelo comigo.",
+      "portrait": "BLACKSMITH_AMUSED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Se alguém perguntar, estou supervisionando."
+    }
+  ],
+  "rare": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "{weapon} já está na raridade que consigo entregar. Material extra não vai fazer meu martelo trabalhar duas vezes.",
+      "portrait": "BLACKSMITH_PLEASED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Certo. Vou testar a qualidade em alguém mais resistente."
+    }
+  ],
+  "missingMaterial": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "Posso melhorar {weapon}, mas falta um Fragmento de Forja. Carrascos às vezes carregam um. Casamentos, infelizmente, não conserto.",
+      "portrait": "BLACKSMITH_CONCERNED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Sem material e sem terapia. Pelo menos a consulta foi grátis."
+    }
+  ],
+  "success": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "Pronto: {weapon} recebeu a raridade Rara. O trabalho continua valendo mesmo se você resolver morrer no caminho.",
+      "portrait": "BLACKSMITH_PLEASED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Excelente garantia. Tenho usado bastante essa cláusula."
+    }
+  ],
+  "failure": [
+    {
+      "speaker": "Ferreiro Errante",
+      "text": "A melhoria de {weapon} não foi concluída. Seu material continua com você; vamos tentar outra vez.",
+      "portrait": "BLACKSMITH_CONCERNED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Ainda bem. Já basta um deus levando minhas coisas."
+    }
+  ]
+}

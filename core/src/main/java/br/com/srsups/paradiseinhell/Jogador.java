@@ -1,7 +1,5 @@
 package br.com.srsups.paradiseinhell;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -13,6 +11,7 @@ public class Jogador {
     public float x, y;
     private final PlayerState stats;
     private final AttackEmitter emitter;
+    private final GameControls controls;
     private Animation<TextureRegion> animacaoFrente, animacaoCostas, animacaoLado;
     private float stateTime;
     private final PilotArt pilot;
@@ -21,6 +20,11 @@ public class Jogador {
     private final EquippedArt.Body body;
     private float aimAngle;
     private final PlayerAnimation visual;
+    private final ActorReaction reaction=new ActorReaction();
+    private final java.util.Map<WeaponType,ReactionArt.Body> reactionBodies=new java.util.EnumMap<>(WeaponType.class);
+    private long seenDamage;
+    private String reactionActor;
+    private ActorAnimation.Direction reactionDirection=ActorAnimation.Direction.DOWN;
     public void aim(float dx,float dy) { if(dx*dx+dy*dy>.001f)aimAngle=(float)Math.toDegrees(Math.atan2(dy,dx)); }
     private final java.util.Map<TextureRegion, SpriteHitbox> hitboxes = new java.util.IdentityHashMap<>();
     public enum Direcao { FRENTE, COSTAS, ESQUERDA, DIREITA, PARADO }
@@ -30,7 +34,17 @@ public class Jogador {
         this(x,y,spritesheet,stats,emitter,null);
     }
     public Jogador(float x, float y, Texture spritesheet, PlayerState stats, AttackEmitter emitter, PilotArt art) {
+        this(x,y,spritesheet,stats,emitter,art,new GameControls(new ControlSettingsService(ControlSettingsStore.memory())));
+    }
+    public Jogador(float x, float y, Texture spritesheet, PlayerState stats, AttackEmitter emitter, PilotArt art, GameControls controls) {
+        this.controls=java.util.Objects.requireNonNull(controls);
         pilot = art;visual=new PlayerAnimation(stats.getProfession());
+        seenDamage=stats.damageRevision();reactionActor=EquippedArt.actor(stats.getProfession(),stats.getWeapon());
+        if(pilot!=null) {
+            reactionBodies.put(stats.getWeapon(),pilot.reactions().body(reactionActor));
+            if(stats.getProfession()==Profession.FAZENDEIRO)for(WeaponType weapon:new WeaponType[]{WeaponType.RAKE,WeaponType.SCYTHE})
+                reactionBodies.put(weapon,pilot.reactions().body(EquippedArt.actor(stats.getProfession(),weapon)));
+        }
         body = pilot == null ? null : pilot.equipped().body(EquippedArt.actor(stats.getProfession()));
         this.x = x;
         this.y = y;
@@ -62,22 +76,23 @@ public class Jogador {
     public void update(float delta, TileMap tileMap,boolean combatAllowed) {
         stateTime += delta;
         visual.advance(delta);
+        reaction.advance(delta);syncReaction();
         float beforeX=x,beforeY=y;
         stats.advance(delta);
-        if(combatAllowed&&Gdx.input.isButtonPressed(Input.Buttons.LEFT)&&stats.tryShoot()){
-            visual.attack(stats.attacksPerSecond());emitter.attack(x+8,y+8);
+        if(combatAllowed&&controls.pressed(ControlAction.ATTACK)&&stats.tryShoot()){
+            visual.attack(stats.attacksPerSecond(),stats.getWeapon());emitter.attack(x+8,y+8);
         }
         Vector2 movimento = new Vector2();
-        if ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))) movimento.y += 1;
-        if ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))) movimento.y -= 1;
-        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) movimento.x -= 1;
-        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) movimento.x += 1;
+        if (controls.pressed(ControlAction.MOVE_UP)) movimento.y += 1;
+        if (controls.pressed(ControlAction.MOVE_DOWN)) movimento.y -= 1;
+        if (controls.pressed(ControlAction.MOVE_LEFT)) movimento.x -= 1;
+        if (controls.pressed(ControlAction.MOVE_RIGHT)) movimento.x += 1;
 
         if (movimento.len() > 0) {
             movimento.nor();
 
             // Dash só pode ser iniciado se houver movimento
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
+            if (controls.justPressed(ControlAction.DASH)) {
                 stats.tryDash();
             }
             float velocidadeFinal = stats.movementSpeed();
@@ -101,10 +116,10 @@ public class Jogador {
             direcaoAtual = Direcao.PARADO;
         }
         motion.advance(delta,x-beforeX,y-beforeY);
-        boolean aiming=combatAllowed&&(Gdx.input.isButtonPressed(Input.Buttons.LEFT)||visual.attacking()||stats.guarding());
+        boolean aiming=combatAllowed&&(controls.pressed(ControlAction.ATTACK)||visual.attacking()||stats.guarding());
         look.advance(delta,aiming?(float)Math.cos(Math.toRadians(aimAngle)):x-beforeX,
             aiming?(float)Math.sin(Math.toRadians(aimAngle)):y-beforeY);
-        visual.select(motion,look.direction(),combatAllowed&&stats.guarding());
+        visual.select(motion,look.direction(),combatAllowed&&stats.guarding(),stats.getWeapon());
     }
 
 
@@ -139,14 +154,37 @@ public class Jogador {
     }
     /** Idle preview during refuge panels: no input, stats, shots or movement. */
     public void idle(float delta){
-        visual.advance(delta);motion.advance(0,0,0);visual.select(motion,look.direction(),false);
+        visual.advance(delta);motion.advance(0,0,0);visual.select(motion,look.direction(),false,stats.getWeapon());
+    }
+    /** Observe actual damage after the combat tick, including damage followed by healing. */
+    public void syncReaction() {
+        if(seenDamage==stats.damageRevision())return;
+        seenDamage=stats.damageRevision();
+        if(!stats.estaMorto()&&reaction.hurt()) {
+            reactionActor=visual.dominant().clip().replaceFirst("-(idle|walk|attack)$","");reactionDirection=visual.dominant().direction();
+        }
+    }
+    public ActorReaction reaction(){return reaction;}
+    public String deathActor(){return reaction.active()?reactionActor:visual.dominant().clip().replaceFirst("-(idle|walk|attack)$","");}
+    public ActorAnimation.Direction deathDirection(){return reaction.active()?reactionDirection:visual.dominant().direction();}
+    public float drawBodySize(){return 18;}
+    private ReactionArt.Body reactionBody(){
+        return reactionBodies.get(reactionActor.equals("farmer-scythe")?WeaponType.SCYTHE
+            :reactionActor.equals("farmer-rake")?WeaponType.RAKE:stats.getWeapon());
     }
     public SpriteHitbox hitbox() {
+        if(pilot!=null&&reaction.state()==ActorReaction.State.HURT)
+            return reactionBody().hitbox(reaction,reactionDirection,x+8,y+8,drawBodySize());
         if(body!=null)return body.hitbox(visual.dominant(),x+8,y+8,18);
         TextureRegion frame = frame();
         return hitboxes.get(frame).place(x, y, 16, 16, frame.isFlipX(), frame.isFlipY());
     }
     public void draw(SpriteBatch batch) {
+        if(pilot!=null&&reaction.state()==ActorReaction.State.HURT) {
+            if(stats.flashing())batch.setColor(Color.SALMON);
+            reactionBody().draw(batch,reaction,reactionDirection,x+8,y+8,drawBodySize());
+            batch.setColor(Color.WHITE);return;
+        }
         if(body!=null) {
             if(stats.flashing())batch.setColor(Color.SALMON);
             float blend=visual.blend();var tint=batch.getColor();float red=tint.r,green=tint.g,blue=tint.b,alpha=tint.a;

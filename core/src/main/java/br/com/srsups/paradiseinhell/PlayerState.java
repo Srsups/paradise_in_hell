@@ -1,8 +1,14 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 /** Mutable state of one attempt. Contains no input, textures, screens or GL resources. */
 public final class PlayerState {
     private final Profession profession;
+    private WeaponType weapon;
+    private final BoonState boons=new BoonState();
+    public BoonState boons(){return boons;}
+    private float staminaCapacityBonus,staminaRecoveryBonus;
     private RunStatistics statistics;
     public void setStatistics(RunStatistics value) { statistics=value; }
     private WeaponRarity rarity = WeaponRarity.COMMON;
@@ -26,7 +32,7 @@ public final class PlayerState {
     public int shockRank() { return shockRank; }
     public int burnRank() { return burnRank; }
     public int impactRank() { return impactRank; }
-    public float baseDps() { return profession.weapon.damage / profession.weapon.interval; }
+    public float baseDps() { return getWeapon().damage / getWeapon().interval; }
     public float dps() { return getDano() / getAttackInterval(); }
     public boolean tryShock() { if (shockRank == 0 || shockCooldown > 0) return false; shockCooldown = 0.8f; return true; }
     public boolean tryBurn() { if (burnRank == 0 || burnCooldown > 0) return false; burnCooldown = 0.8f; return true; }
@@ -60,17 +66,25 @@ public final class PlayerState {
     public float powerRatio() {
         float offense = dps() / baseDps() + 0.22f * shockRank + 0.22f * burnRank + 0.12f * impactRank;
         if (auraDePoseidonAtiva) offense += danoAura / baseDps();
-        return offense * (float) Math.sqrt(vidaMaxima / profession.baseHealth / modDanoRecebido);
+        return (offense+boons.powerBonus()) * (float) Math.sqrt(vidaMaxima / profession.baseHealth / modDanoRecebido);
     }
 
     public PlayerState() { this(Profession.CACADOR); }
     public PlayerState(Profession profession) {
         this.profession = java.util.Objects.requireNonNull(profession);
+        weapon = profession.weapon;
         vida = vidaMaxima = profession.baseHealth;
         tempoEntreTiros = profession.weapon.interval;
     }
     public Profession getProfession() { return profession; }
-    public WeaponType getWeapon() { return profession.weapon; }
+    public WeaponType getWeapon() { return weapon; }
+    /** Both tools belong to the same character and share the unexpired attack cooldown. */
+    public boolean switchTool() {
+        if (profession != Profession.FAZENDEIRO) return false;
+        weapon = weapon == WeaponType.RAKE ? WeaponType.SCYTHE : WeaponType.RAKE;
+        refreshAttackInterval();
+        return true;
+    }
     public WeaponRarity getWeaponRarity() { return rarity; }
     public boolean canForgeWeapon() { return rarity == WeaponRarity.COMMON; }
     public void forgeWeapon() {
@@ -80,13 +94,16 @@ public final class PlayerState {
     }
     public float getLuckMultiplier() { return profession.luckMultiplier; }
     public float meleeReach() {
-        if (profession.weapon == WeaponType.FISTS) return rarity == WeaponRarity.RARE ? 34 : 24;
+        if (getWeapon() == WeaponType.FISTS) return rarity == WeaponRarity.RARE ? 34 : 24;
+        if (getWeapon() == WeaponType.RAKE) return rarity == WeaponRarity.RARE ? 64 : 52;
+        if (getWeapon() == WeaponType.SCYTHE) return rarity == WeaponRarity.RARE ? 44 : 34;
         return swordReach();
     }
     public float swordReach() { return rarity == WeaponRarity.RARE ? 48 : WeaponAttack.SWORD_REACH; }
 
     public void advance(float delta) {
         if (!Float.isFinite(delta) || delta < 0) throw new IllegalArgumentException("Invalid delta");
+        boons.advance(delta);
         shockCooldown = Math.max(0, shockCooldown - delta);
         burnCooldown = Math.max(0, burnCooldown - delta);
         impactCooldown = Math.max(0, impactCooldown - delta);
@@ -103,7 +120,8 @@ public final class PlayerState {
         if (dashing && (dashTimer -= delta) <= 0) dashing = false;
         if (exausto && estaminaAtual >= 20) exausto = false;
         if (!exausto && estaminaAtual <= 5) exausto = true;
-        if (!dashing && !guarding) estaminaAtual = Math.min(100, estaminaAtual + (exausto ? 10f / 3 : 10) * delta);
+        if (!dashing && !guarding) estaminaAtual = Math.min(getEstaminaMaxima(),
+            estaminaAtual + staminaRegeneration() * (exausto ? 1f/3 : 1) * delta);
         if (habilidadeEgideAtiva && (timerEscudo -= delta) <= 0) {
             escudoAtivo = !escudoAtivo;
             timerEscudo = escudoAtivo ? 2 : 10;
@@ -122,6 +140,7 @@ public final class PlayerState {
         dashTimer = 0.15f;
         dashCooldownTimer = 1;
         estaminaAtual -= 20;
+        boons.dash(dps());
     }
     public void setWalkingSpeedLimit(float limit) {
         if (Float.isNaN(limit) || limit <= 0) throw new IllegalArgumentException("Invalid walking speed limit");
@@ -134,16 +153,31 @@ public final class PlayerState {
     }
     public boolean isDashing() { return dashing; }
     public boolean flashing() { return timerFlash > 0; }
+    private long damageRevision;
+    /** Visual observers see real damage even if healing occurs in the same combat tick. */
+    public long damageRevision(){return damageRevision;}
     public float getEstaminaAtual() { return estaminaAtual; }
-    public void recuperarEstamina(float amount) { estaminaAtual = Math.min(100, estaminaAtual + Math.max(0, amount)); }
-    public float getEstaminaMaxima() { return 100; }
+    public void recuperarEstamina(float amount) { estaminaAtual = Math.min(getEstaminaMaxima(), estaminaAtual + Math.max(0, amount)); }
+    public float getEstaminaMaxima() { return 100+100*staminaCapacityBonus; }
+    public float staminaRegeneration(){return 10*(1+staminaRecoveryBonus);}
+    public float normalWalkingSpeed(){return profession.baseSpeed*modVelocidade;}
+    public void aumentarCapacidadeEstamina(float percent){
+        float before=getEstaminaMaxima();staminaCapacityBonus+=percent;estaminaAtual+=getEstaminaMaxima()-before;
+    }
+    public void aumentarRecuperacaoEstamina(float percent){staminaRecoveryBonus+=percent;}
+    public void onKill(){
+        if(estaMorto())return;
+        curar(curaPorAbate);recuperarEstamina(boons.staminaOnKill());
+    }
     public boolean isExausto() { return exausto; }
     public void sofrerDano(float quantidade) { sofrerDano(quantidade,"Dano não identificado"); }
     private void sofrerDano(float quantidade,String cause) {
         if (escudoAtivo || protecaoRessurreicao > 0) return;
         float before=Math.max(0,vida);
-        vida -= quantidade * modDanoRecebido;
+        vida -= quantidade * modDanoRecebido * boons.receivedMultiplier();
+        if(Math.max(0,vida)<before)damageRevision++;
         if(statistics!=null) statistics.receive(Math.max(0,before-Math.max(0,vida)),cause);
+        if(quantidade>0)boons.afterDamage();
         timerFlash = 0.15f;
     }
     public boolean estaMorto() { return vida <= 0; }
@@ -156,32 +190,33 @@ public final class PlayerState {
         xpAtual -= xpParaProximoNivel;
         xpParaProximoNivel = (int) (xpParaProximoNivel * 1.5f);
     }
-    public float getDano() { return profession.weapon.damage * rarity.damageMultiplier * (1 + damageBonus); }
+    public float getDano() { return getWeapon().damage * rarity.damageMultiplier * (1 + damageBonus+boons.damageBonus(vida,vidaMaxima)); }
     public void aumentarDano(float percentual) { damageBonus += percentual; }
     public float getAttackInterval() { return tempoEntreTiros; }
     public float attacksPerSecond() { return 1 / getAttackInterval(); }
     public float attacksPerSecondAfterCadence() {
-        return 1 / Math.max(profession.weapon.minimumInterval,
-            profession.weapon.interval / ((1 + attackRateBonus + .12f) * rarity.attackRateMultiplier));
+        return 1 / Math.max(getWeapon().minimumInterval,
+            getWeapon().interval / ((1 + attackRateBonus + .12f) * rarity.attackRateMultiplier));
     }
     public void aumentarCadencia() {
         attackRateBonus += 0.12f;
         refreshAttackInterval();
     }
     private void refreshAttackInterval() {
-        tempoEntreTiros = Math.max(profession.weapon.minimumInterval,
-            profession.weapon.interval / ((1 + attackRateBonus) * rarity.attackRateMultiplier));
+        tempoEntreTiros = Math.max(getWeapon().minimumInterval,
+            getWeapon().interval / ((1 + attackRateBonus) * rarity.attackRateMultiplier));
     }
     public void aumentarVidaMaxima(float percentual) {
         float bonus = profession.baseHealth * percentual;
         vidaMaxima += bonus; vida += bonus;
     }
     public void aumentarAtracaoXp() { magnetRank = Math.min(3, magnetRank + 1); }
-    public float getRaioAtracaoXp() { return 36 + 32 * magnetRank; }
-    public float getVelocidadeAtracaoXp() { return 120 + 40 * magnetRank; }
+    public float getRaioAtracaoXp() { return 36 + 32 * magnetRank+(boons.collectionActive()?96:0); }
+    public float getVelocidadeAtracaoXp() { return 120 + 40 * magnetRank+(boons.collectionActive()?120:0); }
     public boolean possuiImaXp() { return magnetRank > 0; }
     public void aumentarVelocidadeMovimento(float percentual) { modVelocidade += percentual; }
     public void aumentarResistencia(float percentual) { modDanoRecebido = Math.max(0.25f, modDanoRecebido - percentual); }
+    public float damageReduction() { return 1 - modDanoRecebido; }
     public void aumentarInteligencia(float percentual) { modXpGanho += percentual; }
     public void curar(int valor) { vida = Math.min(vida + valor, vidaMaxima); }
     public boolean possuiRessurreicao() { return temRessurreicao; }
@@ -209,4 +244,106 @@ public final class PlayerState {
     public float getDanoAura() { return danoAura; }
     public boolean isEscudoAtivo() { return escudoAtivo; }
     public void ativarHabilidadeEgide() { habilidadeEgideAtiva = true; }
+
+    /** Exact attempt state. No input, animation, resource or statistics owner is retained. */
+    public JsonValue checkpointState() {
+        JsonValue state=new JsonValue(JsonValue.ValueType.object);
+        SnapshotJson.put(state,"version",1);SnapshotJson.put(state,"profession",profession.name());
+        SnapshotJson.put(state,"weapon",weapon.name());SnapshotJson.put(state,"rarity",rarity.name());
+        state.addChild("boons",boons.checkpointState());
+        SnapshotJson.put(state,"staminaCapacityBonus",staminaCapacityBonus);SnapshotJson.put(state,"staminaRecoveryBonus",staminaRecoveryBonus);
+        SnapshotJson.put(state,"vida",vida);SnapshotJson.put(state,"vidaMaxima",vidaMaxima);
+        SnapshotJson.put(state,"damageBonus",damageBonus);SnapshotJson.put(state,"attackRateBonus",attackRateBonus);
+        SnapshotJson.put(state,"nivel",nivel);SnapshotJson.put(state,"xpParaProximoNivel",xpParaProximoNivel);
+        SnapshotJson.put(state,"curaPorAbate",curaPorAbate);SnapshotJson.put(state,"magnetRank",magnetRank);
+        SnapshotJson.put(state,"xpAtual",xpAtual);SnapshotJson.put(state,"modVelocidade",modVelocidade);
+        SnapshotJson.put(state,"modDanoRecebido",modDanoRecebido);SnapshotJson.put(state,"modXpGanho",modXpGanho);
+        SnapshotJson.put(state,"tempoEntreTiros",tempoEntreTiros);SnapshotJson.put(state,"cooldownTiro",cooldownTiro);
+        if(walkingSpeedLimit==Float.POSITIVE_INFINITY)state.addChild("walkingSpeedLimit",new JsonValue(JsonValue.ValueType.nullValue));
+        else SnapshotJson.put(state,"walkingSpeedLimit",walkingSpeedLimit);
+        SnapshotJson.put(state,"estaminaAtual",estaminaAtual);SnapshotJson.put(state,"dashTimer",dashTimer);
+        SnapshotJson.put(state,"dashCooldownTimer",dashCooldownTimer);SnapshotJson.put(state,"timerFlash",timerFlash);
+        SnapshotJson.put(state,"dashing",dashing);SnapshotJson.put(state,"exausto",exausto);
+        SnapshotJson.put(state,"temRessurreicao",temRessurreicao);SnapshotJson.put(state,"auraDePoseidonAtiva",auraDePoseidonAtiva);
+        SnapshotJson.put(state,"danoAura",danoAura);SnapshotJson.put(state,"raioAura",raioAura);
+        SnapshotJson.put(state,"habilidadeEgideAtiva",habilidadeEgideAtiva);SnapshotJson.put(state,"escudoAtivo",escudoAtivo);
+        SnapshotJson.put(state,"timerEscudo",timerEscudo);SnapshotJson.put(state,"protecaoRessurreicao",protecaoRessurreicao);
+        SnapshotJson.put(state,"shockRank",shockRank);SnapshotJson.put(state,"burnRank",burnRank);SnapshotJson.put(state,"impactRank",impactRank);
+        SnapshotJson.put(state,"shockCooldown",shockCooldown);SnapshotJson.put(state,"burnCooldown",burnCooldown);
+        SnapshotJson.put(state,"impactCooldown",impactCooldown);SnapshotJson.put(state,"spellCooldown",spellCooldown);
+        SnapshotJson.put(state,"retaliationCooldown",retaliationCooldown);SnapshotJson.put(state,"guarding",guarding);
+        SnapshotJson.put(state,"guardX",guardX);SnapshotJson.put(state,"guardY",guardY);SnapshotJson.put(state,"damageRevision",damageRevision);
+        return state;
+    }
+    public static PlayerState fromCheckpointState(JsonValue state) {
+        SnapshotJson.object(state,"version","profession","weapon","rarity","boons","staminaCapacityBonus","staminaRecoveryBonus",
+            "vida","vidaMaxima","damageBonus","attackRateBonus","nivel","xpParaProximoNivel","curaPorAbate","magnetRank","xpAtual",
+            "modVelocidade","modDanoRecebido","modXpGanho","tempoEntreTiros","cooldownTiro","walkingSpeedLimit","estaminaAtual",
+            "dashTimer","dashCooldownTimer","timerFlash","dashing","exausto","temRessurreicao","auraDePoseidonAtiva","danoAura","raioAura",
+            "habilidadeEgideAtiva","escudoAtivo","timerEscudo","protecaoRessurreicao","shockRank","burnRank","impactRank",
+            "shockCooldown","burnCooldown","impactCooldown","spellCooldown","retaliationCooldown","guarding","guardX","guardY","damageRevision");
+        SnapshotJson.integer(state,"version",1,1);
+        PlayerState player=new PlayerState(SnapshotJson.enumValue(state,"profession",Profession.class));
+        player.weapon=SnapshotJson.enumValue(state,"weapon",WeaponType.class);
+        player.rarity=SnapshotJson.enumValue(state,"rarity",WeaponRarity.class);
+        if(player.profession==Profession.FAZENDEIRO?player.weapon!=WeaponType.RAKE&&player.weapon!=WeaponType.SCYTHE:player.weapon!=player.profession.weapon)
+            throw SnapshotJson.invalid("arma da profissão");
+        player.boons.restoreCheckpointState(SnapshotJson.required(state,"boons"));
+        player.staminaCapacityBonus=SnapshotJson.nonNegative(state,"staminaCapacityBonus");
+        player.staminaRecoveryBonus=SnapshotJson.nonNegative(state,"staminaRecoveryBonus");
+        player.vidaMaxima=SnapshotJson.number(state,"vidaMaxima",player.profession.baseHealth,Float.MAX_VALUE);
+        player.vida=SnapshotJson.number(state,"vida",-Float.MAX_VALUE,player.vidaMaxima);
+        player.damageBonus=SnapshotJson.nonNegative(state,"damageBonus");player.attackRateBonus=SnapshotJson.nonNegative(state,"attackRateBonus");
+        player.nivel=SnapshotJson.integer(state,"nivel",1,Integer.MAX_VALUE);
+        player.xpParaProximoNivel=SnapshotJson.integer(state,"xpParaProximoNivel",10,Integer.MAX_VALUE);
+        int expectedThreshold=10;
+        for(int level=1;level<player.nivel&&expectedThreshold<Integer.MAX_VALUE;level++)expectedThreshold=(int)(expectedThreshold*1.5f);
+        if(player.xpParaProximoNivel!=expectedThreshold)throw SnapshotJson.invalid("progressão de nível");
+        player.curaPorAbate=SnapshotJson.integer(state,"curaPorAbate",0,Upgrade.VAMPIRISMO.maxRank);
+        player.magnetRank=SnapshotJson.integer(state,"magnetRank",0,3);
+        player.xpAtual=SnapshotJson.nonNegative(state,"xpAtual");
+        player.modVelocidade=SnapshotJson.number(state,"modVelocidade",Float.MIN_VALUE,Float.MAX_VALUE);
+        player.modDanoRecebido=SnapshotJson.number(state,"modDanoRecebido",.25f,1);
+        player.modXpGanho=SnapshotJson.number(state,"modXpGanho",1,Float.MAX_VALUE);
+        player.tempoEntreTiros=SnapshotJson.number(state,"tempoEntreTiros",player.weapon.minimumInterval,player.weapon.interval);
+        float expectedInterval=Math.max(player.weapon.minimumInterval,player.weapon.interval/((1+player.attackRateBonus)*player.rarity.attackRateMultiplier));
+        if(Math.abs(player.tempoEntreTiros-expectedInterval)>Math.max(.000001f,expectedInterval*.00001f))throw SnapshotJson.invalid("intervalo da arma");
+        float maximumCooldown=player.profession==Profession.FAZENDEIRO?Math.max(WeaponType.RAKE.interval,WeaponType.SCYTHE.interval):player.profession.weapon.interval;
+        player.cooldownTiro=SnapshotJson.number(state,"cooldownTiro",0,maximumCooldown);
+        player.walkingSpeedLimit=SnapshotJson.required(state,"walkingSpeedLimit").isNull()?Float.POSITIVE_INFINITY:
+            SnapshotJson.number(state,"walkingSpeedLimit",Float.MIN_VALUE,Float.MAX_VALUE);
+        float maximumStamina=player.getEstaminaMaxima();
+        if(!Float.isFinite(maximumStamina))throw SnapshotJson.invalid("capacidade de estamina");
+        player.estaminaAtual=SnapshotJson.number(state,"estaminaAtual",0,maximumStamina);
+        player.dashTimer=SnapshotJson.number(state,"dashTimer",-Float.MAX_VALUE,.15f);
+        player.dashCooldownTimer=SnapshotJson.number(state,"dashCooldownTimer",0,1);
+        player.timerFlash=SnapshotJson.number(state,"timerFlash",0,.15f);
+        player.dashing=SnapshotJson.flag(state,"dashing");player.exausto=SnapshotJson.flag(state,"exausto");
+        player.temRessurreicao=SnapshotJson.flag(state,"temRessurreicao");player.auraDePoseidonAtiva=SnapshotJson.flag(state,"auraDePoseidonAtiva");
+        player.danoAura=SnapshotJson.number(state,"danoAura",Float.MIN_VALUE,Float.MAX_VALUE);
+        player.raioAura=SnapshotJson.number(state,"raioAura",Float.MIN_VALUE,Float.MAX_VALUE);
+        player.habilidadeEgideAtiva=SnapshotJson.flag(state,"habilidadeEgideAtiva");player.escudoAtivo=SnapshotJson.flag(state,"escudoAtivo");
+        player.timerEscudo=SnapshotJson.number(state,"timerEscudo",0,10);
+        player.protecaoRessurreicao=SnapshotJson.number(state,"protecaoRessurreicao",0,2);
+        player.shockRank=SnapshotJson.integer(state,"shockRank",0,Upgrade.CHOQUE.maxRank);
+        player.burnRank=SnapshotJson.integer(state,"burnRank",0,Upgrade.QUEIMADURA.maxRank);
+        player.impactRank=SnapshotJson.integer(state,"impactRank",0,Upgrade.IMPACTO.maxRank);
+        player.shockCooldown=SnapshotJson.number(state,"shockCooldown",0,.8f);
+        player.burnCooldown=SnapshotJson.number(state,"burnCooldown",0,.8f);
+        player.impactCooldown=SnapshotJson.number(state,"impactCooldown",0,.8f);
+        player.spellCooldown=SnapshotJson.number(state,"spellCooldown",0,.8f);
+        player.retaliationCooldown=SnapshotJson.number(state,"retaliationCooldown",0,.6f);
+        player.guarding=SnapshotJson.flag(state,"guarding");
+        player.guardX=SnapshotJson.number(state,"guardX",-1,1);player.guardY=SnapshotJson.number(state,"guardY",-1,1);
+        player.damageRevision=SnapshotJson.longInteger(state,"damageRevision",0,Long.MAX_VALUE);
+        if(player.dashing&&player.dashTimer<=0||player.guarding&&(player.weapon!=WeaponType.SHIELD||player.dashing||player.exausto||player.estaminaAtual<12)
+            ||player.escudoAtivo&&!player.habilidadeEgideAtiva||Math.abs(player.guardX*player.guardX+player.guardY*player.guardY-1)>.0001f)
+            throw SnapshotJson.invalid("estado de combate");
+        if(player.shockRank==0&&player.shockCooldown>0||player.burnRank==0&&player.burnCooldown>0||player.impactRank==0&&player.impactCooldown>0)
+            throw SnapshotJson.invalid("recarga sem poder");
+        if(!Float.isFinite(player.getDano())||!Float.isFinite(player.dps())||!Float.isFinite(player.normalWalkingSpeed())
+            ||!Float.isFinite(player.staminaRegeneration())||!Float.isFinite(player.xpGain(Integer.MAX_VALUE))||!Float.isFinite(player.powerRatio()))
+            throw SnapshotJson.invalid("atributo derivado");
+        return player;
+    }
 }

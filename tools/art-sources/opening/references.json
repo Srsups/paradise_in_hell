@@ -1,0 +1,6 @@
+{
+  "operation": "technical crop/copy only; no repainting",
+  "reference-protagonist.png": {"atlas": "../../../core/assets/visual/expanded.atlas", "region": "portrait-protagonist", "crop": [68,868,512,512]},
+  "reference-charon.png": {"atlas": "../../../core/assets/visual/m6-dialogue.atlas", "region": "portrait-charon-neutral", "crop": [0,0,256,256]},
+  "reference-scenery.png": {"source": "../m6-scenery/route-shadows-original.png", "operation": "copy"}
+}

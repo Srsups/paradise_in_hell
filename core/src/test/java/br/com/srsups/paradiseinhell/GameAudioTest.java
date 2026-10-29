@@ -13,8 +13,10 @@ class GameAudioTest {
         audio.advance(.10f);assertTrue(audio.play(SoundCue.HIT));assertEquals(3,audio.activeVoices());
         audio.advance(.3f);assertEquals(0,audio.activeVoices());assertEquals(3,driver.stopped.size());
     }
-    @Test void allWeaponsHaveDistinctAttacksAndCriticalWarningsReplaceAttackVoices() {
-        for(WeaponType weapon:WeaponType.values())assertTrue(audio.play(SoundCue.attack(weapon)));
+    @Test void everyWeaponHasAnAttackCueAndCriticalWarningsReplaceAttackVoices() {
+        var cues=java.util.EnumSet.noneOf(SoundCue.class);
+        for(WeaponType weapon:WeaponType.values())cues.add(SoundCue.attack(weapon));
+        for(SoundCue cue:cues)assertTrue(audio.play(cue));
         assertEquals(GameAudio.MAX_VOICES,audio.activeVoices());
         assertFalse(audio.play(SoundCue.HIT));
         assertTrue(audio.play(SoundCue.BOSS_WARNING));

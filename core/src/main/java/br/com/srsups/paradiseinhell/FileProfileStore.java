@@ -37,6 +37,8 @@ public final class FileProfileStore implements ProfileStore {
         catch (RuntimeException invalid) { throw new IOException("Invalid profile: " + path.getFileName(), invalid); }
     }
     @Override public void save(CampaignProfile profile) throws IOException {
+        if(profile.checkpoint()==null&&profile.lastSettledSequence()>0){saveTerminal(profile);return;}
+        rejectFuture(file);rejectFuture(backup);
         Files.createDirectories(file.getParent());
         Path temporary = Files.createTempFile(file.getParent(), "profile-", ".tmp");
         try {
@@ -50,6 +52,33 @@ public final class FileProfileStore implements ProfileStore {
             try { Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING); }
             catch (AtomicMoveNotSupportedException unsupported) { Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING); }
         } finally { Files.deleteIfExists(temporary); }
+    }
+    @Override public void saveTerminal(CampaignProfile profile)throws IOException {
+        if(profile.checkpoint()!=null)throw new IllegalArgumentException("A terminal profile cannot contain an active checkpoint");
+        rejectFuture(file);rejectFuture(backup);
+        Files.createDirectories(file.getParent());
+        byte[] data=profile.toJson().getBytes(StandardCharsets.UTF_8);
+        Path temporary=Files.createTempFile(file.getParent(),"profile-terminal-",".tmp");
+        Path temporaryBackup=Files.createTempFile(file.getParent(),"profile-terminal-backup-",".tmp");
+        byte[] previousBackup=null;boolean removed=false,committed=false;
+        try {
+            Files.write(temporary,data);Files.write(temporaryBackup,data);
+            if(Files.exists(backup)){previousBackup=Files.readAllBytes(backup);removed=Files.deleteIfExists(backup);}
+            replace(temporary,file);committed=true;
+            // Mirror the terminal receipt/ack. Never leave an active attempt as the fallback.
+            replace(temporaryBackup,backup);
+        }catch(IOException failure){
+            if(!committed&&removed)try{Files.write(backup,previousBackup);}catch(IOException rollback){failure.addSuppressed(rollback);}
+            throw failure;
+        }finally{Files.deleteIfExists(temporary);Files.deleteIfExists(temporaryBackup);}
+    }
+    private static void replace(Path temporary,Path destination)throws IOException {
+        try{Files.move(temporary,destination,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}
+        catch(AtomicMoveNotSupportedException unsupported){Files.move(temporary,destination,StandardCopyOption.REPLACE_EXISTING);}
+    }
+    private void rejectFuture(Path path)throws IOException {
+        if(!Files.exists(path))return;
+        try{read(path);}catch(IOException failure){if(failure.getCause() instanceof CampaignProfile.UnsupportedVersion)throw failure;}
     }
     @Override public void reset(CampaignProfile empty) throws IOException {
         if (empty.professionChosen()) throw new IllegalArgumentException("Reset requires an empty character");

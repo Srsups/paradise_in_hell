@@ -10,19 +10,32 @@ import java.util.*;
 public final class EquippedArt implements com.badlogic.gdx.utils.Disposable {
     public static final float DRAW_SCALE=1.6f;
     private final TextureAtlas atlas=new TextureAtlas(Gdx.files.internal("visual/equipped.atlas"));
+    private final FarmerArt farmer;
+    private final boolean ownsFarmer;
     private final Map<String,TextureRegion> regions=new HashMap<>();
     private final Map<String,Clip> clips=new HashMap<>();
     private record Clip(TextureRegion[] frames,SpriteHitbox.Shape[] masks,int count,int directions) {}
     public record Pose(String clip,ActorAnimation.Direction direction,int frame) {}
-    public EquippedArt() {
+    public EquippedArt(){this(new FarmerArt(),true);}
+    public EquippedArt(FarmerArt farmer){this(farmer,false);}
+    private EquippedArt(FarmerArt farmer,boolean ownsFarmer) {
+        this.farmer=Objects.requireNonNull(farmer);this.ownsFarmer=ownsFarmer;
         for(var region:atlas.getRegions())regions.put(region.name,region);
+        farmer.appendTo(regions);
         var pixels=new IdentityHashMap<Texture,Pixmap>();
         try {
             for(Texture texture:atlas.getTextures()){
                 var data=texture.getTextureData();if(!data.isPrepared())data.prepare();pixels.put(texture,data.consumePixmap());
             }
+            for(Texture texture:farmer.atlas().getTextures()){
+                var data=texture.getTextureData();if(!data.isPrepared())data.prepare();pixels.put(texture,data.consumePixmap());
+            }
             for(Profession p:Profession.values()){
+                if(p==Profession.FAZENDEIRO)continue;
                 String actor=actor(p);read(actor+"-walk",6,5,pixels);read(actor+"-idle",4,5,pixels);read(actor+"-attack",4,5,pixels);
+            }
+            for(String actor:new String[]{"farmer-rake","farmer-scythe"}){
+                read(actor+"-walk",6,5,pixels);read(actor+"-idle",4,5,pixels);read(actor+"-attack",4,5,pixels);
             }
             read("archer-walk",4,8,pixels);read("archer-attack",6,8,pixels);
             read("carrasco-walk",4,8,pixels);read("carrasco-spin",6,4,pixels);read("carrasco-stones",6,4,pixels);
@@ -32,7 +45,11 @@ public final class EquippedArt implements com.badlogic.gdx.utils.Disposable {
             for(var entry:pixels.entrySet())if(entry.getKey().getTextureData().disposePixmap())entry.getValue().dispose();
         }
     }
-    public static String actor(Profession profession){return profession.name().toLowerCase(Locale.ROOT);}
+    public static String actor(Profession profession){return actor(profession,profession.weapon);}
+    public static String actor(Profession profession,WeaponType weapon){
+        return profession==Profession.FAZENDEIRO?weapon==WeaponType.SCYTHE?"farmer-scythe":"farmer-rake"
+            :profession.name().toLowerCase(Locale.ROOT);
+    }
     /** Sprite pixels outside this torso/legs window are equipment; never enlarge body contact. */
     public static boolean bodyPixel(int x,int y,int width,int height){
         return x>=width*.30f&&x<width*.70f&&y>=height*.16f&&y<height*.86f;
@@ -71,7 +88,8 @@ public final class EquippedArt implements com.badlogic.gdx.utils.Disposable {
         private final Map<String,SpriteHitbox[]> masks=new HashMap<>();
         private Body(EquippedArt art,String actor){
             this.art=art;this.actor=actor;
-            for(var entry:art.clips.entrySet())if(entry.getKey().startsWith(actor+"-")){
+            String prefix=actor.startsWith("farmer-")?"farmer-":actor+"-";
+            for(var entry:art.clips.entrySet())if(entry.getKey().startsWith(prefix)){
                 var shapes=entry.getValue().masks;var positions=new SpriteHitbox[shapes.length];
                 for(int i=0;i<shapes.length;i++)positions[i]=new SpriteHitbox(shapes[i]);masks.put(entry.getKey(),positions);
             }
@@ -101,6 +119,6 @@ public final class EquippedArt implements com.badlogic.gdx.utils.Disposable {
             batch.setColor(r,g,b,a*blend);draw(batch,new Pose(actor+"-walk",motion.direction(),index),x,y,bodySize);batch.setColor(r,g,b,a);
         }
     }
-    @Override public void dispose(){atlas.dispose();regions.clear();clips.clear();}
+    @Override public void dispose(){atlas.dispose();if(ownsFarmer)farmer.dispose();regions.clear();clips.clear();}
 }
 

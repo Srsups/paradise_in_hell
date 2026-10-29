@@ -50,7 +50,7 @@ public final class DifficultyScreen extends ScreenAdapter {
         }
         if (confirmDelay == 0 && (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || click && confirm.contains(pointer))) {
             if (game.createCharacter(profession, selected)) {
-                if (region == null) game.startDemo(); else game.setScreen(new RefugeScreen(game));
+                if (region == null) game.startDemo(); else game.enterCampaign();
                 return;
             }
             notice = game.profiles().error().isEmpty() ? "Personagem indisponível. Volte e escolha outra profissão."

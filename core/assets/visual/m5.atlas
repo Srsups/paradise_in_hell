@@ -1,0 +1,1069 @@
+m5.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+farmer-rake-walk-down-0
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-1
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-2
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-3
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-4
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-5
+  rotate: false
+  xy: 331, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-0
+  rotate: false
+  xy: 397, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-0
+  rotate: false
+  xy: 463, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-1
+  rotate: false
+  xy: 529, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-1
+  rotate: false
+  xy: 595, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-2
+  rotate: false
+  xy: 661, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-2
+  rotate: false
+  xy: 727, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-3
+  rotate: false
+  xy: 793, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-3
+  rotate: false
+  xy: 859, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-0
+  rotate: false
+  xy: 925, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-1
+  rotate: false
+  xy: 1, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-2
+  rotate: false
+  xy: 67, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-3
+  rotate: false
+  xy: 133, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-4
+  rotate: false
+  xy: 199, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-5
+  rotate: false
+  xy: 265, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-0
+  rotate: false
+  xy: 331, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-0
+  rotate: false
+  xy: 397, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-1
+  rotate: false
+  xy: 463, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-1
+  rotate: false
+  xy: 529, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-2
+  rotate: false
+  xy: 595, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-2
+  rotate: false
+  xy: 661, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-3
+  rotate: false
+  xy: 727, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-3
+  rotate: false
+  xy: 793, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-0
+  rotate: false
+  xy: 859, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-1
+  rotate: false
+  xy: 925, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-2
+  rotate: false
+  xy: 1, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-3
+  rotate: false
+  xy: 67, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-4
+  rotate: false
+  xy: 133, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-left-5
+  rotate: false
+  xy: 199, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-left-0
+  rotate: false
+  xy: 265, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-left-0
+  rotate: false
+  xy: 331, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-left-1
+  rotate: false
+  xy: 397, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-left-1
+  rotate: false
+  xy: 463, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-left-2
+  rotate: false
+  xy: 529, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-left-2
+  rotate: false
+  xy: 595, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-left-3
+  rotate: false
+  xy: 661, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-left-3
+  rotate: false
+  xy: 727, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-0
+  rotate: false
+  xy: 793, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-1
+  rotate: false
+  xy: 859, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-2
+  rotate: false
+  xy: 925, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-3
+  rotate: false
+  xy: 1, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-4
+  rotate: false
+  xy: 67, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-up-left-5
+  rotate: false
+  xy: 133, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-left-0
+  rotate: false
+  xy: 199, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-left-0
+  rotate: false
+  xy: 265, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-left-1
+  rotate: false
+  xy: 331, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-left-1
+  rotate: false
+  xy: 397, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-left-2
+  rotate: false
+  xy: 463, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-left-2
+  rotate: false
+  xy: 529, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-up-left-3
+  rotate: false
+  xy: 595, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-up-left-3
+  rotate: false
+  xy: 661, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-0
+  rotate: false
+  xy: 727, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-1
+  rotate: false
+  xy: 793, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-2
+  rotate: false
+  xy: 859, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-3
+  rotate: false
+  xy: 925, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-4
+  rotate: false
+  xy: 1, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-walk-down-left-5
+  rotate: false
+  xy: 67, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-left-0
+  rotate: false
+  xy: 133, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-left-0
+  rotate: false
+  xy: 199, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-left-1
+  rotate: false
+  xy: 265, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-left-1
+  rotate: false
+  xy: 331, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-left-2
+  rotate: false
+  xy: 397, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-left-2
+  rotate: false
+  xy: 463, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-idle-down-left-3
+  rotate: false
+  xy: 529, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-rake-attack-down-left-3
+  rotate: false
+  xy: 595, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-0
+  rotate: false
+  xy: 661, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-1
+  rotate: false
+  xy: 727, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-2
+  rotate: false
+  xy: 793, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-3
+  rotate: false
+  xy: 859, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-4
+  rotate: false
+  xy: 925, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-5
+  rotate: false
+  xy: 1, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-0
+  rotate: false
+  xy: 67, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-0
+  rotate: false
+  xy: 133, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-1
+  rotate: false
+  xy: 199, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-1
+  rotate: false
+  xy: 265, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-2
+  rotate: false
+  xy: 331, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-2
+  rotate: false
+  xy: 397, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-3
+  rotate: false
+  xy: 463, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-3
+  rotate: false
+  xy: 529, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-0
+  rotate: false
+  xy: 595, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-1
+  rotate: false
+  xy: 661, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-2
+  rotate: false
+  xy: 727, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-3
+  rotate: false
+  xy: 793, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-4
+  rotate: false
+  xy: 859, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-5
+  rotate: false
+  xy: 925, 331
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-0
+  rotate: false
+  xy: 1, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-0
+  rotate: false
+  xy: 67, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-1
+  rotate: false
+  xy: 133, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-1
+  rotate: false
+  xy: 199, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-2
+  rotate: false
+  xy: 265, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-2
+  rotate: false
+  xy: 331, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-3
+  rotate: false
+  xy: 397, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-3
+  rotate: false
+  xy: 463, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-0
+  rotate: false
+  xy: 529, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-1
+  rotate: false
+  xy: 595, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-2
+  rotate: false
+  xy: 661, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-3
+  rotate: false
+  xy: 727, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-4
+  rotate: false
+  xy: 793, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-left-5
+  rotate: false
+  xy: 859, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-left-0
+  rotate: false
+  xy: 925, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-left-0
+  rotate: false
+  xy: 1, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-left-1
+  rotate: false
+  xy: 67, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-left-1
+  rotate: false
+  xy: 133, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-left-2
+  rotate: false
+  xy: 199, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-left-2
+  rotate: false
+  xy: 265, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-left-3
+  rotate: false
+  xy: 331, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-left-3
+  rotate: false
+  xy: 397, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-0
+  rotate: false
+  xy: 463, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-1
+  rotate: false
+  xy: 529, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-2
+  rotate: false
+  xy: 595, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-3
+  rotate: false
+  xy: 661, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-4
+  rotate: false
+  xy: 727, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-up-left-5
+  rotate: false
+  xy: 793, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-left-0
+  rotate: false
+  xy: 859, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-left-0
+  rotate: false
+  xy: 925, 463
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-left-1
+  rotate: false
+  xy: 1, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-left-1
+  rotate: false
+  xy: 67, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-left-2
+  rotate: false
+  xy: 133, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-left-2
+  rotate: false
+  xy: 199, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-up-left-3
+  rotate: false
+  xy: 265, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-up-left-3
+  rotate: false
+  xy: 331, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-0
+  rotate: false
+  xy: 397, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-1
+  rotate: false
+  xy: 463, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-2
+  rotate: false
+  xy: 529, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-3
+  rotate: false
+  xy: 595, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-4
+  rotate: false
+  xy: 661, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-walk-down-left-5
+  rotate: false
+  xy: 727, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-left-0
+  rotate: false
+  xy: 793, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-left-0
+  rotate: false
+  xy: 859, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-left-1
+  rotate: false
+  xy: 925, 529
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-left-1
+  rotate: false
+  xy: 1, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-left-2
+  rotate: false
+  xy: 67, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-left-2
+  rotate: false
+  xy: 133, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-idle-down-left-3
+  rotate: false
+  xy: 199, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+farmer-scythe-attack-down-left-3
+  rotate: false
+  xy: 265, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+portrait-camponesa
+  rotate: false
+  xy: 331, 595
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+npc-camponesa
+  rotate: false
+  xy: 589, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+weapon-rake
+  rotate: false
+  xy: 655, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+weapon-scythe
+  rotate: false
+  xy: 721, 595
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fx-rake-0
+  rotate: false
+  xy: 787, 595
+  size: 64, 24
+  orig: 64, 24
+  offset: 0, 0
+  index: -1
+fx-rake-1
+  rotate: false
+  xy: 853, 595
+  size: 64, 24
+  orig: 64, 24
+  offset: 0, 0
+  index: -1
+fx-rake-2
+  rotate: false
+  xy: 919, 595
+  size: 64, 24
+  orig: 64, 24
+  offset: 0, 0
+  index: -1
+fx-rake-3
+  rotate: false
+  xy: 1, 853
+  size: 64, 24
+  orig: 64, 24
+  offset: 0, 0
+  index: -1
+fx-scythe-0
+  rotate: false
+  xy: 67, 853
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fx-scythe-1
+  rotate: false
+  xy: 133, 853
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fx-scythe-2
+  rotate: false
+  xy: 199, 853
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fx-scythe-3
+  rotate: false
+  xy: 265, 853
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

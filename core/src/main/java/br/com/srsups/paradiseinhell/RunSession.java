@@ -1,6 +1,7 @@
 package br.com.srsups.paradiseinhell;
 
 import java.util.EnumMap;
+import com.badlogic.gdx.utils.JsonValue;
 
 /** One attempt. Arena screens own entities/resources; this object owns progression. */
 public final class RunSession {
@@ -9,10 +10,29 @@ public final class RunSession {
     public GameDifficulty difficulty() { return difficulty; }
     private final PlayerState player;
     private final RunProgress progress;
+    private final TutorialGuide tutorial;
+    public TutorialGuide tutorial() { return tutorial; }
     private final PermanentBonuses permanent;
     private final RunEncounters encounters;
+    private FarmerQuest farmerQuest = FarmerQuest.NOT_STARTED;
+    private final RunRandom farmerRandom = new RunRandom();
+    public boolean questEnabled() { return !isDemo() && region.id().equals(RegionDefinition.PROTOTYPE_ID); }
+    public FarmerQuest farmerQuest() { return farmerQuest; }
+    void prepareFarmerQuest(FarmerQuest value) {
+        if (questEnabled() && value.ordinal() > farmerQuest.ordinal()) farmerQuest = value;
+    }
+    public boolean openFarmerEncounter(boolean eligible) {
+        return encounters.openFarmer(eligible && questEnabled() && !finished && arenaComplete
+            && arena().kind() == ArenaDefinition.Kind.COMBAT, farmerRandom);
+    }
     private int pendingForgeMaterials;
-    private final String id=java.util.UUID.randomUUID().toString();
+    private final String id;
+    private long attemptSequence;
+    public long attemptSequence(){return attemptSequence;}
+    public void bindAttemptSequence(long value){
+        if(value<=0||attemptSequence!=0&&attemptSequence!=value)throw new IllegalArgumentException("Attempt sequence mismatch");
+        attemptSequence=value;
+    }
     private String characterId = "";
     private boolean characterBound;
     public String characterId() { return characterId; }
@@ -22,7 +42,7 @@ public final class RunSession {
         characterId = value; characterBound = true;
     }
     private final RunStatistics statistics=new RunStatistics();
-    private final Necromancy necromancy=new Necromancy(new java.util.Random(), statistics);
+    private final Necromancy necromancy=new Necromancy(new RunRandom(), statistics);
     private RunReport report;
     private boolean sharedRecorded;
     private long soulHundredths;
@@ -45,7 +65,9 @@ public final class RunSession {
     private final EnumMap<Upgrade, Integer> ranks = new EnumMap<>(Upgrade.class);
     private final EnumMap<EnemyType, Integer> arenaKills = new EnumMap<>(EnemyType.class);
     private final java.util.Map<String, ArenaVariation> variations = new java.util.HashMap<>();
-    private final java.util.Random rewardRandom = new java.util.Random();
+    private final RunRandom rewardRandom = new RunRandom();
+    private final RunRandom boonRandom = new RunRandom();
+    public java.util.Random boonRandom(){return boonRandom;}
     private java.util.List<Upgrade> rewardChoices;
     private boolean arenaRewardClaimed;
     private String arenaId;
@@ -55,18 +77,24 @@ public final class RunSession {
 
     private RunSession(RegionDefinition region, Profession profession, PermanentBonuses permanent, GameDifficulty difficulty,
                        java.util.random.RandomGenerator random) {
+        this(region,profession,permanent,difficulty,random,java.util.UUID.randomUUID().toString(),null);
+    }
+    private RunSession(RegionDefinition region,Profession profession,PermanentBonuses permanent,GameDifficulty difficulty,
+                       java.util.random.RandomGenerator random,String id,PlayerState restoredPlayer) {
+        java.util.UUID.fromString(id);this.id=id;
         this.region = region;
         this.difficulty = java.util.Objects.requireNonNull(difficulty);
         encounters = new RunEncounters(random, profession.luckMultiplier);
         this.permanent = java.util.Objects.requireNonNull(permanent);
-        player = new PlayerState(profession);
-        permanent.apply(player);
+        player = restoredPlayer==null?new PlayerState(profession):restoredPlayer;
+        if(restoredPlayer==null)permanent.apply(player);
         progress = new RunProgress(region == null);
+        tutorial = new TutorialGuide(region == null);
         arenaId = region == null ? null : region.start();
         statistics.enterRoom(isDemo()?"demo":arenaId,isDemo()?"Demo de sobrevivência":arena().title(),player.getVida());
         player.setStatistics(statistics);
         if (region != null) {
-            java.util.Random variationRandom = new java.util.Random();
+            java.util.Random variationRandom = new RunRandom();
             for (ArenaDefinition arena : region.arenas())
                 if (arena.kind() == ArenaDefinition.Kind.COMBAT) variations.put(arena.id(), ArenaVariation.draw(variationRandom));
         }
@@ -74,7 +102,7 @@ public final class RunSession {
     public static RunSession demo() { return demo(Profession.CACADOR); }
     public static RunSession demo(Profession profession) { return demo(profession, GameDifficulty.MEDIUM); }
     public static RunSession demo(Profession profession, GameDifficulty difficulty) {
-        return new RunSession(null, profession, PermanentBonuses.NONE, difficulty, new java.util.Random());
+        return new RunSession(null, profession, PermanentBonuses.NONE, difficulty, new RunRandom());
     }
     public static RunSession campaign(RegionDefinition region) { return campaign(region, Profession.CACADOR); }
     public static RunSession campaign(RegionDefinition region, Profession profession) {
@@ -88,7 +116,7 @@ public final class RunSession {
         return campaign(region, profession, permanent, GameDifficulty.MEDIUM, random);
     }
     public static RunSession campaign(RegionDefinition region, Profession profession, PermanentBonuses permanent, GameDifficulty difficulty) {
-        return campaign(region, profession, permanent, difficulty, new java.util.Random());
+        return campaign(region, profession, permanent, difficulty, new RunRandom());
     }
     public static RunSession campaign(RegionDefinition region, Profession profession, PermanentBonuses permanent,
                                       GameDifficulty difficulty, java.util.random.RandomGenerator random) {
@@ -152,7 +180,8 @@ public final class RunSession {
         requireActive();
         if (isDemo() || arena().kind() != ArenaDefinition.Kind.COMBAT) throw new IllegalStateException("Not a campaign fight");
         boolean material = encounters.defeatMiniBoss();
-        addSouls(xpDrop(SoulRewards.MINI_BOSS)); statistics.kill();
+        if (questEnabled() && farmerQuest == FarmerQuest.ACCEPTED) farmerQuest = FarmerQuest.SEED_FOUND;
+        addSouls(xpDrop(SoulRewards.MINI_BOSS)); statistics.kill();player.onKill();
         progress.recordKill(); // A mini-boss never substitutes a common/fast/tank goal.
         if (material) pendingForgeMaterials++;
         return material;
@@ -180,7 +209,7 @@ public final class RunSession {
         requireActive();
         if (type == null || baseSouls <= 0) throw new IllegalArgumentException("Invalid enemy reward");
         if (!isDemo() && arena().kind() != ArenaDefinition.Kind.COMBAT) throw new IllegalStateException("Not a combat arena");
-        progress.recordKill(); statistics.kill();
+        progress.recordKill(); statistics.kill();player.onKill();
         if (isDemo()) return;
         addSouls(xpDrop(baseSouls));
         arenaKills.merge(type, 1, Integer::sum);
@@ -200,7 +229,8 @@ public final class RunSession {
         if (isDemo() || arena().kind() != ArenaDefinition.Kind.BOSS_ROOM || bossDefeated)
             throw new IllegalStateException("Boss defeat unavailable");
         bossDefeated = true;
-        addSouls(SoulRewards.FLOOR_BOSS); statistics.kill(); statistics.unlockExit();
+        if (questEnabled() && farmerQuest == FarmerQuest.SEED_FOUND) farmerQuest = FarmerQuest.COMPLETED;
+        addSouls(SoulRewards.FLOOR_BOSS); statistics.kill(); statistics.unlockExit();player.onKill();
         arenaComplete = true;
         completedArenas++;
         progress.recordKill();
@@ -225,6 +255,7 @@ public final class RunSession {
         if (rank(upgrade) >= upgrade.maxRank) throw new IllegalStateException("Upgrade at maximum rank");
         upgrade.apply(player);
         ranks.merge(upgrade, 1, Integer::sum);
+        tutorial.action(TutorialTopic.BOONS);
     }
     public float difficultyTime() { return isDemo() ? progress.elapsed() : Math.min(300, arena().difficultySeconds() + arenaElapsed); }
     public EnemyDifficulty enemyDifficulty() {
@@ -258,10 +289,113 @@ public final class RunSession {
     }
     public void end() { statistics.end(player.getVida()); finished = true; necromancy.clear(); }
     public RunSession newAttempt() {
-        RunSession next = new RunSession(region, player.getProfession(), permanent, difficulty, new java.util.Random());
+        RunSession next = new RunSession(region, player.getProfession(), permanent, difficulty, new RunRandom());
         if (encounters.regionMaterialClaimed()) next.encounters.blockRegionMaterial();
         if (!isDemo() && player.getWeaponRarity() == WeaponRarity.RARE) next.player.forgeWeapon();
+        next.prepareFarmerQuest(farmerQuest);
         return next;
     }
     private void requireActive() { if (finished) throw new IllegalStateException("Attempt has ended"); }
+    /** Pure data only. Stage rules belong to RunCheckpoint; live combat entities never enter this state. */
+    public JsonValue checkpointState(){
+        if(isDemo()||finished||bossDefeated||settled||sharedRecorded||player.estaMorto())throw new IllegalStateException("Only a living campaign attempt can be suspended");
+        JsonValue root=new JsonValue(JsonValue.ValueType.object);
+        SnapshotJson.put(root,"id",id);SnapshotJson.put(root,"characterId",characterId);SnapshotJson.put(root,"characterBound",characterBound);
+        SnapshotJson.put(root,"attemptSequence",attemptSequence);SnapshotJson.put(root,"regionId",region.id());
+        SnapshotJson.put(root,"regionFingerprint",RunCheckpoint.fingerprint(region));SnapshotJson.put(root,"profession",player.getProfession().name());
+        SnapshotJson.put(root,"difficulty",difficulty.name());SnapshotJson.put(root,"arenaId",arenaId);SnapshotJson.put(root,"arenaElapsed",arenaElapsed);
+        SnapshotJson.put(root,"arenaComplete",arenaComplete);SnapshotJson.put(root,"completedArenas",completedArenas);
+        SnapshotJson.put(root,"arenaRewardClaimed",arenaRewardClaimed);SnapshotJson.put(root,"chestObols",chestObols);
+        SnapshotJson.put(root,"soulHundredths",soulHundredths);SnapshotJson.put(root,"pendingForgeMaterials",pendingForgeMaterials);
+        SnapshotJson.put(root,"farmerQuest",farmerQuest.name());
+        JsonValue bonuses=new JsonValue(JsonValue.ValueType.object);
+        SnapshotJson.put(bonuses,"vitality",permanent.vitality());SnapshotJson.put(bonuses,"strength",permanent.strength());
+        SnapshotJson.put(bonuses,"agility",permanent.agility());SnapshotJson.put(bonuses,"endurance",permanent.endurance());
+        SnapshotJson.put(bonuses,"recovery",permanent.recovery());SnapshotJson.put(bonuses,"armor",permanent.armor());root.addChild("permanent",bonuses);
+        root.addChild("player",player.checkpointState());root.addChild("progress",progress.checkpointState());
+        root.addChild("statistics",statistics.checkpointState());root.addChild("encounters",encounters.checkpointState());
+        root.addChild("necromancy",necromancy.checkpointState());root.addChild("fury",fury.checkpointState());
+        root.addChild("farmerRandom",farmerRandom.checkpointState());root.addChild("rewardRandom",rewardRandom.checkpointState());root.addChild("boonRandom",boonRandom.checkpointState());
+        JsonValue boonRanks=new JsonValue(JsonValue.ValueType.object),kills=new JsonValue(JsonValue.ValueType.object),draws=new JsonValue(JsonValue.ValueType.object);
+        for(Upgrade upgrade:Upgrade.values())if(rank(upgrade)>0)SnapshotJson.put(boonRanks,upgrade.name(),rank(upgrade));root.addChild("ranks",boonRanks);
+        for(EnemyType type:EnemyType.values())if(kills(type)>0)SnapshotJson.put(kills,type.name(),kills(type));root.addChild("arenaKills",kills);
+        for(ArenaDefinition definition:region.arenas())if(variations.containsKey(definition.id()))SnapshotJson.put(draws,definition.id(),variations.get(definition.id()).name());root.addChild("variations",draws);
+        JsonValue choices=new JsonValue(rewardChoices==null?JsonValue.ValueType.nullValue:JsonValue.ValueType.array);
+        if(rewardChoices!=null)for(Upgrade choice:rewardChoices)choices.addChild(new JsonValue(choice.name()));root.addChild("rewardChoices",choices);
+        return root;
+    }
+    public static RunSession fromCheckpointState(RegionDefinition region,JsonValue root){
+        java.util.Objects.requireNonNull(region);
+        SnapshotJson.object(root,"id","characterId","characterBound","attemptSequence","regionId","regionFingerprint","profession","difficulty",
+            "arenaId","arenaElapsed","arenaComplete","completedArenas","arenaRewardClaimed","chestObols","soulHundredths","pendingForgeMaterials","farmerQuest",
+            "permanent","player","progress","statistics","encounters","necromancy","fury","farmerRandom","rewardRandom","boonRandom","ranks","arenaKills","variations","rewardChoices");
+        String regionId=SnapshotJson.text(root,"regionId"),fingerprint=SnapshotJson.text(root,"regionFingerprint");
+        if(!region.id().equals(regionId)||!RunCheckpoint.fingerprint(region).equals(fingerprint))throw SnapshotJson.invalid("conteúdo da região alterado");
+        String id=SnapshotJson.text(root,"id"),characterId=SnapshotJson.text(root,"characterId");
+        java.util.UUID.fromString(id);java.util.UUID.fromString(characterId);
+        if(!SnapshotJson.flag(root,"characterBound"))throw SnapshotJson.invalid("personagem da tentativa");
+        Profession profession=SnapshotJson.enumValue(root,"profession",Profession.class);
+        GameDifficulty difficulty=SnapshotJson.enumValue(root,"difficulty",GameDifficulty.class);
+        JsonValue bonuses=SnapshotJson.required(root,"permanent");SnapshotJson.object(bonuses,"vitality","strength","agility","endurance","recovery","armor");
+        int max=PermanentAttribute.MAX_RANK;
+        PermanentBonuses permanent=new PermanentBonuses(SnapshotJson.integer(bonuses,"vitality",0,max),SnapshotJson.integer(bonuses,"strength",0,max),
+            SnapshotJson.integer(bonuses,"agility",0,max),SnapshotJson.integer(bonuses,"endurance",0,max),SnapshotJson.integer(bonuses,"recovery",0,max),SnapshotJson.integer(bonuses,"armor",0,max));
+        PlayerState player=PlayerState.fromCheckpointState(SnapshotJson.required(root,"player"));
+        if(player.getProfession()!=profession||player.estaMorto())throw SnapshotJson.invalid("profissão ou vida");
+        RunSession result=new RunSession(region,profession,permanent,difficulty,new RunRandom(0),id,player);
+        result.bindCharacter(characterId);result.attemptSequence=SnapshotJson.longInteger(root,"attemptSequence",0,Long.MAX_VALUE);
+        result.arenaId=SnapshotJson.text(root,"arenaId");region.arena(result.arenaId);
+        result.arenaElapsed=SnapshotJson.nonNegative(root,"arenaElapsed");result.arenaComplete=SnapshotJson.flag(root,"arenaComplete");
+        result.completedArenas=SnapshotJson.integer(root,"completedArenas",0,region.arenas().size());result.arenaRewardClaimed=SnapshotJson.flag(root,"arenaRewardClaimed");
+        result.chestObols=SnapshotJson.integer(root,"chestObols",0,Integer.MAX_VALUE);result.soulHundredths=SnapshotJson.longInteger(root,"soulHundredths",0,(long)Integer.MAX_VALUE*100);
+        result.pendingForgeMaterials=SnapshotJson.integer(root,"pendingForgeMaterials",0,1);result.farmerQuest=SnapshotJson.enumValue(root,"farmerQuest",FarmerQuest.class);
+        result.progress.restoreCheckpointState(SnapshotJson.required(root,"progress"));result.statistics.restoreCheckpointState(SnapshotJson.required(root,"statistics"));
+        result.encounters.restoreCheckpointState(SnapshotJson.required(root,"encounters"));result.necromancy.restoreCheckpointState(SnapshotJson.required(root,"necromancy"));
+        result.fury.restoreCheckpointState(SnapshotJson.required(root,"fury"));result.farmerRandom.restoreCheckpointState(SnapshotJson.required(root,"farmerRandom"));
+        result.rewardRandom.restoreCheckpointState(SnapshotJson.required(root,"rewardRandom"));result.boonRandom.restoreCheckpointState(SnapshotJson.required(root,"boonRandom"));
+        JsonValue ranks=SnapshotJson.required(root,"ranks");if(!ranks.isObject()||ranks.size>Upgrade.values().length)throw SnapshotJson.invalid("dádivas");
+        result.ranks.clear();java.util.Set<String> seen=new java.util.HashSet<>();
+        for(JsonValue rank:ranks){
+            if(!seen.add(rank.name))throw SnapshotJson.invalid("dádiva repetida");Upgrade upgrade;
+            try{upgrade=Upgrade.valueOf(rank.name);}catch(IllegalArgumentException invalid){throw SnapshotJson.invalid("dádiva");}
+            result.ranks.put(upgrade,SnapshotJson.integer(ranks,rank.name,1,upgrade.maxRank));
+        }
+        JsonValue kills=SnapshotJson.required(root,"arenaKills");if(!kills.isObject()||kills.size>EnemyType.values().length)throw SnapshotJson.invalid("abates");
+        result.arenaKills.clear();seen.clear();
+        for(JsonValue count:kills){
+            if(!seen.add(count.name))throw SnapshotJson.invalid("abate repetido");EnemyType type;
+            try{type=EnemyType.valueOf(count.name);}catch(IllegalArgumentException invalid){throw SnapshotJson.invalid("tipo de inimigo");}
+            result.arenaKills.put(type,SnapshotJson.integer(kills,count.name,1,Integer.MAX_VALUE));
+        }
+        JsonValue draws=SnapshotJson.required(root,"variations");if(!draws.isObject()||draws.size>region.arenas().size())throw SnapshotJson.invalid("variações");
+        result.variations.clear();seen.clear();
+        for(JsonValue draw:draws){
+            if(!seen.add(draw.name)||region.arena(draw.name).kind()!=ArenaDefinition.Kind.COMBAT)throw SnapshotJson.invalid("variação da sala");
+            result.variations.put(draw.name,SnapshotJson.enumValue(draws,draw.name,ArenaVariation.class));
+        }
+        for(ArenaDefinition arena:region.arenas())if(arena.kind()==ArenaDefinition.Kind.COMBAT&&!result.variations.containsKey(arena.id()))throw SnapshotJson.invalid("variação ausente");
+        JsonValue choices=SnapshotJson.required(root,"rewardChoices");
+        if(choices.isNull())result.rewardChoices=null;
+        else{
+            if(!choices.isArray()||choices.size>3)throw SnapshotJson.invalid("escolhas de recompensa");
+            java.util.ArrayList<Upgrade> parsed=new java.util.ArrayList<>();
+            for(JsonValue choice:choices){
+                if(!choice.isString())throw SnapshotJson.invalid("escolha de recompensa");Upgrade upgrade;
+                try{upgrade=Upgrade.valueOf(choice.asString());}catch(IllegalArgumentException invalid){throw SnapshotJson.invalid("escolha de recompensa");}
+                if(parsed.contains(upgrade)||upgrade.rarity.ordinal()<BoonRarity.RARE.ordinal())throw SnapshotJson.invalid("recompensa repetida ou inválida");parsed.add(upgrade);
+            }
+            result.rewardChoices=java.util.List.copyOf(parsed);
+        }
+        result.validateCheckpointState();return result;
+    }
+    private void validateCheckpointState(){
+        if(statistics.checkpointEnded()||!statistics.checkpointRoomId().equals(arenaId)||statistics.checkpointKills()!=progress.kills()
+            ||Math.abs(statistics.checkpointElapsed()-progress.elapsed())>Math.max(.05f,progress.elapsed()*.0001f)
+            ||arenaElapsed>progress.elapsed()+.05f)throw SnapshotJson.invalid("estatísticas da tentativa");
+        int roomKills=0;for(int count:arenaKills.values())roomKills=Math.addExact(roomKills,count);
+        if(roomKills>progress.kills()||arenaComplete!=goalsMet()||arenaRewardClaimed&&!arenaComplete
+            ||!arenaComplete&&rewardChoices!=null||rewardChoices!=null&&arena().reward()!=ArenaReward.RARE_BOON)
+            throw SnapshotJson.invalid("progresso da sala");
+        if(!questEnabled()&&farmerQuest!=FarmerQuest.NOT_STARTED)throw SnapshotJson.invalid("promessa fora da região");
+    }
 }

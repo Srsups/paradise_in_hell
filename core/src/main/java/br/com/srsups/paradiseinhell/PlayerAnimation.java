@@ -3,18 +3,24 @@ package br.com.srsups.paradiseinhell;
 /** Cosmetic clocks only. Sampling a pose cannot fire a weapon or change combat cooldowns. */
 public final class PlayerAnimation {
     public static final float WALK_FRAME_SECONDS=.135f,IDLE_FRAME_SECONDS=.40f,TRANSITION_SECONDS=.08f;
-    private final String actor;
+    private final Profession profession;
+    private String actor,attackActor;
     private float elapsed,remaining,attackDuration,transition=TRANSITION_SECONDS;
     private EquippedArt.Pose current,previous;
     public PlayerAnimation(Profession profession){
-        actor=EquippedArt.actor(profession);current=previous=new EquippedArt.Pose(actor+"-idle",ActorAnimation.Direction.DOWN,0);
+        this.profession=profession;actor=attackActor=EquippedArt.actor(profession);
+        current=previous=new EquippedArt.Pose(actor+"-idle",ActorAnimation.Direction.DOWN,0);
     }
     public void advance(float delta){
         if(!Float.isFinite(delta)||delta<0)throw new IllegalArgumentException("Invalid animation time");
         elapsed=(elapsed+delta)%3600;remaining=Math.max(0,remaining-delta);transition=Math.min(TRANSITION_SECONDS,transition+delta);
     }
     public void attack(float attacksPerSecond){
+        attack(attacksPerSecond,profession.weapon);
+    }
+    public void attack(float attacksPerSecond,WeaponType weapon){
         if(!Float.isFinite(attacksPerSecond)||attacksPerSecond<=0)throw new IllegalArgumentException("Invalid attack rate");
+        attackActor=EquippedArt.actor(profession,weapon);
         attackDuration=Math.max(.20f,Math.min(.48f,.72f/attacksPerSecond));remaining=attackDuration;
     }
     public boolean attacking(){return remaining>0;}
@@ -24,11 +30,16 @@ public final class PlayerAnimation {
     public EquippedArt.Pose previous(){return previous;}
     public EquippedArt.Pose dominant(){return blend()<.5f?previous:current;}
     public void select(ActorAnimation motion,ActorAnimation.Direction facing,boolean guarding){
+        select(motion,facing,guarding,profession.weapon);
+    }
+    public void select(ActorAnimation motion,ActorAnimation.Direction facing,boolean guarding,WeaponType weapon){
+        actor=EquippedArt.actor(profession,weapon);
         String action;int frame;
         if(attacking()||guarding){action="attack";frame=attacking()?Math.min(3,(int)((1-remaining/attackDuration)*4)):0;}
         else if(motion.moving()){action="walk";frame=motion.frame(6,WALK_FRAME_SECONDS);}
         else {action="idle";frame=(int)(elapsed/IDLE_FRAME_SECONDS)%4;}
-        var next=new EquippedArt.Pose(actor+"-"+action,facing,frame);
+        // Q may choose the next tool while a swing is in flight; finish the body pose with its original tool.
+        var next=new EquippedArt.Pose((attacking()?attackActor:actor)+"-"+action,facing,frame);
         if(!next.clip().equals(current.clip())||next.direction()!=current.direction()){
             previous=dominant();transition=0;
         }

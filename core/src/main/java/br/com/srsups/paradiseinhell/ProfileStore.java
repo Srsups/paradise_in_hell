@@ -5,6 +5,8 @@ import java.io.IOException;
 public interface ProfileStore {
     CampaignProfile load() throws IOException;
     void save(CampaignProfile profile) throws IOException;
+    /** Terminal attempt records must not recover an active checkpoint from an older backup. */
+    default void saveTerminal(CampaignProfile profile)throws IOException {save(profile);}
 
     /** Reset only the selected character; file stores also invalidate their old backup. */
     default void reset(CampaignProfile empty) throws IOException { save(empty); }

@@ -1,5 +1,7 @@
 package br.com.srsups.paradiseinhell;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 /** Only active fighting after a room's exit unlocks contributes pressure. Menus never tick. */
 public final class DivineFury {
     public static final float GRACE = 20, WARNING = 15, LEVEL_SECONDS = 25;
@@ -8,6 +10,17 @@ public final class DivineFury {
     public float farmingSeconds() { return farming; }
     public float pressure() { return pressure; }
     public int level() { return level; }
+    public JsonValue checkpointState(){
+        JsonValue value=new JsonValue(JsonValue.ValueType.object);SnapshotJson.put(value,"farming",farming);
+        SnapshotJson.put(value,"pressure",pressure);SnapshotJson.put(value,"level",level);return value;
+    }
+    public void restoreCheckpointState(JsonValue value){
+        SnapshotJson.object(value,"farming","pressure","level");
+        farming=SnapshotJson.nonNegative(value,"farming");pressure=SnapshotJson.nonNegative(value,"pressure");
+        level=SnapshotJson.integer(value,"level",0,3);
+        int expected=Math.min(3,(int)(pressure/LEVEL_SECONDS)+(farming>=GRACE+WARNING?1:0));
+        if(level!=expected)throw SnapshotJson.invalid("fúria");
+    }
     public boolean warned() { return farming >= GRACE; }
     public void update(float delta, boolean exitUnlocked, float classRelativePower, float roomSeconds, int allyCount) {
         if (!Float.isFinite(delta) || delta < 0) throw new IllegalArgumentException("Invalid delta");

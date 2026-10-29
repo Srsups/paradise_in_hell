@@ -57,9 +57,10 @@ class CombatReadabilityTest {
         BoonPanel panel = new BoonPanel(run); assertTrue(panel.acquired().isEmpty()); assertEquals(1,panel.pageCount());
         for(Upgrade upgrade : Upgrade.values()) run.applyUpgrade(upgrade);
         run.applyUpgrade(Upgrade.FORCA);
-        panel.toggle(); assertTrue(panel.open()); assertEquals(15,panel.acquired().size());
-        assertEquals(2,run.rank(Upgrade.FORCA)); assertEquals(3,panel.pageCount());
-        panel.movePage(1); panel.movePage(1); panel.movePage(1); assertEquals(2,panel.page());
+        panel.toggle(); assertTrue(panel.open()); assertEquals(22,panel.acquired().size());
+        assertEquals(2,run.rank(Upgrade.FORCA)); assertEquals(4,panel.pageCount());
+        panel.movePage(1); panel.movePage(1); panel.movePage(1);panel.movePage(1); assertEquals(3,panel.page());
+        assertEquals(Upgrade.ECO_DO_ESTIGE,panel.acquired().getLast());
         panel.close(); assertFalse(panel.open());
         assertTrue(new BoonPanel(run.newAttempt()).acquired().isEmpty());
     }

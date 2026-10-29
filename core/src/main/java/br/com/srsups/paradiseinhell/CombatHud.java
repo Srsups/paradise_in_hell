@@ -29,9 +29,10 @@ public final class CombatHud {
         bar(shapes,72,505,176,12,player.getVida()/player.getVidaMaxima(),Color.SCARLET);
         bar(shapes,72,485,176,8,player.getEstaminaAtual()/player.getEstaminaMaxima(),
             player.isExausto()?Color.SALMON:Color.GREEN);
-        // Five segments communicate the standard dash's stamina cost without numeric clutter.
+        // Segments follow the actual capacity, including permanent stamina purchases.
         shapes.setColor(.08f,.10f,.16f,1);
-        for(int i=1;i<5;i++) shapes.rect(72+176*i/5f,485,2,8);
+        for(float spent=20;spent<player.getEstaminaMaxima();spent+=20)
+            shapes.rect(72+176*spent/player.getEstaminaMaxima(),485,2,8);
         bar(shapes,72,466,176,6,xpFraction(player),Color.CYAN);
         if(player.dashCooldownRemaining()>0) bar(shapes,155,438,93,3,1-player.dashCooldownRemaining(),Color.GOLD);
         shapes.end();
@@ -48,6 +49,9 @@ public final class CombatHud {
         font.getData().setScale(1);font.setColor(Color.WHITE);batch.end();
     }
     public static void goals(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,RunSession run) {
+        goals(batch,shapes,font,run,null);
+    }
+    public static void goals(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,RunSession run,GameControls controls) {
         if(run.isDemo()) {
             panel(shapes,817,491,129,35);
             batch.begin();font.getData().setScale(.95f);font.setColor(Color.LIGHT_GRAY);
@@ -69,7 +73,9 @@ public final class CombatHud {
         batch.begin();font.getData().setScale(.85f);
         if(run.arenaComplete()) {
             font.setColor(Color.GOLD);font.draw(batch,"Passagem liberada",647,514);
-            font.setColor(Color.WHITE);font.draw(batch,"E / ENTER",843,514);
+            font.setColor(Color.WHITE);
+            String keys=controls==null?"E / ENTER":controls.label(ControlAction.INTERACT);
+            font.getData().setScale(.78f);font.draw(batch,keys,835,514,103,8,true);
         } else {
             int column=0;
             for(EnemyType type:EnemyType.values()) {
@@ -89,6 +95,15 @@ public final class CombatHud {
         font.draw(batch,BossEncounter.NAME,538,517);font.setColor(Color.WHITE);
         font.draw(batch,"Fase "+(boss.enraged()?2:1),885,517);
         font.getData().setScale(1);font.setColor(Color.WHITE);batch.end();
+    }
+    /** Uses the same right-hand column as the boss bar, keeping the enlarged player HUD clear. */
+    public static void bossWarning(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,String cue,boolean locked) {
+        if(cue==null||cue.isEmpty())return;
+        HudLayout.Bounds bounds=HudLayout.WARNING;
+        panel(shapes,bounds.x(),bounds.y(),bounds.width(),bounds.height());
+        batch.begin();font.getData().setScale(.9f);font.setColor(locked?Color.SCARLET:Color.ORANGE);
+        font.draw(batch,cue,bounds.x()+12,bounds.top()-8,bounds.width()-24,com.badlogic.gdx.utils.Align.left,true);
+        font.setColor(Color.WHITE);font.getData().setScale(1);batch.end();
     }
     public static void panel(ShapeRenderer shapes,float x,float y,float width,float height) {
         Gdx.gl.glEnable(GL20.GL_BLEND);Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);

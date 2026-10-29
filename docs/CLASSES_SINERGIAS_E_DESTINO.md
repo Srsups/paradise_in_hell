@@ -9,7 +9,7 @@ liberar a saída. Os demais números abaixo são iniciais para playtests.
 
 Há oito saves, com quatro cartões por página. Setas esquerda/direita, PageUp/PageDown
 ou os botões Anterior/Próxima trocam a página; 1–4 escolhem o cartão da página atual.
-As profissões também têm duas páginas. A escolha pertence ao personagem e fica
+As nove profissões têm três páginas. A escolha pertence ao personagem e fica
 fixa após salvar; a primeira página mantém Caçador, Ferreiro, Vigilante e Apostador.
 
 | Nova profissão | Vida | Dano direto | Intervalo | Velocidade / dash | Habilidade |
@@ -20,9 +20,9 @@ fixa após salvar; a primeira página mantém Caçador, Ferreiro, Vigilante e Ap
 | Guerreiro | 150 | 7 | 0,70 s | 50 / 175 | Espada em área e escudo frontal pelo botão direito |
 
 As novas classes têm sorte 1×. Dádivas e atributos permanentes usam as mesmas
-fórmulas percentuais das classes anteriores. As artes e animações próprias continuam
-pendentes: o herói compartilha o atlas, os feitiços têm cores próprias e os aliados
-usam a animação dos inimigos em verde.
+fórmulas percentuais das classes anteriores. O elenco inicial já recebeu visuais
+e animações próprios; aliados usam a animação dos inimigos em verde. O acabamento
+das novas apresentações continua sujeito à revisão artística.
 
 No altar do refúgio, **L → N ou clique no texto do Necromante** compra o desbloqueio
 por **1.000 Almas do saldo compartilhado**. Moeda e `necromancerUnlocked`
@@ -37,25 +37,46 @@ O preço foi reduzido de 10.000 Óbolos para 1.000 Almas por decisão do autor.
 A duração real do desbloqueio ainda precisa de playtests. Economia, migração e
 relatórios: [ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).
 Use um slot vazio ou a opção Excluir na seleção de saves para reiniciar um personagem,
-com confirmação. Almas e acesso lendário permanecem compartilhados.
+com confirmação. Almas e acessos lendário/épico permanecem compartilhados.
 
-## Profissão planejada: Fazendeiro Épico
+## Fazendeiro Épico e desafio da Camponesa
 
-Confirmada em 13/10/2026: usa ancinho com estocadas e alterna para foice com
-corte de 360°. O acesso vem de desafio de NPC com chance de encontro por run.
-Essa é a nona profissão planejada; as oito profissões da tabela continuam sendo
-as implementadas. A categoria Épica da classe não torna suas armas/dádivas Épicas.
+Implementado no M5 em **23/10/2026**, com 290 testes unitários, OpenGL e pacote
+Windows aprovados; balanceamento humano pendente. É a nona profissão, com vida 120, movimento 57, dash 195 e sorte
+1×. A categoria Épica pertence à profissão, separada da raridade de armas/dádivas.
 
-Propostas do M5: ancinho com alcance/dano concentrados, foice mais lenta e melhor
-para grupos, troca por Q com recarga compartilhada e uma forja que beneficia
-as duas ferramentas permanentemente. Trocar não pode repetir golpes, acumular
-bônus ou reiniciar procs. Bases e poderes raros ainda não foram definidos.
+| Ferramenta | Dano base | Intervalo | Alcance comum / raro | Ataque |
+| --- | --- | --- | --- | --- |
+| Ancinho | 9 | 0,70 s | 52 / 64 | Estocada estreita na direção da mira |
+| Foice | 6 | 0,85 s | 34 / 44 | Corte circular de 360° |
 
-NPC, chance, condições/persistência da missão e desbloqueio compartilhado para
-novos personagens estão detalhados como propostas no
-[roteiro](ROTEIRO_DE_MELHORIAS.md#m5--npc-de-desafio-e-fazendeiro-épico).
-A profissão permanece fixa para o save: alternar ferramentas não muda classe.
-O catálogo também receberá novas dádivas gerais e exclusivas por região no M4.
+**Q** troca ferramentas somente em combate ativo. A recarga é compartilhada:
+trocar não concede golpe extra, reinicia procs ou duplica bônus. Dano e cadência
+seguem as bases da ferramenta ativa. Uma única forja permanente melhora ambas,
+com os bônus gerais de raridade e maior alcance. A ferramenta continua entre
+salas e volta ao ancinho em cada tentativa. A profissão permanece fixa no save.
+
+A **Camponesa das Cinzas** tem **10% de chance base por run**, ou **40% para o
+Apostador**. Um sorteio independente ocorre após liberar a passagem do Estige;
+o encontro opcional vem depois de eventuais recompensa e ferreiro, em segurança,
+sem avançar o relógio de combate.
+
+A aceitação é gravada antes de mudar o estado. Depois, derrotar um Carrasco
+concede uma semente garantida, independente do Fragmento de Forja e de seu limite
+regional. Vencer o Guardião do Submundo com a semente conclui o desafio, sem precisar
+reencontrar a NPC. Aceitação e semente persistem entre mortes, abandonos e sessões,
+mas pertencem apenas ao personagem que aceitou.
+
+Concluir libera o Fazendeiro para **novos personagens em todos os saves**; não
+muda classes existentes nem gasta Óbolos/Almas. A conclusão no perfil permite
+recuperar o acesso se a gravação global falhar. A exclusão apaga missões incompletas;
+uma conclusão pendente deve ter o acesso preservado antes de apagar o personagem.
+Detalhes: [MARCO_5_FAZENDEIRO.md](MARCO_5_FAZENDEIRO.md).
+J no refúgio consulta o diário; Tab mostra o objetivo da missão aceita na tentativa.
+
+O [M4](MARCO_4_DADIVAS_E_ALTAR.md) ampliou o catálogo para 22 dádivas, com seis
+geralistas novas e Eco do Estige exclusivo do Submundo. Novas regiões terão opções
+próprias quando forem produzidas.
 
 ## Armas e forja permanente
 
@@ -131,7 +152,7 @@ participam do sorteio de reviver.
 
 ## Dádivas e três combinações para testar
 
-O catálogo passa de 12 para **15 dádivas**. As três novas são Raras, com três níveis:
+Este primeiro lote ampliou de 12 para 15; o M4 posterior chegou a **22 dádivas**. As três novas são Raras, com três níveis:
 
 | Dádiva | Efeito por nível | Recarga |
 | --- | --- | --- |
@@ -192,6 +213,11 @@ Entrar na próxima sala limpa a pressão; a dificuldade normal de tempo total
 continua. O chefe e a demo de cinco minutos não acumulam fúria.
 
 ## Verificação
+
+Além das verificações da base abaixo, o M5 passou em 290 testes unitários,
+integração OpenGL do fluxo completo e verificação nativa do pacote Windows.
+Missão, falhas de gravação, exclusão segura, criação do Fazendeiro e ferramentas
+foram cobertas. Equilíbrio, animações e ritmo continuam sujeitos a partidas humanas.
 
 Os testes de regressão verificam custos, falha de gravação, migração, oito arquivos,
 bloqueio de profissão, efeitos nas oito classes, recargas, dano contínuo, paredes,

@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-23",
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "requests": [
+    {
+      "actor": "cacador",
+      "file": "cacador-reactions-original.png",
+      "reference": "tools/art-sources/polish/cacador-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean man, short dark beard, bronze crested helmet with teal crest, ivory tunic, dark teal cloak, brown boots and bracers, ONE wooden BOW integrated in hands; quiver stays on back."
+    },
+    {
+      "actor": "ferreiro",
+      "file": "ferreiro-reactions-original.png",
+      "reference": "tools/art-sources/polish/ferreiro-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Muscular Mediterranean male blacksmith protagonist, short dark beard, burnt-orange leather apron over ivory tunic, bronze bracers and brown boots, ONE short broad bronze SWORD integrated in hand."
+    },
+    {
+      "actor": "vigilante",
+      "file": "vigilante-reactions-original.png",
+      "reference": "tools/art-sources/polish/vigilante-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male pistol vigilante, short dark beard, dark blue coat, burgundy sash, bronze shoulder guard and brown boots, ONE small bronze/iron PISTOL held in hand."
+    },
+    {
+      "actor": "apostador",
+      "file": "apostador-reactions-original.png",
+      "reference": "tools/art-sources/polish/apostador-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male lucky brawler, short dark beard, loose ivory shirt, moss-green sash, brown trousers, bronze wrist wraps, bare closed FISTS only, NO weapon."
+    },
+    {
+      "actor": "feiticeira",
+      "file": "feiticeira-reactions-original.png",
+      "reference": "tools/art-sources/polish/feiticeira-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Copy EXACT spellcaster identity, gender, face and outfit from reference: purple/indigo robes and cape, bronze trim, ONE short magical WAND firmly held in hand; preserve all current costume details."
+    },
+    {
+      "actor": "sacerdote",
+      "file": "sacerdote-reactions-original.png",
+      "reference": "tools/art-sources/polish/sacerdote-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male priest, short dark beard, ivory robes and wine-red stole with bronze clasp, ONE purple CURSE TALISMAN with red ribbons held in hand."
+    },
+    {
+      "actor": "necromante",
+      "file": "necromante-reactions-original.png",
+      "reference": "tools/art-sources/polish/necromante-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male necromancer, short dark beard, dark forest-green cloak over charcoal robes with bronze clasps and skull belt charm, ONE green-topped wooden STAFF held in hand. Keep exact outfit from reference, do not add a new face-covering hood."
+    },
+    {
+      "actor": "guerreiro",
+      "file": "guerreiro-reactions-original.png",
+      "reference": "tools/art-sources/polish/guerreiro-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male shield warrior, short dark beard, bronze helmet with red crest, bronze cuirass and ivory tunic, red sash, ONE bronze SWORD in right hand AND EXACTLY ONE round bronze SHIELD on left forearm. Never add another shield to back/waist/other hand."
+    },
+    {
+      "actor": "farmer-rake",
+      "file": "farmer-rake-reactions-original.png",
+      "reference": "tools/art-sources/m5/farmer-rake-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Mediterranean male farmer protagonist, short dark beard, olive skin, broad straw hat with moss-green band, rolled-sleeve ivory linen shirt, green waist sash, brown work trousers and boots, ONE brown wooden RAKE with bronze crossbar and short teeth firmly held; NO scythe."
+    },
+    {
+      "actor": "farmer-scythe",
+      "file": "farmer-scythe-reactions-original.png",
+      "reference": "tools/art-sources/m5/farmer-scythe-walk-original.png",
+      "columns": 7,
+      "rows": 5,
+      "hurtColumns": [
+        0,
+        1,
+        2
+      ],
+      "deathColumns": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "directions": [
+        "down",
+        "up",
+        "left",
+        "up-left",
+        "down-left"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production pixel-art HURT and DEATH animation sprite sheet for the original Greek mythology top-down roguelite Paradise in Hell. The attached image is an IDENTITY, OUTFIT, PROPORTIONS and CAMERA reference only; do NOT repeat its walking poses. Keep exactly the same actor's face, hair, clothes, equipment, colors and rendered low-resolution pixel style. Crisp deliberate pixel clusters, dark readable outlines, orthographic three-quarter top-down gameplay camera; no soft illustration, vector placeholders or 3D render. ONE truly transparent RGBA PNG, EXACT canvas1792x1280, invisible SEVEN-column FIVE-row grid,35 separate256x256 cells. Rows in exact order:1 DOWN/front toward viewer with face and chest;2 UP/back away from viewer;3 LEFT/west true profile;4 UP-LEFT/northwest true45degree rear-left with back visible;5 DOWN-LEFT/southwest true45degree front-left with face/chest visible, NEVER another side-profile. Engine mirrors right views; NO right-facing rows. In EVERY row, columns1–3 HURT, columns4–7 DEATH. HURT3frames: first a quick physical flinch/recoil from being hit, second slight torso compression/shoulders pulled back expressing pain, third recovering to upright ready stance. These are damage reactions, not attacks, blocking, walking or idle copies. DEATH4frames: losing balance and knees bending, dropping onto one knee while torso slumps, collapsing/rolling toward floor, finally whole body lying clearly defeated on ground with head and limbs lowered. FINAL frame must show a complete visible non-graphic fallen body, NOT upright or kneeling, NOT vanished, NOT a faint ghost. No gore/blood, damage numbers, hit sparks, skull icons or interface. Equipment remains physically attached/held and drawn into the full-body pose; do not separate/duplicate weapons. Keep body/gear size CONSTANT across all35cells, especially lying bodies: a fallen actor is naturally wider/shorter but never shrunk or enlarged to fill height. Fixed world root in each cell: standing feet at82%cellheight, headcenter50%width30%height, waist50%width56%height. Collapse toward same root, corpse lies around lower half of cell; all body/gear remains inside own cell with at least8%transparent gutters. No walking translation, camera zoom, random drift, duplicated limbs or extra equipment. NO scene, floor texture, ground shadow, text, numbers, grid lines, label, watermark, colored background, checkerboard or matte halos. Background and gutters actual alpha zero. Exact5rows and7columns. Make posture changes smooth and anatomically readable. Exact actor to retain: Same Mediterranean farmer, short dark beard, olive skin, straw hat with green band, ivory rolled-sleeve shirt, green sash, brown trousers and boots, ONE brown wooden SCYTHE with ONE silver-bronze crescent harvest blade held firmly; NO rake."
+    }
+  ]
+}

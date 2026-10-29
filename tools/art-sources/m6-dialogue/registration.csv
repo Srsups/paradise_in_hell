@@ -1,0 +1,13 @@
+actor,expression,source_x,source_y,crop_width,crop_height,dest_x,dest_y,draw_width,draw_height
+charon,neutral,0,0,627,605,4,13,248,239
+charon,amused,627,0,627,605,4,13,248,239
+charon,concerned,0,627,627,605,4,13,248,239
+charon,pleased,627,627,627,605,4,13,248,239
+blacksmith,neutral,0,0,627,605,4,13,248,239
+blacksmith,amused,627,0,627,605,4,13,248,239
+blacksmith,concerned,0,627,627,605,4,13,248,239
+blacksmith,pleased,627,627,627,605,4,13,248,239
+camponesa,neutral,0,0,627,605,4,13,248,239
+camponesa,amused,627,0,627,605,4,13,248,239
+camponesa,concerned,0,627,627,605,4,13,248,239
+camponesa,pleased,627,627,627,605,4,13,248,239

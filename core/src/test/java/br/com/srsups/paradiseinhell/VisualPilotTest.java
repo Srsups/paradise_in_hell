@@ -25,9 +25,20 @@ class VisualPilotTest {
         playback.instant(true);assertTrue(playback.complete());assertEquals(0,playback.line());
         assertEquals(DialoguePlayback.Action.ADVANCED,playback.accept());
         assertEquals("É claro.",playback.visibleText());
-        playback.instant(false);assertFalse(playback.complete());
+        playback.instant(false);assertTrue(playback.complete());assertEquals("É claro.",playback.visibleText());
         playback.advance(30);assertTrue(playback.complete());assertEquals(1,playback.line());
         assertThrows(IllegalArgumentException.class,()->playback.advance(Float.NaN));
+    }
+    @Test void turningOffInstantTextKeepsTheReadLineButTheNextLineTypesNormally() {
+        DialoguePlayback playback=new DialoguePlayback(List.of(
+            new DialogueLine("Caronte","Uma fala já lida.",DialoguePortrait.CHARON_AMUSED),
+            new DialogueLine("Protagonista","Outra fala.")),true);
+        assertEquals(2,playback.lineCount());assertEquals("Uma fala já lida.",playback.visibleText());
+        playback.instant(false);assertTrue(playback.complete());assertEquals("Uma fala já lida.",playback.visibleText());
+        assertEquals(DialoguePlayback.Action.ADVANCED,playback.accept());assertEquals("",playback.visibleText());
+        playback.advance(2f/42);assertEquals("Ou",playback.visibleText());
+        playback.instant(true);assertEquals("Outra fala.",playback.visibleText());
+        playback.instant(false);assertEquals("Outra fala.",playback.visibleText());assertEquals(1,playback.line());
     }
     @Test void cancellingAndReopeningDoesNotCreditOrMarkTheNarrativeEvent() {
         CampaignProfile profile=new CampaignProfile();

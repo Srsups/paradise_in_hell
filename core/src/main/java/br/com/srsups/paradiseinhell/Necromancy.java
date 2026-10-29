@@ -3,6 +3,7 @@ package br.com.srsups.paradiseinhell;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
+import com.badlogic.gdx.utils.JsonValue;
 
 /** Allies live for one attempt, carry between rooms, and never count as enemy kills or XP. */
 public final class Necromancy {
@@ -16,6 +17,9 @@ public final class Necromancy {
             strength = corpse.strength();
             damage = Math.min(40, 4 * (float) Math.sqrt(strength)) * player.getWeaponRarity().damageMultiplier;
             remaining = player.getWeaponRarity() == WeaponRarity.RARE ? 75 : 60;
+        }
+        private Ally(float strength,float damage,float remaining,float cooldown){
+            super(0,0);this.strength=strength;this.damage=damage;this.remaining=remaining;this.cooldown=cooldown;
         }
     }
     private final List<Ally> allies = new ArrayList<>();
@@ -69,4 +73,29 @@ public final class Necromancy {
         allies.removeIf(ally -> ally.remaining <= 0);
     }
     public void clear() { allies.clear(); processed.clear(); }
+    public JsonValue checkpointState(){
+        JsonValue root=new JsonValue(JsonValue.ValueType.object),values=new JsonValue(JsonValue.ValueType.array);
+        root.addChild("random",RunRandom.checkpoint(random));
+        for(Ally ally:allies){
+            JsonValue value=new JsonValue(JsonValue.ValueType.object);
+            SnapshotJson.put(value,"strength",ally.strength);SnapshotJson.put(value,"damage",ally.damage);
+            SnapshotJson.put(value,"remaining",ally.remaining);SnapshotJson.put(value,"cooldown",ally.cooldown);values.addChild(value);
+        }
+        root.addChild("allies",values);return root;
+    }
+    public void restoreCheckpointState(JsonValue root){
+        SnapshotJson.object(root,"random","allies");JsonValue values=SnapshotJson.array(root,"allies");
+        if(values.size>MAX_ALLIES)throw SnapshotJson.invalid("aliados");
+        clear();
+        for(JsonValue value:values){
+            SnapshotJson.object(value,"strength","damage","remaining","cooldown");
+            float strength=SnapshotJson.number(value,"strength",Float.MIN_VALUE,Float.MAX_VALUE);
+            float damage=SnapshotJson.number(value,"damage",Float.MIN_VALUE,Float.MAX_VALUE);
+            float remaining=SnapshotJson.number(value,"remaining",Float.MIN_VALUE,75);
+            float cooldown=SnapshotJson.number(value,"cooldown",0,.9f);
+            allies.add(new Ally(strength,damage,remaining,cooldown));
+        }
+        RunRandom restored=RunRandom.fromCheckpointState(SnapshotJson.required(root,"random"));
+        if(random instanceof RunRandom resumable)resumable.restoreState(restored.state());
+    }
 }

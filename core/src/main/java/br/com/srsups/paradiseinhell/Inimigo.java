@@ -17,12 +17,23 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     private EquippedArt.Body archerBody;
     private float releaseAnimation;
     private String visualKind;
+    private ReactionArt.Body reactionBody;
+    private final ActorReaction reaction=new ActorReaction();
+    private ActorAnimation.Direction reactionDirection=ActorAnimation.Direction.DOWN;
+    public ActorReaction reaction(){return reaction;}
+    public String deathActor(){return visualKind!=null?visualKind:isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);}
+    public ActorAnimation.Direction deathDirection(){return reaction.active()?reactionDirection:currentDirection();}
+    public float drawBodySize(){return size+2;}
+    private ActorAnimation.Direction currentDirection(){
+        return archerActing()?ActorAnimation.facing(archer.aimX()-centerX(),archer.aimY()-centerY()):motion.dominantDirection();
+    }
     public String visualKind() { return visualKind; }
     private void refreshBody() {
         if(pilot==null)return;
         String kind=isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);
         if(!kind.equals(visualKind)){
             visualKind=kind;body=pilot.expanded().body(kind);
+            reactionBody=pilot.reactions().body(kind);reaction.clear();
             archerBody=isArcher()?pilot.equipped().body("archer"):null;releaseAnimation=0;
         }
     }
@@ -87,6 +98,7 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public int getXpDrop() { return isArcher() ? ArcherAttack.XP : type.xp; }
     public void update(float delta, EnemyNavigation navigation) { update(delta, navigation, true); }
     public void update(float delta, EnemyNavigation navigation, boolean visible) {
+        reaction.advance(delta);
         stateTime += delta; attackTimer -= delta; flashTimer -= delta;releaseAnimation=Math.max(0,releaseAnimation-delta);
         float beforeX=x,beforeY=y;
         if (estaMorto()) { if (archer != null) archer.clear(); return; }
@@ -107,11 +119,18 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
         return archerBody.pose("attack",facing,progress);
     }
     public SpriteHitbox hitbox() {
+        if(usesPilot()&&reaction.state()==ActorReaction.State.HURT)
+            return reactionBody.hitbox(reaction,reactionDirection,centerX(),centerY(),drawBodySize());
         if(archerBody!=null)return archerBody.hitbox(archerPose(),centerX(),centerY(),size+2);
         if(usesPilot())return body.hitbox(motion,centerX(),centerY(),size+2);
         return hitboxes[animation.getKeyFrameIndex(stateTime)].place(x - (size - 16) / 2, y - (size - 16) / 2, size, size, false, false);
     }
     public void draw(SpriteBatch batch) {
+        if(usesPilot()&&reaction.active()) {
+            batch.setColor(reaction.state()==ActorReaction.State.HURT&&flashTimer>0?Color.SALMON:Color.WHITE);
+            reactionBody.draw(batch,reaction,reactionDirection,centerX(),centerY(),drawBodySize());
+            batch.setColor(Color.WHITE);return;
+        }
         batch.setColor(flashTimer > 0 ? Color.SALMON
             : type == EnemyType.FAST && FastPursuit.speed(stateTime,pursuitOffset) == FastPursuit.RECOVERY_SPEED ? Color.TEAL : tint);
         if(usesPilot()) {
@@ -127,7 +146,14 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public boolean podeAtacar() { return attackTimer <= 0; }
     public void resetarCooldownAtaque() { attackTimer = 1; }
     public float getDano() { return damage; }
-    public void sofrerDano(float amount) { vida -= amount; flashTimer = 0.15f; }
+    public void sofrerDano(float amount) {
+        float before=vida;vida -= amount;flashTimer = 0.15f;
+        if(before>0&&amount>0) {
+            var direction=deathDirection();
+            if(estaMorto()){if(reaction.die())reactionDirection=direction;}
+            else if(reaction.hurt())reactionDirection=direction;
+        }
+    }
     public boolean estaMorto() { return vida <= 0; }
     public void dispose() { if (archer != null) archer.clear(); }
 }

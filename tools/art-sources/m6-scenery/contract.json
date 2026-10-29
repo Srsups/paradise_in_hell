@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-25",
+  "themes": [
+    "refuge",
+    "styx",
+    "ashes",
+    "shadows",
+    "guardian"
+  ],
+  "themeSource": "{theme}-tiles-original.png",
+  "themeSourceGrid": [
+    3,
+    3
+  ],
+  "themeRows": {
+    "0": [
+      "floor-0",
+      "floor-1",
+      "floor-2"
+    ],
+    "1": [
+      "obstacle-0",
+      "obstacle-1",
+      "obstacle-2"
+    ],
+    "2": [
+      "floor-3",
+      "floor-4",
+      "floor-5"
+    ]
+  },
+  "baseFloorUse": ">=95%",
+  "decoratedFloorUse": "<=5%",
+  "obstacleFootprint": "full solid square, at least95% visible stone coverage; no tall column/invisible corners",
+  "tileSize": [
+    64,
+    64
+  ],
+  "tileOpaque": true,
+  "previewKeys": [
+    "route-ashes",
+    "route-shadows",
+    "route-guardian"
+  ],
+  "previewSize": [
+    320,
+    180
+  ],
+  "previewOpaque": true,
+  "passageSourceGrid": [
+    4,
+    1
+  ],
+  "passageKeys": [
+    "passage-0",
+    "passage-1",
+    "passage-2",
+    "passage-3"
+  ],
+  "passageSize": [
+    96,
+    96
+  ],
+  "passageTransparent": true,
+  "generatedAssets": 9,
+  "regions": 52,
+  "atlasSize": [
+    1024,
+    1024
+  ],
+  "rgbaBytes": 4194304,
+  "processing": "crop, nearest-neighbor reduction, technical packing; no repainting of artwork"
+}

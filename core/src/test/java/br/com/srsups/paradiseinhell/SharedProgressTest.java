@@ -79,11 +79,11 @@ class SharedProgressTest {
     }
     @Test void unreadableOrNewerFilesArePreservedAndCannotBeSpentOrOverwritten() throws Exception {
         Path file=directory.resolve("shared-progress.json"),backup=directory.resolve("shared-progress.json.bak");
-        Files.writeString(file,new SharedProgress().toJson().replace("\"version\": 1","\"version\": 2"));
+        Files.writeString(file,new SharedProgress().toJson().replace("\"version\": 2","\"version\": 3"));
         Files.writeString(backup,new SharedProgress().toJson());
         SharedProgressService service=new SharedProgressService(new FileSharedProgressStore(file));
         service.progress().credit(1000); assertFalse(service.unlockNecromancer()); assertFalse(service.retrySave());
-        assertTrue(Files.readString(file).contains("\"version\": 2")); assertFalse(service.error().isEmpty());
+        assertTrue(Files.readString(file).contains("\"version\": 3")); assertFalse(service.error().isEmpty());
         Files.writeString(file,"broken"); Files.writeString(backup,"also broken");
         service=new SharedProgressService(new FileSharedProgressStore(file));
         service.settle(run(3),RunOutcome.DEATH,0);

@@ -22,14 +22,27 @@ public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
         boolean audioSmoke=Arrays.asList(args).contains("--audio-smoke-test");
-        createApplication(audioSmoke || Arrays.asList(args).contains("--smoke-test"),audioSmoke);
+        boolean displaySmoke=Arrays.asList(args).contains("--display-smoke-test");
+        createApplication(audioSmoke || displaySmoke || Arrays.asList(args).contains("--smoke-test"),audioSmoke,displaySmoke);
     }
 
-    private static Lwjgl3Application createApplication(boolean smokeTest,boolean audioSmoke) {
+    private static Lwjgl3Application createApplication(boolean smokeTest,boolean audioSmoke,boolean displaySmoke) {
         Main game = smokeTest ? new Main(ProfileStore.memory()) {
             private int frames;
+            private boolean rendering;
             @Override public void render() {
+                if(rendering)return;
+                rendering=true;
+                try {
                 super.render();
+                if(frames==1) {
+                    Lwjgl3WindowPlacement placement=new Lwjgl3WindowPlacement();
+                    var monitor=placement.display();var window=placement.window();
+                    if(monitor.bounds().width()<=0||monitor.workArea().height()<=0||window.width()<=0)
+                        throw new IllegalStateException("Native monitor geometry is unavailable");
+                    System.out.println("PACKAGED_MONITOR_SMOKE_OK: native monitor, work area and logical window geometry");
+                    if(displaySmoke)verifyDisplayModes();
+                }
                 if (frames == 2) setScreen(new GameScreen(this));
                 if (frames == 4) {
                     RegionDefinition region = RegionDefinition.fromJson(
@@ -79,11 +92,30 @@ public class Lwjgl3Launcher {
                     session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.IMPACTO);
                     setScreen(new GameScreen(this, session));
                 }
+                if(frames==27) setScreen(br.com.srsups.paradiseinhell.FarmerQuestScreen.journal(this));
                 if(frames==28) {
                     RunSession session=RunSession.demo(Profession.SACERDOTE);
                     session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.CADENCIA); session.advance(4); session.end();
                     br.com.srsups.paradiseinhell.RunReport report=shared().settle(session,br.com.srsups.paradiseinhell.RunOutcome.ABANDONED,0);
                     setScreen(new br.com.srsups.paradiseinhell.RunReportScreen(this,report,()->new RefugeScreen(this)));
+                }
+                if(frames==29) {
+                    setScreen(new br.com.srsups.paradiseinhell.VideoSettingsScreen(this,
+                        ()->new br.com.srsups.paradiseinhell.MenuScreen(this)));
+                    getScreen().render(0); // Render bundled video UI without changing the diagnostic window's mode.
+                    setScreen(new br.com.srsups.paradiseinhell.OpeningScreen(this,
+                        profiles().profile().characterId(),false,()->new br.com.srsups.paradiseinhell.MenuScreen(this)));
+                    getScreen().render(.05f);
+                    System.out.println("PACKAGED_OPENING_SMOKE_OK: layered atlas, timeline and subtitles");
+                    setScreen(new br.com.srsups.paradiseinhell.ControlsSettingsScreen(this,
+                        ()->new br.com.srsups.paradiseinhell.MenuScreen(this)));
+                    getScreen().render(0);
+                    System.out.println("PACKAGED_CONTROLS_SMOKE_OK: settings panel, default bindings and memory preferences");
+                    setScreen(new br.com.srsups.paradiseinhell.VideoSettingsScreen(this,
+                        ()->new br.com.srsups.paradiseinhell.MenuScreen(this),true));
+                    getScreen().render(0);
+                    System.out.println("PACKAGED_HUD_SMOKE_OK: scale panel, sample indicators and memory preferences");
+                    verifyCheckpoint();
                 }
                 if(audioSmoke && frames==31) {
                     if(!Gdx.audio.getClass().getSimpleName().contains("OpenAL") || !audio().available())
@@ -101,14 +133,53 @@ public class Lwjgl3Launcher {
                     System.out.println("PACKAGED_AUDIO_SMOKE_OK: 24 native effects, streaming music, audio menu, bundled assets");
                 }
                 if (++frames >= (audioSmoke?120:30)) Gdx.app.exit();
+                } finally {rendering=false;}
             }
-        } : new Main();
+            private void verifyCheckpoint() {
+                if(!createCharacter(Profession.CACADOR,br.com.srsups.paradiseinhell.GameDifficulty.MEDIUM))
+                    throw new IllegalStateException("Checkpoint diagnostic character was not created");
+                RunSession run=RunSession.campaign(campaignRegion(),Profession.CACADOR);
+                profiles().prepareRun(run);
+                if(!profiles().saveCheckpoint(run,br.com.srsups.paradiseinhell.RunCheckpoint.Stage.ROOM_START))
+                    throw new IllegalStateException("Checkpoint diagnostic could not save its memory profile");
+                var loaded=br.com.srsups.paradiseinhell.CampaignProfile.fromJson(profiles().profile().toJson());
+                var restored=loaded.checkpoint().restore(campaignRegion());
+                if(!restored.id().equals(run.id())||restored.attemptSequence()!=1)
+                    throw new IllegalStateException("Checkpoint JSON did not round-trip");
+                setScreen(new br.com.srsups.paradiseinhell.ResumeRunScreen(this));getScreen().render(0);
+                resumeCampaign();getScreen().render(0);
+                finishRun(restored,br.com.srsups.paradiseinhell.RunOutcome.ABANDONED);
+                if(profiles().profile().checkpoint()!=null||profiles().profile().pendingSettlement()!=null
+                    ||profiles().profile().attempts()!=1)
+                    throw new IllegalStateException("Checkpoint diagnostic did not complete its settlement");
+                setScreen(new br.com.srsups.paradiseinhell.CheckpointSaveErrorScreen(this,"Diagnóstico em memória",()->{}));
+                getScreen().render(0);
+                System.out.println("PACKAGED_CHECKPOINT_SMOKE_OK: memory JSON, resume screens and terminal settlement");
+            }
+        } : new Main(new br.com.srsups.paradiseinhell.GdxVideoBackend(new Lwjgl3WindowPlacement()));
         Lwjgl3ApplicationConfiguration configuration = getDefaultConfiguration();
         if (smokeTest) {
             configuration.setInitialVisible(false);
             configuration.disableAudio(!audioSmoke);
         }
         return new Lwjgl3Application(game, configuration);
+    }
+
+    /** Hidden diagnostic, with no preference writes. Fullscreen requests the desktop's existing native mode. */
+    private static void verifyDisplayModes() {
+        var backend=new br.com.srsups.paradiseinhell.GdxVideoBackend(new Lwjgl3WindowPlacement());
+        var original=backend.snapshot();
+        try {
+            for(var mode:br.com.srsups.paradiseinhell.VideoSettings.Mode.values()) {
+                var target=backend.adapt(original.settings().withMode(mode));
+                if(!backend.apply(target)||!backend.matches(target))
+                    throw new IllegalStateException("Native display-mode check failed: "+mode);
+            }
+        } finally {
+            if(!backend.restore(original)||!backend.matches(original.settings()))
+                throw new IllegalStateException("Native display-mode check could not restore the original window");
+        }
+        System.out.println("PACKAGED_DISPLAY_MODES_SMOKE_OK: windowed, borderless, native fullscreen and restored window");
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
@@ -125,6 +196,7 @@ public class Lwjgl3Launcher {
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
 
         configuration.setWindowedMode(960, 540);
+        configuration.setWindowSizeLimits(640,360,-1,-1);
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");

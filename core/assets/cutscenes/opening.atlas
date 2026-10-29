@@ -1,0 +1,110 @@
+opening.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+background-home
+  rotate: false
+  xy: 1, 1
+  size: 960, 540
+  orig: 960, 540
+  offset: 0, 0
+  index: -1
+background-styx
+  rotate: false
+  xy: 963, 1
+  size: 960, 540
+  orig: 960, 540
+  offset: 0, 0
+  index: -1
+foreground-home
+  rotate: false
+  xy: 1, 543
+  size: 960, 540
+  orig: 960, 540
+  offset: 0, 0
+  index: -1
+foreground-styx
+  rotate: false
+  xy: 963, 543
+  size: 960, 540
+  orig: 960, 540
+  offset: 0, 0
+  index: -1
+hero-idle
+  rotate: false
+  xy: 1, 1085
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+hero-reach
+  rotate: false
+  xy: 435, 1085
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+wife-idle
+  rotate: false
+  xy: 869, 1085
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+wife-resist
+  rotate: false
+  xy: 1303, 1085
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+zeus-idle
+  rotate: false
+  xy: 1, 1567
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+zeus-cast
+  rotate: false
+  xy: 435, 1567
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+charon
+  rotate: false
+  xy: 869, 1567
+  size: 432, 480
+  orig: 432, 480
+  offset: 0, 0
+  index: -1
+portal-0
+  rotate: false
+  xy: 1737, 1085
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+portal-1
+  rotate: false
+  xy: 1737, 1343
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+portal-2
+  rotate: false
+  xy: 1737, 1601
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+portal-3
+  rotate: false
+  xy: 1303, 1567
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1

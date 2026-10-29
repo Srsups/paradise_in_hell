@@ -11,6 +11,7 @@ public class Projetil {
     private final TextureRegion textura;
     private final WeaponType weapon;
     private PilotArt visuals;
+    public WeaponBonus bonus=new WeaponBonus(0);
     public void visuals(PilotArt value) {visuals=value;}
     public float beforeX, beforeY;
     private float angulo;
@@ -31,6 +32,7 @@ public class Projetil {
     }
     public void configure(PlayerState player) {
         dano = player.getDano();
+        bonus=player.boons().beginAttack();
         if (player.getWeaponRarity() == WeaponRarity.RARE && (weapon == WeaponType.BOW || weapon == WeaponType.PISTOL)) { maxHits = 2; ricochet = player.getWeapon() == WeaponType.PISTOL; }
     }
     public float hitRadius() { return Math.min(width, height) / 2; }

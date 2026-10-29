@@ -24,7 +24,7 @@ Almas têm recompensa determinística e não recebem multiplicador de sorte.
 
 Socos atingem inimigos comuns, mini-boss e chefe. Não geram projéteis. Dádivas
 e compras de atributos mantêm seus bônus percentuais sobre a base da profissão.
-A animação usa uma forma curta na direção da mira; arte própria ainda está pendente.
+A animação usa corpo com punhos integrados e sprites de impacto na direção da mira.
 
 Um Fragmento de Forja fortalece os golpes permanentemente no save: +25% de dano base,
 +10% de taxa de ataque e alcance 34, mantendo um alvo por soco. O jogador
@@ -81,8 +81,8 @@ coletada e uma escolha por tentativa, substituindo +20% em até três escolhas.
 | Categoria | Dádivas atuais |
 | --- | --- |
 | Comum | Força de Hércules, Celeridade de Ártemis, Saúde do Minotauro, Sandálias de Hermes, Cura de Apolo |
-| Rara | Resistência de Ares, Colheita de Deméter, Favor de Hades, Faísca de Zeus, Brasa de Héstia, Martelo de Hefesto |
-| Épica | Sabedoria de Atena, Égide, Correnteza de Poseidon |
+| Rara | Resistência de Ares, Colheita de Deméter, Favor de Hades, Faísca de Zeus, Brasa de Héstia, Martelo de Hefesto, Amparo de Héstia, Furor de Ares, Fôlego de Íris, Rastro de Deméter, Emboscada de Ártemis |
+| Épica | Sabedoria de Atena, Égide, Correnteza de Poseidon, Convergência de Hefesto (requer queimadura/Sacerdote), Eco do Estige (Submundo) |
 | Mitológica | Favor de Asclépio: uma ressurreição com metade da vida |
 
 A tela mostra o nome e a cor da categoria. Ao subir de nível, sorteia até três
@@ -104,24 +104,26 @@ as chances das próximas opções. Peso final = pesoBase × sorte^índice,
 com índices 0, 1, 2 e 3, respectivamente. Esse aumento favorece os poderes
 mais raros de forma acentuada no Apostador e deve ser ajustado com partidas completas.
 
-Sabedoria de Atena ocupa uma das três opções Épicas do catálogo. No primeiro
-cartão, com catálogo inicial e sorte 1, a chance é 6% / 3 = 2%; antes era
-23% / 7 ≈ 3,3%. Para o Apostador, é (96 / 322) / 3 ≈ 9,9%:
-a sorte continua favorecendo os efeitos mais fortes, mesmo após a mudança de categoria.
+Com o M4, Atena divide a categoria com a origem regional e sinergias elegíveis.
+No primeiro cartão do Submundo, sem Convergência, há quatro Épicas:
+6% / 4 = 1,5% (sorte 1) ou (96/322)/4 ≈ 7,45% (Apostador).
+Com queimadura/Sacerdote, cinco: 1,2% e aproximadamente 5,96%.
+Na demo sem Convergência, permanecem três: 2% e aproximadamente 9,9%.
 Esses valores mudam conforme opções saem do conjunto. Depois de escolhida, Atena
 deixa de participar pelo resto da tentativa. O bônus afeta apenas XP futura,
 não moedas. Matemática e cenários: [BALANCEAMENTO_E_SAVES.md](BALANCEAMENTO_E_SAVES.md#sabedoria-de-atena-e-a-curva-de-xp).
 
-## Catálogo regional e profissão Épica planejados
+## Catálogo regional implementado e profissão Épica planejada
 
-O M4 do [roteiro](ROTEIRO_DE_MELHORIAS.md) propõe seis novas dádivas gerais e
-uma exclusiva do Submundo no primeiro lote. Cada região futura terá sua própria
+O [M4 implementado em 22/10/2026](MARCO_4_DADIVAS_E_ALTAR.md) trouxe seis novas
+dádivas gerais e Eco do Estige exclusivo do Submundo. Cada região futura terá sua própria
 opção. A restrição define onde sortear; um poder já obtido acompanha a tentativa
 nas regiões seguintes. Sorte, limites de rank e ausência de duplicatas permanecem.
 
 Ao ampliar o catálogo, recalcular a chance de cada efeito dentro de sua categoria,
 inclusive Atena: os percentuais das categorias não são a chance de cada dádiva.
-As tabelas acima continuam descrevendo as 15 opções atualmente implementadas.
+As tabelas acima descrevem as 22 opções implementadas; Convergência e Eco têm
+filtros de elegibilidade, além dos limites e da cura inútil.
 Revisar oportunidades reais de escolha e combinações em partidas, além da distribuição.
 
 Épica será também uma classificação do Fazendeiro, obtido por desafio de NPC;

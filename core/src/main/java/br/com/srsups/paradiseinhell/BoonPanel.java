@@ -13,9 +13,11 @@ import java.util.List;
 public final class BoonPanel {
     private static final int PER_PAGE = 6;
     private final RunSession session;
+    private final GameControls controls;
     private boolean open;
     private int page;
-    public BoonPanel(RunSession session) { this.session = session; }
+    public BoonPanel(RunSession session) { this(session,new GameControls()); }
+    public BoonPanel(RunSession session,GameControls controls) { this.session = session;this.controls=controls; }
     public boolean open() { return open; }
     public void toggle() { open = !open; page = 0; }
     public void close() { open = false; }
@@ -65,11 +67,18 @@ public final class BoonPanel {
                 : "Nível " + session.rank(boon) + "/" + boon.maxRank;
             if (boon == Upgrade.RESSURREICAO && !player.possuiRessurreicao()) rank += " | Consumida";
             if (boon == Upgrade.CURA) rank += " | Cura já aplicada";
+            if (boon == Upgrade.ECO_DO_ESTIGE) rank += " | "+boon.originLabel();
             font.draw(batch, rank, x, y - 60);
         }
         font.setColor(Color.LIGHT_GRAY);
-        font.draw(batch, "TAB ou ESC: fechar | Setas: página " + (page + 1) + "/" + pageCount()
-            + " | Jogo pausado", 35, 60);
+        font.getData().setScale(.88f);
+        if(session.questEnabled() && session.farmerQuest()!=FarmerQuest.NOT_STARTED)
+            font.draw(batch,"Promessa: "+session.farmerQuest().description,35,82,890,8,true);
+        else if(player.getProfession()==Profession.FAZENDEIRO)
+            font.draw(batch,controls.label(ControlAction.SWITCH_TOOL)+" no combate: alternar ancinho e foice. As ferramentas compartilham a recarga.",35,82);
+        font.getData().setScale(1);
+        font.draw(batch, controls.label(ControlAction.BOONS)+" ou ESC: fechar | Setas: página " + (page + 1) + "/" + pageCount()
+            + " | Jogo pausado", 35, 45,890,8,true);
         batch.end();
     }
 }

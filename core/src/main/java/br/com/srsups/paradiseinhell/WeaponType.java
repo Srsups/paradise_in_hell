@@ -8,10 +8,12 @@ public enum WeaponType {
     WAND("Varinha", 6, 0.75f, 0.18f, 250, 9, 9),
     CURSE("Maldição", 3, 0.8f, 0.20f, 210, 10, 10),
     SOUL("Cajado de almas", 4, 0.65f, 0.18f, 240, 8, 8),
-    SHIELD("Espada e escudo", 7, 0.70f, 0.18f, 0, 0, 0);
+    SHIELD("Espada e escudo", 7, 0.70f, 0.18f, 0, 0, 0),
+    RAKE("Ancinho", 9, 0.70f, 0.18f, 0, 0, 0),
+    SCYTHE("Foice", 6, 0.85f, 0.22f, 0, 0, 0);
 
-    public boolean isMelee() { return this == SWORD || this == FISTS || this == SHIELD; }
-    public float halfAngle() { return this == FISTS ? 40 : WeaponAttack.HALF_ANGLE_DEGREES; }
+    public boolean isMelee() { return this == SWORD || this == FISTS || this == SHIELD || this == RAKE || this == SCYTHE; }
+    public float halfAngle() { return this == FISTS ? 40 : this == SCYTHE ? 180 : WeaponAttack.HALF_ANGLE_DEGREES; }
     public final String label;
     public final int damage;
     public final float interval, minimumInterval, projectileSpeed, projectileWidth, projectileHeight;

@@ -9,7 +9,8 @@ public enum Profession {
     FEITICEIRA("Feiticeira", "Você achava que toda crise precisava de um bom feitiço.", WeaponType.WAND, 90, 60, 200, 1),
     SACERDOTE("Sacerdote", "Você distribuía bênçãos. Agora mudou de departamento.", WeaponType.CURSE, 105, 56, 190, 1),
     NECROMANTE("Necromante", "Você fazia amizades até depois do expediente da vida.", WeaponType.SOUL, 85, 58, 195, 1),
-    GUERREIRO("Guerreiro", "Você levava um escudo para discussões difíceis.", WeaponType.SHIELD, 150, 50, 175, 1);
+    GUERREIRO("Guerreiro", "Você levava um escudo para discussões difíceis.", WeaponType.SHIELD, 150, 50, 175, 1),
+    FAZENDEIRO("Fazendeiro", "Você plantava problemas para colher soluções. Profissão épica.", WeaponType.RAKE, 120, 57, 195, 1);
 
     public final String title, description;
     public final WeaponType weapon;

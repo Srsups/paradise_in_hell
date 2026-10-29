@@ -1,0 +1,18 @@
+{
+  "name": "Camponesa das Cinzas",
+  "title": "UMA PROMESSA NAS CINZAS",
+  "offer": "Zeus anda colhendo o que não plantou, pelo visto. Posso ensinar você a devolver o favor.\n\nRecupere a Semente das Cinzas de um Carrasco que derrotar a partir de agora e vença o Guardião do Tártaro. Não precisa fazer tudo nesta viagem. A semente sabe esperar. Diferente do seu casamento.",
+  "accepted": "Combinado. Derrube um Carrasco, guarde a semente e faça o Guardião sair da frente.\n\nSe morrer, a promessa e a semente continuam com você. Já que não pode descansar em paz, pelo menos plante alguma coisa.",
+  "NOT_STARTED": "Uma camponesa misteriosa pode esperar por você depois de liberar a passagem do Estige. Aceite sua promessa para descobrir uma nova profissão.\n\nO desafio libera o Fazendeiro épico para novos personagens. Este personagem mantém a profissão que já escolheu.",
+  "ACCEPTED": "Promessa aceita.\n\nDerrote um Carrasco do Submundo para obter a Semente das Cinzas. A semente é garantida e não ocupa o lugar do Fragmento de Forja.\n\nA promessa continua entre mortes e novas tentativas deste personagem.",
+  "SEED_FOUND": "Semente das Cinzas recuperada.\n\nAgora vença o Guardião do Tártaro. A semente fica com este personagem entre tentativas; não é preciso encontrar a Camponesa novamente.\n\nA recompensa vale para todos os seus novos personagens.",
+  "COMPLETED": "Promessa cumprida!\n\nO Fazendeiro épico está disponível na terceira página de profissões ao criar um novo personagem.\n\nAncinho para quem está na frente. Foice para quem insiste em cercar você. Q alterna as ferramentas durante o combate.",
+  "portraits": {
+    "offer": "CAMPONESA_AMUSED",
+    "accepted": "CAMPONESA_NEUTRAL",
+    "NOT_STARTED": "CAMPONESA_NEUTRAL",
+    "ACCEPTED": "CAMPONESA_CONCERNED",
+    "SEED_FOUND": "CAMPONESA_NEUTRAL",
+    "COMPLETED": "CAMPONESA_PLEASED"
+  }
+}

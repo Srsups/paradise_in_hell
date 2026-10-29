@@ -66,7 +66,7 @@ class FileProfileStoreTest {
     @Test void aNewerProfileIsNotDowngradedEvenWhenAnOlderBackupExists() throws Exception {
         Path file = directory.resolve("profile.json"); FileProfileStore store = new FileProfileStore(file);
         store.save(new CampaignProfile()); store.save(new CampaignProfile());
-        String future = new CampaignProfile().toJson().replace("\"version\": 1", "\"version\": 2");
+        String future = new CampaignProfile().toJson().replace("\"version\": 2", "\"version\": 3");
         Files.writeString(file, future);
         ProfileService service = new ProfileService(store);
         assertFalse(service.error().isEmpty()); assertFalse(service.retrySave());

@@ -6,13 +6,76 @@ anterior. M1/M2 têm implementação e verificação automática/gráfica; a val
 de dificuldade continua. M3 e a expansão visual do elenco atual foram implementados
 em **15/10/2026**. Parte do M6 foi antecipada a pedido do autor antes do M4:
 [entrega visual e capturas](EXPANSAO_VISUAL.md).
-**M4/M5/M7 permanecem planejados; M6 está parcialmente antecipado**.
+**M4 implementado em 22/10/2026; M5 implementado em 23/10/2026, com 290 testes,
+OpenGL e pacote Windows aprovados. Playtests/balanceamento pendentes;
+M7 maior em aberto e M6 em andamento, com lote de diálogos de 23/10/2026 aprovado em
+302 testes/OpenGL e execução nativa do pacote Windows.**
+O [lote de dano/morte](MARCO_6_DANO_E_MORTE.md) também foi concluído em 23/10/2026,
+com **320 testes unitários, OpenGL e execução nativa do pacote Windows aprovados**.
+O [lote de cenários e rotas](MARCO_6_CENARIOS_E_ROTAS.md), implementado em
+**25/10/2026**, passou em **336 testes de lógica, sem falhas, integração OpenGL e
+execução nativa do pacote Windows**. O M6 continua em andamento e depende do
+aceite visual humano em partidas completas.
+Em **27/10/2026**, o [primeiro incremento do M7](MARCO_7_TUTORIAL_E_CENTELHA.md)
+implementou dicas contextuais, guia de jogo e desfecho da Centelha da Insurgência.
+Foi **verificado em 27/10/2026**: **372 testes de lógica passaram sem falhas**,
+com 36 novos (18 de persistência, 11 do guia e sete da história), e **OpenGL foi
+aprovado**, assim como a **execução nativa do pacote Windows**. Playtests humanos
+continuam pendentes; os 336 testes pertencem ao lote anterior.
+O incremento de **vídeo/janela foi implementado e verificado em 27/10/2026**: F2 nas quatro
+entradas, presets, tela cheia na resolução atual do monitor, VSync e prévia de
+15 s. **389 testes de lógica passaram, sem falhas ou erros** (base 372 + 12 de
+vídeo + cinco do adaptador Gdx com Graphics simulado). **OpenGL e execução nativa
+Windows aprovados**. Tela cheia física, vários monitores e HiDPI reais continuam
+em revisão manual; 372 é a base histórica anterior.
+[Regras e limites do incremento](MARCO_7_VIDEO_E_JANELA.md).
+O autor aprovou a produção do [piloto da abertura](PILOTO_DA_ABERTURA.md):
+ilustrações em camadas, Zeus clássico e esposa grega adulta. Modelo, persistência,
+tela e atlas estão implementados. **412 testes de lógica passaram sem falhas ou
+erros**, com 23 novos: sete de story, sete de playback e nove de persistência.
+**OpenGL e execução nativa do pacote Windows aprovados em 27/10/2026**.
+389 é o histórico anterior.
+
+O incremento seguinte de **controles está implementado**:
+F3/CONTROLES, duas associações por ação, teclado/mouse, rascunho e preferências
+globais com backup/retry. Preserva os painéis anteriores e pausa no refúgio,
+arena e chefe. [Contrato e verificações](MARCO_7_CONTROLES.md).
+**424 testes de lógica passaram, sem falhas ou erros; OpenGL e execução nativa
+Windows aprovados**. Revisão humana dos controles ainda em aberto.
+Os 412 testes e aprovações anteriores pertencem à abertura.
+
+Em **28/10/2026**, o incremento de **tamanho do HUD** foi implementado, com
+**439 testes de lógica sem falhas ou erros, integração OpenGL e execução nativa
+do pacote Windows aprovadas**:
+F2 → TAMANHO DO HUD, faixa 80–125%, prévia local,
+rascunho e preferência global independente dos personagens e do modo físico
+de vídeo. O lote acrescenta 12 testes de preferências e três de layout.
+[Escopo, controles e validação](MARCO_7_ESCALA_HUD.md). Os 424 testes e as
+aprovações anteriores pertencem ao remapeamento.
+
+Em **28/10/2026**, o incremento de **três modos de exibição passou em 457 testes
+de lógica, sem falhas ou erros, integração OpenGL e execução nativa Windows**:
+Janela, Janela sem bordas e Tela cheia no monitor atual, com ajuste à área
+útil, cobertura do desktop ou modo exclusivo, conforme a opção. Snapshot
+nativo preserva posição/flags na reversão de 15 s, e preferências v1 migram
+para mode na v2. Os 439 testes acima pertencem ao HUD.
+[Contrato, capturas e resultados](MARCO_7_MODOS_DE_EXIBICAO.md).
+
+Em **29/10/2026**, a retomada por checkpoints entre salas e áreas seguras foi
+adotada pelo autor. O incremento acrescenta salvamento antes do combate e nas
+telas de recompensa, ferreiro, Camponesa e rota, com **Salvar e sair [F5]**.
+A escolha do personagem oferece continuação ou abandono confirmado; fechar
+durante um combate volta ao último ponto gravado. A tentativa mantém dádivas,
+aliados e decisões já sorteadas. O encerramento usa recibo durável para não
+recolher moedas novamente após recarga. **495 testes de lógica, integração OpenGL
+e execução nativa do pacote Windows aprovados.**
+[Contrato e limites](MARCO_7_CHECKPOINTS.md).
 
 ## Base existente e objetivo
 
 A campanha já permite atravessar o Estige, escolher Cinzas/Sombras ou o Guardião,
-retornar ao refúgio e manter profissão, arma forjada e compras. Há oito profissões,
-15 dádivas, três atributos no altar, dois NPCs, Arqueiro do Estige, Carrasco,
+retornar ao refúgio e manter profissão, arma forjada e compras. Há nove profissões,
+22 dádivas, seis atributos no altar, três NPCs, Arqueiro do Estige, Carrasco,
 Fúria dos Deuses, Almas compartilhadas e relatórios por tentativa.
 Atena já foi ajustada para +150% de XP, Épica e uma escolha por tentativa.
 
@@ -42,6 +105,8 @@ balanceamento ou produção de arte ainda presentes no Submundo.
 | Ataques e poderes | Substituir a apresentação por linhas/formas por sprites e animações |
 | Tipografia e telas | Nova fonte, menus polidos e conversas com retrato/caixa de diálogo |
 | Personagens | Visuais distintos para inimigos e profissões, com mudanças de direção suaves |
+| Poder do Submundo — confirmado em 27/10 | Centelha da Insurgência permitirá ferir deuses; agora é conquista narrativa permanente, sem bônus de combate |
+| Cutscenes e diálogos futuros — confirmado em 27/10 | Referências Symphony of the Night e Metal Slug: atuação em sprites na sala, retratos, gatilhos espaciais e ações sincronizadas por eventos; geometria 3D texturizada conforme o efeito. Conservar a abertura atual |
 
 Profissão fixa, forja permanente, dádivas temporárias, limite regional de material,
 metas independentes de abate e mira pelo mouse continuam sendo regras do jogo.
@@ -55,10 +120,10 @@ salas do mesmo Submundo.
 | M1 — implementado; playtests pendentes | HUD limpo, áudio do Carrasco e Guardião mais exigente | Base atual | 211 testes/OpenGL aprovados; confirmar ritmo/diversão em partidas completas |
 | M2 — implementado; playtests pendentes | Dificuldade fixa por save e recompensas ajustadas | M1 como referência de combate | 222 testes/OpenGL; três modos, migração e crédito único verificados; confirmar economia em partidas |
 | M3 — implementado e ampliado | Fontes, atlas, animações e conversa com retratos | M1; migração visual gradual | 241 testes/OpenGL após expansão; revisar movimento e leitura na escala real |
-| M4 | Novas dádivas, primeira dádiva regional e novas compras do altar | M2; ícones/fontes de M3 | Escolhas mudam a forma de jogar e mantêm chefe/economia viáveis |
-| M5 | NPC de desafio e Fazendeiro desbloqueável | M2–M4 | Desafio persiste corretamente; duas ferramentas têm utilidade; desbloqueio permite criar novo personagem |
-| M6 — parte antecipada | Elenco atual, repouso, armas, efeitos, baús, ícones e três elementos do refúgio entregues; poses/novos conteúdos e outros NPCs pendentes | M3; completar após catálogo de M4/M5 | Animações, efeitos, colisões e telas consistentes na travessia inteira |
-| M7 | Fechar Submundo, variedade narrativa e preparação da expansão | M1–M6 | Região completa aprovada em playtests; custos de produzir outra região conhecidos |
+| M4 — implementado; playtests pendentes | Seis dádivas gerais novas, Eco do Estige e três compras do altar | M2/M3 | 263 testes/OpenGL; validar builds, dificuldade e economia em partidas |
+| M5 — implementado; playtests pendentes | NPC de desafio, missão persistente e Fazendeiro desbloqueável | M2–M4 | 290 testes/OpenGL/Windows aprovados; validar utilidade das ferramentas e ritmo em partidas |
+| M6 — em andamento | Elenco/efeitos, diálogos, dano/morte e cenários/rotas implementados | M3–M5 | Cenários: 336 testes/0 falhas, OpenGL/Windows aprovados; revisar o conjunto em partidas |
+| M7 — tutorial/Centelha, vídeo, abertura, controles, escala do HUD, três modos e checkpoints implementados | Guia, desfecho, três modos, introdução, remapeamento, tamanho do HUD e retomada entre salas | M1–M6 | 495 testes/0 falhas ou erros, OpenGL e Windows aprovados; revisão humana, monitores reais e playtests antes da expansão |
 
 Cada marco deve gerar um build jogável e um registro curto dos resultados.
 Não há estimativa de prazo fechada: medir o trabalho do primeiro pacote de arte
@@ -219,22 +284,26 @@ visualmente antes de repetir o estilo para todo o catálogo.
 
 ## M4 — Dádivas regionais e altar
 
+Implementado em **22/10/2026**. [Entrega, custos, limites e capturas](MARCO_4_DADIVAS_E_ALTAR.md).
+Amparo, Furor, Fôlego, Rastro, Emboscada, Convergência e Eco do Estige compõem o lote.
+Reserva, recuperação de estamina e Armadura completam seis compras em duas páginas.
+Os critérios abaixo continuam orientando playtests e as regiões futuras.
+
 ### Catálogo de dádivas
 
-Proposta do primeiro lote: **seis dádivas gerais e uma exclusiva do Submundo**,
-levando o catálogo inicial de 15 para 22. Não fixar os sete efeitos em código
-antes de testar suas funções: dois de sobrevivência/risco, dois de dash/utilidade
-e dois de ataque/sinergia, com comportamento além de um aumento plano de atributo.
+Primeiro lote implementado: **seis dádivas gerais e uma exclusiva do Submundo**,
+levando o catálogo de 15 para 22. Há dois poderes de sobrevivência/risco, dois de
+dash/utilidade e dois de ataque/sinergia, além do eco regional. Os testes verificam
+função, orçamento de dano, recargas e limites; equilíbrio/diversão exigem partidas.
 
-Candidatos para protótipos: bônus no próximo golpe após dash, defesa breve após
-dano e efeito limitado ao abater um alvo. Definir duração, recarga, condição,
+Implementados: bônus de um alvo no próximo ataque após dash, defesa breve após
+dano e recuperação de estamina limitada por recarga ao abater um alvo. Definir duração, recarga, condição,
 limite de rank, raridade e fonte de dano; evitar cadeias infinitas de procs.
 Comparar os efeitos por DPS/tempo de ativação, para pistola e foice com vários
 alvos não dispararem um benefício muito mais vezes que arco ou ancinho.
 
-Proposta regional do Submundo: **Eco do Estige**, um eco ofensivo breve após dash,
-com alcance/recarga próprios e dano proporcional ao DPS da profissão.
-O efeito precisa ser distinguível das seis opções gerais antes de fechar o lote.
+Regional implementada: **Eco do Estige**, dano em raio 44 na origem do dash após
+0,35 s, com recarga de 3 s e 60% do DPS por nível (até 2).
 Ascensão ao Olimpo e Olimpo recebem pelo menos uma dádiva exclusiva cada quando
 suas regiões forem produzidas; nomes e efeitos permanecem abertos.
 
@@ -250,70 +319,89 @@ origem regional respeitada na oferta e poder preservado entre andares.
 
 ### Novas compras permanentes
 
-Além de vida, dano e movimento, testar inicialmente três opções:
+Além de vida, dano e movimento, foram implementadas três opções:
 
-| Compra proposta | Papel | Limite a definir nos playtests |
+| Compra implementada | Papel | Limite inicial |
 | --- | --- | --- |
-| Reserva de estamina | Maior capacidade de dash/defesa | Ganho pequeno e finito sobre a base; não remove exaustão |
-| Recuperação de estamina | Recuperar o recurso mais depressa | Bônus percentual; não regenera defendendo |
-| Alcance inicial de coleta | Mais conforto para pegar cristais | Ganho moderado; Colheita de Deméter continua muito superior |
+| Reserva de estamina | Maior capacidade de dash/defesa | +5% por nível, até 5; máximo 125 |
+| Recuperação de estamina | Recuperar o recurso mais depressa | +8% por nível, até 5; sem regenerar defendendo |
+| Armadura | Reduzir dano recebido | +3 pontos percentuais por nível, até 5; máximo 15% |
 
-Definir custos em Óbolos e limites antes do lote. Mostrar efeito atual → próximo
-e preço; compras só são aplicadas após gravação. Adiar sorte permanente e aumento
+Custos por nível: reserva 6/11/16/21/26; recuperação 7/12/17/22/27;
+Armadura 5/9/13/17/21. O altar mostra atual → próximo e preço em duas páginas;
+compras só são aplicadas após gravação. Adiar sorte permanente e aumento
 permanente de XP até revisar economia e raridades, para não neutralizar Apostador,
 Atena ou o desafio do Difícil. Custos e bases são pessoais; Almas continuam para
 desbloqueios compartilhados. Revisar defesa/dash e chefe também com altar máximo.
+Armadura substitui a antiga compra de coleta, convertendo seus níveis sem custo.
+Soma com a resistência existente até 75% no total; Amparo multiplica o dano restante.
+Ímã e Rastro mantêm seus bônus temporários de coleta.
 
 **Aceite:** variedade de preparação, preços alcançáveis sem farming infinito,
 reset das dádivas intacto e snapshot correto dos atributos em novas tentativas.
 
 ## M5 — NPC de desafio e Fazendeiro Épico
 
+Implementado em **23/10/2026**, com **290 testes unitários, integração OpenGL e
+pacote Windows aprovados**. Balanceamento humano ainda pendente.
+[Regras e capturas](MARCO_5_FAZENDEIRO.md).
+
 A raridade Épica é da **profissão**, separada da raridade da arma e das dádivas.
-O Fazendeiro mantém ferramentas iniciais comuns e recebe a forja permanente
-conforme as regras da classe. O Necromante permanece Lendário, por 1.000 Almas.
+O Fazendeiro começa com ferramentas comuns; uma forja permanente melhora ambas.
+O Necromante permanece Lendário, por 1.000 Almas.
 
-NPC proposto: **Camponesa das Cinzas**, possivelmente Deméter disfarçada.
-Identidade, chance e missão são propostas: começar testando **10% base por run**,
-uma única rolagem registrada na tentativa, com sorte aplicada como nos outros
-encontros. Revelar o encontro em um ponto seguro após progresso no Estige,
-evitando procurar NPC fora da tela ou reiniciar instantaneamente para vê-lo.
-Medir espera real e avaliar proteção contra muitas tentativas sem encontro.
+A **Camponesa das Cinzas** tem **10% de chance base por run**, multiplicada pela
+sorte: Apostador 4× tem **40%**. O sorteio é independente e acontece uma única vez
+após liberar a passagem do Estige. O encontro opcional ocorre em segurança,
+depois de eventuais recompensa e ferreiro, sem avançar o tempo de combate.
+Reabrir telas ou mudar de sala não oferece outro sorteio.
 
-Desafio candidato: aceitar a missão, obter uma semente de missão garantida ao
-derrotar um Carrasco e concluir o Submundo. A semente é um item de missão,
-não o Fragmento de Forja de 1,5%. A proposta conserva aceitação/item entre mortes;
-condições finais e necessidade de uma única run ainda serão discutidas.
-A conclusão não depende de reencontrar o NPC no mesmo sorteio: reconhecer o
-objetivo cumprido no retorno e registrar a recompensa uma vez.
+Missão: aceitar, obter uma semente garantida ao derrotar um Carrasco e vencer
+o Guardião do Submundo. O Carrasco derrotado antes da aceitação não conta.
+A semente é um item de missão, independente da chance e do limite do Fragmento
+de Forja. Aceitação e semente persistem entre mortes, abandonos e sessões;
+não é preciso cumprir tudo na mesma tentativa nem reencontrar a NPC.
 
-Proposta de escopo: desbloqueio compartilhado para **novos saves**; missão em
-andamento no personagem que aceitou. Excluir esse personagem apaga sua missão
-incompleta, mas não desfaz um desbloqueio já concedido. Isso não troca a profissão
-de personagens existentes. Chance, condições e escopo do progresso devem ser
-confirmados antes de implementar a missão.
+O progresso pertence ao personagem; a conclusão libera o Fazendeiro para
+**novos personagens de todos os saves**, sem mudar profissões existentes ou moedas.
+Aceitar só altera o estado após gravar. Ganhos de missão ficam em memória para
+repetir a gravação; um perfil concluído permite recuperar o acesso global após
+falha de gravação. Excluir o personagem apaga sua missão incompleta; uma conclusão
+pendente precisa ter o desbloqueio preservado antes da exclusão.
+J no refúgio abre o diário; Tab mostra o objetivo da missão aceita na tentativa.
 
-| Ferramenta | Comportamento confirmado | Diferenciação proposta |
-| --- | --- | --- |
-| Ancinho | Estocada dirigida pela mira | Maior alcance e DPS concentrado; faixa estreita, respeita paredes |
-| Foice | Corte circular de 360° ao redor | Melhor contra grupos, menor alcance/DPS por alvo e ataque mais lento |
+Bases iniciais: vida 120, movimento 57, dash 195 e sorte 1×.
 
-Proposta de controle: **Q** alterna ferramentas, com ícone discreto e informação
-completa em Tab. As duas compartilham a recarga de ataque: trocar não concede
-golpe gratuito nem reinicia efeitos. Uma execução não acerta o mesmo alvo várias
-vezes por quadro. Animação, dano e cadência seguem a ferramenta ativa; vida,
-profissão, dificuldade e upgrades continuam do personagem.
+| Ferramenta | Dano / intervalo base | Alcance comum / raro | Comportamento |
+| --- | --- | --- | --- |
+| Ancinho | 9 / 0,70 s | 52 / 64 | Estocada estreita na direção da mira |
+| Foice | 6 / 0,85 s | 34 / 44 | Corte circular de 360° |
 
-A mesma melhoria da forja beneficia ambas; definir os poderes raros e bases
-de cada ferramenta depois de comparar grupo, arqueiro, Carrasco e Guardião.
-Não permitir que a troca duplique compras, bônus de altar ou dádivas.
+**Q** alterna ferramentas somente em combate ativo. A recarga é compartilhada:
+trocar não concede golpe extra, reinicia efeitos ou duplica bônus. Dano, cadência
+e bônus percentuais seguem a ferramenta ativa. A seleção continua entre salas;
+uma nova tentativa começa com ancinho. Há nove profissões em três páginas e
+oito saves em duas páginas.
 
-**Aceite:** NPC/objetivo legíveis, progresso salvo após morte/reload, recompensa
-resistente a falhas de gravação e sem repetição; criação de personagem desbloqueado;
-ancinho útil contra alvos prioritários e foice útil nas hordas. Prever paginação
-para nove profissões, mantendo os oito slots de save existentes.
+Persistência, migração, falhas/retry, exclusão e criação foram verificadas nas
+regras e no fluxo gráfico. **Aceite humano pendente:** comparar ancinho/foice
+contra grupos, arqueiros, Carrasco e Guardião, em diferentes dificuldades e
+com/sem forja; avaliar espera pelo encontro, leitura das animações e vontade de repetir.
 
 ## M6 — Arte e animação da travessia inteira
+
+**Lote de diálogos implementado em 23/10/2026**, com **302 testes unitários,
+OpenGL e execução nativa do pacote Windows aprovados**.
+[Entrega do lote](MARCO_6_DIALOGOS_E_NPCS.md).
+Caronte, Ferreiro e Camponesa recebem quatro expressões cada, com retrato definido
+por fala/etapa. As três telas compartilham DialoguePanel e leitura gradual/instantânea;
+T mantém o texto já revelado ao mudar o modo.
+
+Caronte conserva seus eventos/presente e acrescenta comentários de missão/forja
+sem recompensas novas. O Ferreiro responde a profissão, arma, material, raridade e
+sucesso/falha da compra: Espaço/clique na fala lê, 1/E compra e 2/Enter/Esc sai.
+A Camponesa mantém uma fala por estado, proteção de 1,5 s, soltura do mouse e diário
+por J. Os encontros continuam seguros; leitura não avança combate nem altera compras.
 
 **Parte antecipada em 15/10/2026**, por solicitação do autor antes do M4.
 Oito profissões com roupa/arma próprias, oito direções e seis quadros de
@@ -333,9 +421,36 @@ As oito classes agora respiram; Caronte, altar e travessia do refúgio têm spri
 animadas, e o refúgio bloqueia ataques. Cinco vistas desenhadas geram oito direções,
 com alinhamento dos quadros e cadência revista.
 
-Ainda faltam poses de dano/morte, expressões adicionais, outros NPCs/cenários
-e arte do futuro Fazendeiro/dádivas de M4. Preservar escala, continuidade da passada
+O [lote de dano/morte](MARCO_6_DANO_E_MORTE.md) acrescenta três quadros de impacto
+e quatro de queda para todos os corpos de combate, com oito direções lógicas.
+Corpos derrotados têm duração e quantidade limitadas e não retêm entidades vivas.
+Os ganhos são resolvidos no abate; a apresentação final não adia a liquidação.
+As 896 poses e suas máscaras passaram na integração gráfica; 320 testes e pacote
+Windows também foram aprovados. Outros NPCs continuam futuros.
+Revisar também a apresentação dos novos conteúdos do M5. Preservar escala, continuidade da passada
 e orientação da mira ao ampliar as folhas. Avaliar as oito direções em partidas.
+
+**Cenários e rotas implementados em 25/10/2026:** cinco temas distinguem o
+refúgio, Estige/demo, Cinzas, Sombras e sala do Guardião. Cada tema tem seis pisos
+e três obstáculos; três pisos básicos ocupam aproximadamente 96% das células e
+três detalhes, 4%. O atlas compartilhado tem 52 regiões em 1024×1024, com 4 MiB
+RGBA: 45 tiles, três ilustrações de destino e quatro quadros da passagem.
+
+Os cartões preservam título, descrição, evento, recompensa, metas e destaque
+ao passar o mouse. As ilustrações são recortadas mantendo a proporção; um destino
+único fica centralizado. A entrada mantém 0,2 s de espera e soltura do mouse.
+A porta animada indica um ponto alcançável, sem exigir proximidade: E/Enter
+continua avançando de qualquer posição depois das metas. As bordas desenhadas
+ficam fora dos limites caminháveis existentes.
+
+TileLayout conserva exatamente a sequência de java.util.Random da colisão
+anterior; hashes visuais são separados. Navegação não cria tiles visuais, e o
+cache tem teto de 8.192, janela com margem e suporte ao zoom. Os mapas emprestam
+o atlas de PilotArt. Economia, RNG de gameplay, saves e IDs não mudam; não foi
+acrescentada uma região. **336 testes/0 falhas, OpenGL e execução nativa do pacote
+Windows aprovados.** A verificação nativa usa Java incluído, PATH sem Java externo,
+áudio OpenAL nativo silenciado e saves em memória.
+[Entrega e revisão](MARCO_6_CENARIOS_E_ROTAS.md).
 
 Socos, cortes, feitiços, maldição, aura, escudo, raios, pedras e flechas já usam
 sprites/efeitos. Marcas, mira, giro, leque, investida e queda também têm avisos
@@ -349,7 +464,8 @@ quadro/memória com hordas, aliados e efeitos simultâneos.
 
 Aplicar a mesma fonte, molduras, ícones e feedback a menu, criação de save,
 profissões, altar, diálogos, rotas, pausa, resultado e histórico. Retratos de
-Caronte, Ferreiro e NPC do desafio precisam de expressões e estados de conversa.
+Caronte, Ferreiro e Camponesa já têm expressões e estados de conversa neste lote;
+validar sua leitura e coerência durante uma travessia completa.
 Registrar origem/licença dos assets incorporados e manter revisão humana das
 folhas geradas, especialmente consistência entre quadros.
 
@@ -360,15 +476,110 @@ ao trocar de tela. Avaliação humana obrigatória para animação e mistura son
 
 ## M7 — Fechar o Submundo e preparar a expansão
 
+O **primeiro incremento foi implementado e verificado em 27/10/2026**:
+tutorial contextual com uma dica por vez, guia por F1 e desfecho da primeira
+travessia. H controla dicas por personagem; aprendizados e preferência ficam
+no save. O guia pausa a simulação e não substitui os avisos de combate.
+
+O autor aprovou a **Centelha da Insurgência**, que permitirá ferir os deuses.
+Neste lote ela é uma conquista narrativa permanente por vitória real no
+Submundo, sem bônus em combate. Depois da queda do Guardião, Caronte explica
+o poder e o protagonista escolhe voltar voluntariamente ao refúgio para preparar
+a ascensão. Zeus e o resgate continuam como objetivo futuro.
+
+A leitura tem proteção de 1,5 s/soltura, modo gradual/instantâneo e adiamento por
+Esc. V no refúgio e C no resultado retomam/reveem a conversa sem duplicar ganhos.
+Concluir a leitura impede sua abertura automática nas próximas vitórias.
+Migração e progresso pessoal, inclusive falhas/retry, estão no
+[documento do incremento](MARCO_7_TUTORIAL_E_CENTELHA.md).
+
 Ampliar desafios/eventos que mudem escolhas de rota, preservando sua duração:
 recompensas distintas, modificadores de combate e encontros narrativos.
 Caronte comenta a maldição; Ferreiro reage à arma; o NPC do Fazendeiro conecta
 o desafio ao mundo. Externalizar textos e registrar condições/eventos no save.
-Fechar a função do poder obtido no Submundo e a passagem narrativa à próxima região.
+Desenvolver a aplicação jogável futura da Centelha e a passagem à próxima região,
+preservando o nome e a função narrativa já aprovados.
 
-Concluir tutorial contextual, opções de vídeo/escala e remapeamento de comandos.
-Definir quando será permitido interromper/retomar uma run antes de implementar
-esse salvamento. Manter backup e migração dos perfis, preferências e histórico.
+Validar o tutorial em partidas. O incremento de janela foi **implementado e verificado em 27/10/2026**:
+janela/tela cheia na resolução atual do monitor, presets de 800×450 a 1920×1080,
+VSync (desligado: 120 FPS) e prévia de 15 s com confirmação/reversão. Preferências
+globais usam video-settings.json independente dos saves, com backup e retry S
+no painel. F2 no menu/refúgio/arena/chefe pausa sem trocar a tentativa.
+Os 389 testes de lógica passaram sem falhas ou erros, com OpenGL e execução nativa
+Windows aprovados. Testes com backend falso não homologam tela cheia física;
+monitores reais, resoluções e HiDPI continuam em revisão manual.
+[Detalhes](MARCO_7_VIDEO_E_JANELA.md).
+O tamanho do HUD e o remapeamento têm incrementos separados, descritos abaixo.
+
+**Piloto da abertura implementado e verificado em 27/10/2026:** seis quadros/45 s com
+ilustrações em camadas, Zeus clássico e esposa grega adulta, conforme escolhas
+do autor. I no menu abre prévia sem criar personagem; I no refúgio revê sem
+ganhos. Personagens pendentes veem a história após confirmar profissão, antes
+do refúgio. Espaço pausa, Enter avança após 1,5 s, Esc pede pulo confirmado e
+F2 conserva a cena ao abrir vídeo. Cinematics pessoais distinguem UNSEEN,
+COMPLETED, SKIPPED e LEGACY sem alterar fatos de combate. Fechar no meio não
+conclui; autosave falho retém o registro para retry S no refúgio.
+Os 412 testes de lógica passaram, sem falhas ou erros; OpenGL e a execução
+nativa Windows do piloto foram aprovados, com atlas fechado e desenhado pelo
+diagnóstico do executável empacotado.
+É um piloto para refinamento de movimento, composição, legendas e sons,
+sem encerrar o acabamento cinematográfico. [Direção adotada](CUTSCENES_E_ABERTURA.md)
+e [implementação do piloto](PILOTO_DA_ABERTURA.md).
+
+**Direção futura registrada em 27/10/2026, sem refazer a abertura:** o autor
+escolheu Symphony of the Night e Metal Slug como referências de encenação e
+animação. Quando retomarmos cutscenes, prototipar uma sequência curta na sala,
+com gatilho por cruzamento, modo CUTSCENE, fala/retrato, gesto e objeto acionados
+por eventos, pulo seguro e devolução do controle. Planejar planos/geometria 3D
+texturizados para efeitos de perspectiva, com custo medido. Isso é trabalho
+futuro; o piloto e o pacote existentes permanecem como entregues.
+[Direção, referências dos vídeos e contrato técnico](CUTSCENES_E_ABERTURA.md).
+
+**Remapeamento implementado, com 424 testes, OpenGL e Windows aprovados:** F3 abre controles pelo
+menu e sobrepõe o painel no refúgio/arena/chefe, conservando seus estados. Onze
+ações têm um ou dois comandos de teclado/mouse, com captura protegida,
+conflitos explícitos, rascunho, restauração e salvamento global. Menus e mira
+conservam seus controles próprios. Bloquear entradas seguradas até soltar ao
+voltar; guardas de escolha continuam consultando o ataque físico.
+[Detalhes, capturas e resultados](MARCO_7_CONTROLES.md). O diagnóstico do pacote
+desenha a tela de controles com preferências em memória. A revisão humana
+dos controles e o restante do M7 permanecem em aberto.
+
+**Tamanho do HUD implementado em 28/10/2026, com 439 testes, OpenGL e Windows aprovados:** F2 abre
+uma página separada com prévia local, ajuste de 80% a 125%, presets e rascunho.
+Salvar aplica uma preferência global em hud-settings.json com backup/retry.
+Esc volta à imagem; F2 fecha. Indicadores do jogador, metas/relógio e barra/
+aviso do chefe escalam por âncoras; o aviso fica alinhado à coluna direita.
+Mundo, câmera, colisões, menus, diálogos, cutscenes e rodapés mantêm o layout.
+[Contrato do incremento](MARCO_7_ESCALA_HUD.md). A validação final cobre todas
+as porcentagens, textos e separação de caixas em duas resoluções, rascunho,
+persistência e estados pausados. Arrasto é cancelado por F3/pausa da aplicação,
+exigindo soltura e proteção de 0,2 s na volta. A execução nativa Windows passou
+com Java incluído, perfis em memória e a página do HUD desenhada pelo diagnóstico.
+
+**Checkpoints implementados e verificados em 29/10/2026:** interromper/retomar entre salas e áreas
+seguras. Gravar no início das salas e nas telas de recompensa, ferreiro,
+Camponesa e rota; F5 salva e volta ao menu sem liquidar a tentativa. A continuação
+preserva poderes, aliados, relógios e decisões daquele ponto. Fechar durante o
+combate reinicia a sala pelo último checkpoint. Não serializar entidades/telas.
+Migração pessoal/compartilhada v1 → v2 e recibos de encerramento impedem duplicar
+moedas após recarga; backup terminal não deve reabrir tentativa encerrada.
+[Implementação, limites e verificação](MARCO_7_CHECKPOINTS.md).
+
+**Modos de exibição implementados em 28/10/2026, com 457 testes, OpenGL e Windows aprovados:** F2 oferece janela decorada,
+janela sem bordas e tela cheia exclusiva, adaptadas ao monitor atual. A janela
+cabe na área útil; os outros modos usam a área/resolução do monitor e guardam
+o tamanho preferido da janela. Reversão por prazo/Esc/F2/pausa/fechamento usa
+snapshot de posição, dimensões, monitor e flags, com fallback seguro quando
+necessário. Usar geometria lógica para HiDPI e origens negativas. Preferências
+globais migram v1 → v2 sem alterar HUD, controles ou saves. A confirmação
+verifica a geometria real, inclusive depois de mover sem bordas com Win+setas.
+O diagnóstico opcional do pacote aplica três modos reais numa janela oculta
+e restaura o snapshot; a execução passou com PACKAGED_DISPLAY_MODES_SMOKE_OK,
+Java incluído e preferências em memória, no monitor atual e sem escolher outra
+resolução/taxa. Uso visível/Alt+Tab, vários monitores e HiDPI reais permanecem
+em revisão; essa aprovação não encerra o M7 maior.
+[Contrato e limites](MARCO_7_MODOS_DE_EXIBICAO.md).
 
 Repetir travessias por profissão/dificuldade e comparar personagem novo/evoluído,
 rotas e builds. Testar sessões longas, pausa/Tab/Alt+Tab, minimizar, resoluções,
@@ -385,20 +596,39 @@ por dificuldade; produção de nova região reutiliza dados/assets e os mesmos s
 
 ## Próxima entrega concreta e decisões restantes
 
+Concluir a verificação dos checkpoints e então **balancear o Submundo em partidas
+completas**. Comparar personagens novos/evoluídos por profissão e dificuldade,
+incluindo Fazendeiro/Necromante, rotas diretas/opcionais, tempo até as passagens,
+pressão dos rápidos, Guardião e economia. Ajustes precisam registrar o problema
+observado e o efeito esperado para a rodada seguinte.
+
+Em seguida, revisar estabilidade e apresentação em sessões longas e hardware
+Windows real, ampliar variedade entre tentativas e prototipar o sistema futuro
+de cutscenes por gatilhos/eventos conforme SOTN/Metal Slug, preservando a abertura
+atual. Só depois ampliar Ascensão/Centelha, Olimpo e Zeus e preparar o lançamento.
+
 **Entrega artística antecipada concluída para o elenco atual**:
 [EXPANSAO_VISUAL.md](EXPANSAO_VISUAL.md). Revisar caminhada/viradas, distinção dos
 inimigos, armas, poderes, baús e o menu de dádivas numa travessia completa.
 Os 241 testes e a integração gráfica verificam regras/recursos; o parecer do
 autor orienta o próximo acabamento.
 
-**Após a revisão, retomar M4**, novas dádivas, primeira dádiva regional e altar.
-Usar os relatórios para comparar economia, dificuldades e builds.
+**M4 e M5 implementados e verificados:** jogar o desafio com personagens
+novos/evoluídos nas três dificuldades, incluindo desbloqueio e troca de ferramentas.
+Revisar as três famílias de builds, o altar e a espera pelo encontro da Camponesa.
 
-Antes de implementar os respectivos marcos, revisar as animações com o autor;
-confirmar chance/identidade do NPC;
-condições e persistência do desafio; alcance/dano/forja das duas ferramentas;
-efeitos das novas dádivas e custos/limites do altar. São decisões localizadas,
-não impedem medir as partidas do M1–M3 e preparar o M4.
+O primeiro incremento do M7 passou em 372 testes de lógica/zero falhas, OpenGL
+e execução nativa Windows. Partidas continuam pendentes. A revisão humana do M6 segue em paralelo; avaliar
+clareza das dicas e do desfecho antes de produzir outras regiões.
+Ajustar chance do encontro, bases das ferramentas, dádivas e
+custos do altar a partir das partidas; preservar as regras de persistência e
+os limites regionais já estabelecidos.
+O lote de diálogos de 23/10 passou nos testes de regras, OpenGL e execução nativa
+do pacote Windows. As novas poses de dano/morte também foram verificadas.
+Os cenários do Submundo e as rotas foram implementados em 25/10, com 336 testes
+de lógica/0 falhas, OpenGL e execução nativa do pacote Windows aprovados.
+Revisar contraste dos perigos, obstáculos, portais e cartões em uma partida
+completa antes de avançar o conteúdo; novas regiões permanecem posteriores ao M7.
 
 Documentos relacionados: [design](DESIGN_DO_JOGO.md),
 [balanceamento e saves](BALANCEAMENTO_E_SAVES.md), [arte](ARTE_DA_DEMO.md),

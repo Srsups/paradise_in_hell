@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-25",
+  "tool": "built-in image_gen",
+  "prompts": ["prompts.json", "prompts-revisions.json"],
+  "contract": "contract.json",
+  "selectedAssets": 9,
+  "generationCalls": 14,
+  "selection": "refined theme palettes and raised block silhouettes; original previews and passage",
+  "selectedSources": {
+    "refuge-tiles-refined.png": {"size": [1254, 1254], "opaque": true, "sha256": "5bb2a8d032786d953d5c72ab1dee717f09a2717e461a7daaecc757f818eba4fe"},
+    "styx-tiles-refined.png": {"size": [1254, 1254], "opaque": true, "sha256": "87884bb1fbdd00a6345467992ca09728bc20b2c8c753c250ed9a575d0a887393"},
+    "ashes-tiles-refined.png": {"size": [1254, 1254], "opaque": true, "sha256": "bbf27cc209004c2c0d42a1f48c09b1a769151d73a23282e2edc9ad08517dbfeb"},
+    "shadows-tiles-refined.png": {"size": [1254, 1254], "opaque": true, "sha256": "64b2edb4c76aaf4e8019271950fd2380fd5e0175466b121441a3d8efa8950f88"},
+    "guardian-tiles-refined.png": {"size": [1254, 1254], "opaque": true, "sha256": "7176e2a81cad1e3eafbf33157967752b1f186bcda69db293dc67d1a308cac2be"},
+    "route-ashes-original.png": {"size": [1672, 941], "opaque": true, "sha256": "cd352b35146b415012dbec57fc7a3cded760a4c92f89d94432a798eaf79c6bd0"},
+    "route-shadows-original.png": {"size": [1672, 941], "opaque": true, "sha256": "b72d15ea136455835034be134fb8f907d5b259ff9b1766e7005f978eb7947238"},
+    "route-guardian-original.png": {"size": [1672, 941], "opaque": true, "sha256": "0ffb5953286923a74118187164eb3eada24f8c030dca90b4820141a6535d9e40"},
+    "passage-original.png": {"size": [2172, 724], "opaque": false, "sha256": "d0364547708f6606f554f805b524c6bfa299a3441b65f5e78fbdacf8810c16db"}
+  },
+  "retainedOriginalThemeSources": {
+    "refuge-tiles-original.png": {"sha256": "bc5bf35cd207ff0f6679f444b6c2f6e55d787d63a64f7a38eee8f1dc58d65baf"},
+    "styx-tiles-original.png": {"sha256": "2655fab966c7d7402b7fb72b2b6b6753d5357a03d3a162c0a6b4230f26e5484b"},
+    "ashes-tiles-original.png": {"sha256": "b1de789f91131fd7005774346a0545ca23235f8cc8a96ff80c92c2afb8dbcd32"},
+    "shadows-tiles-original.png": {"sha256": "40f1eaa876453cdefd11730604b518ceef561ecae18c76049582133408a1825e"},
+    "guardian-tiles-original.png": {"sha256": "495bc393ebc660177aa5f216ef776ae84b44ac3ae38d4a7b8628ec987393fc2f"}
+  },
+  "themeGrid": [3, 3],
+  "themeRows": ["floor0/1/2", "obstacle0/1/2", "floor3/4/5"],
+  "passageSourceGrid": [4, 1],
+  "previewCrop": "center crop to16:9, then nearest-neighbor reduction to320x180",
+  "operations": ["crop", "uniform passage pivot registration", "nearest-neighbor reduction", "atlas packing"],
+  "preserveGeneratedAlphaAndColors": true,
+  "paintOrRecolor": false,
+  "registration": "registration.csv",
+  "packed": {"atlas": "../../../core/assets/visual/m6-scenery.atlas", "page": "../../../core/assets/visual/m6-scenery.png", "regions": 52, "dimensions": [1024, 1024], "rgbaBytes": 4194304, "sha256": "f1a6941d3872f503cef1c268c0e23647ea51b28c206dc56dda1e06b5564c6f17"},
+  "reference": {"source": "../../../core/assets/demo-atlas.png", "technicalCrop": "reference-floors.png", "note": "Only existing stone floor row, cropped without repainting; not a new generation"},
+  "tooling": "../../SceneryAtlasBaker.java"
+}

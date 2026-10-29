@@ -4,7 +4,8 @@ O protótipo valida profissões, geração contínua, metas de abates, transiç�
 combate com o chefe da primeira região. A demo de cinco minutos continua como
 modo separado. O refúgio, Caronte, atributos permanentes, baús e perfil salvo já
 estão no protótipo. Mini-boss, material persistente e encontro com o ferreiro
-estão implementados. Outros encontros e inventário geral continuam pendentes.
+estão implementados. O M5 acrescenta a Camponesa das Cinzas e o Fazendeiro Épico.
+Inventário geral e próximas regiões continuam pendentes.
 
 ## Marco 1 implementado
 
@@ -76,6 +77,434 @@ tela inteira e os retângulos dos cartões, incluindo catálogos reduzidos.
 BoonPanel reutiliza os mesmos ícones. RefugeScreen usa o retrato ilustrado do
 protagonista, mantendo o avanço/conclusão do diálogo no serviço existente.
 
+## Marco 5 implementado
+
+Implementado em **23/10/2026**, com **290 testes unitários, integração OpenGL e
+pacote Windows aprovados**. Balanceamento em partidas ainda pendente.
+[Regras e capturas](MARCO_5_FAZENDEIRO.md).
+
+CampaignProfile registra FarmerQuest como NOT_STARTED, ACCEPTED, SEED_FOUND ou
+COMPLETED; o campo ausente em perfis v1 assume NOT_STARTED. RunSession recebe o
+estado no prepareRun e conserva avanços entre salas. ProfileService aceita a
+missão após gravar; collectFarmerQuest preserva objetivos ganhos em memória para
+retry e impede transferir a missão entre personagens. recordMiniBossDefeat gera
+semente garantida somente após aceitação, sem depender do Fragmento de Forja.
+recordBossDefeat no Submundo conclui a missão quando a semente está disponível.
+Morte, abandono e recarga conservam aceitação/semente no perfil.
+
+RunEncounters faz uma rolagem independente de 10% base para a Camponesa, após
+liberar a passagem do Estige. Luck.chance multiplica a base pela sorte, até 100%:
+o Apostador 4× tem 40%. O RNG não consome a sequência de ferreiro/fragmento.
+Main.offerRoute encadeia recompensa, ferreiro, FarmerQuestScreen e destino;
+fechar/reabrir ou mudar de sala não sorteia novamente. O encontro opcional não
+avança combate, Fúria ou recargas.
+FarmerQuestScreen também funciona como diário pelo atalho J no refúgio;
+BoonPanel mostra a descrição do objetivo aceito em Tab, sem acrescentar HUD fixo.
+
+SharedProgress guarda farmerUnlocked opcional, falso em arquivos v1 antigos.
+A conclusão libera novos personagens sem mudar classes ou moedas. Main.shared
+recupera o acesso a partir de perfil COMPLETED; uma falha global deixa a recompensa
+disponível para retry. A exclusão aguarda preservar o desbloqueio pendente.
+ProfileService também valida o acesso na criação, além da interface.
+
+PlayerState conserva a ferramenta ativa entre salas; switchTool alterna ancinho
+e foice mantendo o cooldown de ataque. Q só é tratado no combate ativo. Os bônus
+percentuais usam dano/cadência da ferramenta atual e uma forja beneficia ambas.
+Cada nova tentativa começa com ancinho. MenuPages usa a contagem do catálogo:
+nove profissões em três páginas, oito saves em duas, sem cartões fora do catálogo.
+
+## Marco 6 — lote de diálogos e NPCs
+
+Implementado em **23/10/2026**, com **302 testes unitários, OpenGL e execução
+nativa do pacote Windows aprovados**. O lote seguinte de
+[dano/morte](MARCO_6_DANO_E_MORTE.md) passou em 320 testes, OpenGL e execução
+nativa do pacote Windows. O lote de cenários e rotas de 25/10/2026 está descrito
+abaixo; o M6 geral continua em andamento.
+[Detalhes e procedência](MARCO_6_DIALOGOS_E_NPCS.md).
+
+DialogueLine contém falante, texto e DialoguePortrait. O enum identifica quatro
+expressões de cada NPC, além do protagonista. DialoguePlayback aceita listas
+imutáveis ou a Conversation compatível de Caronte, revela 42 code points/s e
+retorna REVEALED/ADVANCED/FINISHED. Alternar T não rebobina o texto já visível;
+um comando de leitura revela ou avança, sem realizar compras ou conceder eventos.
+DialoguePanel desenha as três telas com a geometria de cada uma, reutilizando
+fontes/molduras e regiões emprestadas de ExpandedArt; as telas não possuem as texturas.
+
+CaronteDialogue conserva os eventos prioritários e seleciona comentários opcionais
+de missão/forja com event null. A substituição de {returns} preserva o retrato.
+JSON sem retrato usa o padrão por falante; scripts opcionais ausentes usam repeat
+na seleção. O catálogo antigo com apenas quatro chaves continua funcional.
+BlacksmithDialogue seleciona falas pela profissão, arma ativa, material e raridade,
+com rara prevalecendo sobre estoque. Respostas de sucesso/falha vêm após a ação
+explícita de forja, que continua usando o commit existente do ProfileService.
+
+No Ferreiro, Espaço ou clique no painel lê, T alterna o modo, 1/E/botão compra
+e 2/Enter/Esc sai. A proteção de entrada de 0,2 s permanece; compras por clique
+exigem soltar o mouse. CamponesaDialogue mantém uma linha por estado, as strings
+antigas e o retrato por etapa. A aceitação conserva a proteção de 1,5 s e o commit;
+o diário J começa revelado. Nenhum desses modelos chama serviços ou avança a run.
+
+## Marco 6 — cenários e rotas
+
+Implementado em **25/10/2026**, com **336 testes de lógica e zero falhas,
+integração OpenGL e execução nativa do pacote Windows aprovados**. Os resultados
+históricos de 302/320 testes correspondem aos lotes anteriores. O M6 continua
+em revisão humana; o primeiro incremento de tutorial/desfecho do M7 foi implementado e verificado em 27/10.
+[Entrega, origem e critérios](MARCO_6_CENARIOS_E_ROTAS.md).
+
+SceneryTheme define REFUGE, STYX, ASHES, SHADOWS e GUARDIAN, com chaves estáveis,
+títulos e seleção pela arena. Demo e combate desconhecido usam Estige; Kind.BOSS_ROOM
+seleciona Guardião. Não há mudança de IDs, esquema de save ou conteúdo de região.
+Cada tema oferece seis pisos e três obstáculos; floorVariant usa três bases com
+96% de probabilidade e três detalhes com 4%. obstacleVariant e os demais sorteios
+visuais usam hashes independentes do RNG de combate/encontros.
+
+TileLayout.solid preserva exatamente `new Random(seed ^ (x*73856093L) ^ (y*19349663L))`,
+`nextInt(3)` e `nextFloat() < .012f`, incluindo a rejeição rara de nextInt.
+Seu LCG de 48 bits não aloca Random por consulta. TileMap conserva área segura e
+bounds; ehSolido não consulta nem cria Tile. O cache visual usa coordenadas long,
+janela visível com duas células de margem, zoom ortográfico e teto de 8.192 tiles.
+Evicção/revisita não altera aparência ou colisão; o construtor legado permanece.
+
+SceneryArt pertence a PilotArt e carrega um atlas de 52 regiões em uma página
+1024×1024, 4 MiB RGBA: 45 tiles de 64×64, três previews de 320×180 e quatro
+quadros de passagem de 96×96. Telas e mapas emprestam regiões e não descartam
+essas texturas. SceneryVisuals desenha bordas fora dos bounds físicos originais
+do refúgio/chefe e cria recortes centrais de preview sem distorcer sua proporção.
+
+RouteScreen mantém título, descrição, evento fixo da tentativa, recompensa e
+metas, com hover, espera de 0,2 s e soltura do mouse antes de outro clique.
+Um destino único fica centralizado. Consultar a tela não avança a sessão nem
+repete recompensas/eventos. A passagem luminosa substitui apenas o beacon visual:
+continua em ponto alcançável próximo ao jogador e E/Enter continua global após
+as metas, sem colisão ou exigência de proximidade. Economia e RNG de gameplay
+permanecem os mesmos. O tutorial e o fechamento da primeira travessia pertencem
+ao incremento seguinte do M7; a revisão humana do M6 continua.
+
+## Marco 7 — tutorial e Centelha da Insurgência
+
+Primeiro incremento implementado e verificado em **27/10/2026**.
+**372 testes de lógica passaram sem falhas**, com 36 novos: 18 de persistência,
+11 do guia e sete da história. **OpenGL e execução nativa do pacote Windows aprovados**.
+O nativo usa Java incluído, PATH sem Java externo, perfis em memória, outra pasta
+de trabalho e 24 efeitos/música via OpenAL nativo silenciado. Playtests humanos
+continuam pendentes. Os 336 testes acima
+correspondem ao lote anterior. [Regras e critérios](MARCO_7_TUTORIAL_E_CENTELHA.md).
+
+TutorialGuide mantém os dez TutorialTopic por personagem, selecionando uma dica
+por contexto e sete segundos de leitura ativa. Ações reais concluem tópicos antes
+do prazo: deslocamento, ataque emitido, dash aceito, XP recebida, escolha de
+dádiva, metas, saída usada, chefe derrotado, compra confirmada e conversa/partida
+do refúgio. TutorialPanel compartilha F1, duas páginas de campanha (uma na demo),
+H, rodapé e sincronização com o perfil. O guia consome o quadro de abertura e
+fechamento; simulação e leitura contextual ficam congeladas. Pausa, Tab e áudio
+mantêm suas proteções. Avisos do chefe, Fúria, saída e baús têm prioridade.
+As lições da demo ficam locais; H continua sendo preferência do personagem.
+
+O autor aprovou a Centelha como poder que permitirá ferir deuses. O incremento
+atual só registra uma conquista narrativa, sem alterar PlayerState, dano,
+economia, sorte ou raridades. ProfileService.settle concede
+`INSURGENCE_SPARK_OBTAINED` somente à vitória real do Submundo na campanha,
+com chefe derrotado e identidade do personagem correspondente.
+
+Main.finishRun liquida perfil, compartilhado e relatório antes de apresentar a
+queda. UnderworldEndingScreen aparece depois da queda do Guardião e antes de
+GameOverScreen se a leitura ainda não foi concluída. UnderworldStory carrega
+`dialogues/underworld-ending.json`: `title()`, `subtitle()`, `nextObjective()`,
+`continuationNotice()` e `lines()` imutável. O parser estrito valida campos,
+tipos, duplicações, cinco a sete falas, limites e retratos compatíveis; o JSON
+entregue tem sete falas com os retratos existentes.
+
+A tela usa DialoguePanel/DialoguePlayback, ChoiceInputGuard de 1,5 s e soltura
+do ataque. Enter/E/Espaço/clique na fala revela ou avança, T alterna o modo e
+Esc adia sem registrar `UNDERWORLD_EPILOGUE_READ`. Confirmar a última fala chama
+ProfileService.finishUnderworldEpilogue. V no refúgio e C no resultado permitem
+retomar/rever a conversa; consultar não liquida a tentativa novamente. Depois
+de concluído, o desfecho não reaparece automaticamente. A narrativa distingue
+a maldição de retorno da Centelha e o retorno voluntário para preparar a ascensão;
+o rodapé informa que a continuação está em desenvolvimento.
+
+No lote do tutorial, CampaignProfile ainda usava `version: 1` e acrescentou
+`narrativeVersion: 1`, `tutorialSeen` e `tutorialEnabled`. O lote de checkpoints
+passa a escrever `version: 2`, conservando essa versão narrativa. Os campos do
+tutorial são opcionais nos arquivos
+antigos; ausência dos dois últimos significa conjunto vazio e dicas ativadas.
+Uma versão narrativa desconhecida usa a proteção UnsupportedVersion. Perfis
+sem versão narrativa e com vitórias anteriores migram a Centelha, sem marcar
+a leitura. Um perfil já versionado não infere a conquista pelo contador.
+
+ProfileService.completeTutorial(characterId, topic), setTutorialEnabled(characterId,
+enabled) e finishUnderworldEpilogue(characterId) verificam a identidade do save.
+Falhas de autosave conservam fatos/preferência em memória para retrySave por S
+no refúgio. Os dados são pessoais e reiniciam ao excluir o slot, independentes
+de SharedProgress. A aquisição não acrescenta atributo nem muda o reset das dádivas.
+Retomada por checkpoints é descrita no incremento de 29/10/2026 abaixo;
+próximas regiões continuam em aberto. Vídeo,
+controles e tamanho do HUD têm seus próprios incrementos abaixo.
+
+## Marco 7 — vídeo e janela
+
+Incremento de **27/10/2026**, implementado e verificado.
+Este bloco descreve a entrega original de dois modos. A adaptação atual e o
+formato v2 estão no [incremento de três modos](MARCO_7_MODOS_DE_EXIBICAO.md)
+e na seção seguinte, com lógica, OpenGL e execução nativa aprovados.
+**389 testes de lógica aprovados, sem falhas ou erros**: base 372 + 12 em
+VideoSettingsTest + cinco em GdxVideoBackendTest, com Graphics simulado.
+**OpenGL e execução nativa do pacote Windows aprovados**; os 372 testes e aprovações do
+incremento anterior são históricos. [Regras e limites](MARCO_7_VIDEO_E_JANELA.md).
+
+VideoSettings valida tamanho de janela, fullscreen e VSync. VideoSettingsService
+aplica uma prévia de 15 s por System.nanoTime e só grava confirmação explícita.
+O snapshot de reversão usa a janela real, inclusive tamanho manual. Tick é
+chamado por Main.render independentemente do combate. A guarda busy impede
+aplicar/confirmar durante callbacks nativos; um cancelamento reentrante fica
+pendente até a operação terminar. Falha na reversão tenta uma janela segura.
+
+GdxVideoBackend usa a resolução atual de getDisplayMode() para tela cheia e
+preserva dimensões de janela. Oferece cinco presets de 800×450 a 1920×1080;
+recusa janelas que excedem o espaço disponível. VSync desligado usa 120 FPS;
+ligado usa limite de primeiro plano refreshRate + 1, com fallback de 60 Hz
+somente quando o monitor informa zero; taxas positivas de 24/30/50 Hz são respeitadas.
+Tamanho do HUD e remapeamento de entrada pertencem a incrementos separados.
+
+F2 abre VideoSettingsScreen pelo menu e VideoPanel sobreposto no refúgio,
+GameScreen e BossRoomScreen. A sobreposição pausa a simulação e consome o quadro
+de abrir/fechar, preservando os estados anteriores de pausa/Tab/áudio/dádiva.
+Editar altera somente um draft; Enter/Aplicar começa a prévia e Enter/Manter
+confirma. Esc/timeout reverte. Fechar painel, trocar de tela, pausar a aplicação
+ou encerrar Main cancela uma prévia pendente. Há proteção de entrada de 0,2 s
+e soltura do mouse.
+
+FileVideoSettingsStore guarda video-settings.json global, version1, em UTF-8,
+com temporário, troca atômica quando possível e backup válido .bak. Versão
+futura é preservada; falha de leitura usa preferências apenas na sessão sem
+sobrescrever o arquivo. Falha de confirmação mantém imagem/preferência pendente
+em memória; S no painel chama retrySave. Dados não pertencem a CampaignProfile
+ou SharedProgress e sobrevivem à exclusão de personagens.
+
+Smokes usam VideoSettingsStore.memory e VideoBackend.memory ou backend falso,
+sem alterar a configuração física do monitor. Verificar UI/estado por OpenGL
+não equivale a homologar tela cheia, VSync ou resoluções físicas reais.
+O pacote nativo foi aprovado com Java incluído, PATH sem Java externo, 24 efeitos
+e música em OpenAL nativo silenciado e perfis em memória. Seu diagnóstico também
+renderiza VideoSettingsScreen com backend em memória. Resoluções físicas, vários
+monitores e HiDPI reais continuam pendentes de revisão manual.
+Cutscenes em camadas têm [direção aprovada](CUTSCENES_E_ABERTURA.md), e o piloto
+da abertura foi implementado no incremento abaixo. O acabamento é iterável.
+
+## Marco 7 — três modos de exibição e monitor atual
+
+Incremento de **28/10/2026**, aprovado em **457 testes de lógica sem falhas ou
+erros, integração OpenGL e execução nativa Windows**. VideoSettings usa Mode.WINDOWED,
+BORDERLESS e FULLSCREEN; width/height continuam sendo o tamanho preferido da
+janela. O JSON v2 grava mode em texto; a leitura migra v1/fullscreen booleano.
+Parser estrito e FileVideoSettingsStore preservam versões futuras no principal
+e no backup, inclusive contra gravação direta. Os 439 testes anteriores são
+históricos do HUD; 18 testes de lógica foram acrescentados neste lote.
+
+VideoBackend oferece adapt e Snapshot/settings, snapshot/restore. O serviço
+adapta antes de aplicar/comparar/confirmar, conserva a prévia monotônica de
+15 s e usa o snapshot nativo para restaurar posição, tamanho, monitor e flags.
+Fallback tenta janela segura se a restauração não for possível; falha do
+próprio provedor de área segura é tratada sem gravar o alvo não confirmado.
+VideoBackend.matches valida o estado real na inicialização e confirmação,
+recusando uma janela sem bordas que tenha sido reposicionada fora da cobertura
+esperada com Win+setas durante a prévia.
+
+GdxVideoBackend recebe WindowPlacement. Main(VideoBackend) permite ao launcher
+fornecer Lwjgl3WindowPlacement com consultas GLFW de monitor, área útil,
+coordenadas lógicas, moldura, decoração e redimensionamento. A ponte genérica
+Graphics é um fallback aproximado; a produção desktop injeta a ponte nativa.
+Janela decorada/redimensionável cabe na área útil; borderless usa janela sem
+decoração sobre os bounds totais; fullscreen usa o modo exclusivo atual do
+monitor. Presets ficam ativos apenas em WINDOWED. Origens negativas e tamanho
+lógico de janela são preservados; framebuffer HiDPI não dimensiona a janela.
+
+Os smokes gráficos usam backend falso e stores em memória. O diagnóstico do
+launcher consulta geometria nativa no primeiro quadro, com
+PACKAGED_MONITOR_SMOKE_OK, e desenha o painel de três modos em janela oculta.
+O diagnóstico opcional --display-smoke-test aplica os três modos nativos reais
+nessa janela, na resolução/taxa atuais do monitor, e restaura o snapshot em
+finally. O script do pacote exige PACKAGED_DISPLAY_MODES_SMOKE_OK; sua execução
+foi aprovada com WINDOWS_PACKAGE_OK e código zero, com Java incluído, PATH sem
+Java externo, perfis/preferências em memória e OpenAL null. O diagnóstico
+confirmou os três modos reais e a restauração de posição/flags, no monitor
+atual e sem escolher outra resolução/taxa. O launcher protege render contra
+reentrada nos callbacks de redimensionamento. Os smokes de UI continuam com
+backend falso.
+Resultados e capturas em [MARCO_7_MODOS_DE_EXIBICAO.md](MARCO_7_MODOS_DE_EXIBICAO.md).
+Uma janela oculta no monitor atual não homologa uso visível de tela cheia,
+Alt+Tab visível, vários monitores físicos, remoção real ou HiDPI real. Esses cenários continuam
+em revisão manual. HUD, controles, abertura, colisões e progressão não mudam.
+
+## Marco 7 — piloto da abertura em camadas
+
+Incremento autorizado em **27/10/2026**, com visuais de Zeus clássico e esposa
+grega adulta escolhidos pelo autor. Modelo, persistência, renderer e atlas estão
+implementados. **412 testes de lógica passaram, sem falhas ou erros**, com 23
+novos (sete de story, sete de playback e nove de persistência). **OpenGL e execução
+nativa do pacote Windows aprovados em 27/10/2026**. Base histórica: 389 do vídeo.
+[Contrato e regras do piloto](PILOTO_DA_ABERTURA.md).
+
+O diagnóstico nativo desenha o atlas, a linha do tempo e as legendas da abertura
+no executável empacotado, com Java incluído, PATH sem Java externo e perfis em
+memória. O áudio usa OpenAL com dispositivo null. O resultado foi
+`WINDOWS_PACKAGE_OK`; avaliação humana do piloto e demais entregas do M7
+continuam abertas.
+
+OpeningStory carrega cutscenes/opening.json: ID opening-v1, seis ShotId e
+durações 6/7/7/9/7/9 s. Layers descrevem asset, posições/alfas inicial e final,
+tamanho e respiração; shots têm zoom inicial/final, legendas e cues de SoundCue.
+Parser valida estrutura, tipos, duplicações, limites, ordem e checkpoints.
+OpeningPlayback é puro, com tempo/progresso de UI, pausa, avanço mínimo de 1,5 s,
+pulo e cues liberados uma vez. Não guarda perfil, textura ou estado de combate.
+
+Main.openOpening(Supplier, recordCompletion) e enterCampaign integram o fluxo:
+profissão/dificuldade são confirmadas antes de uma abertura pendente; o destino
+é criado sob demanda. I/ABERTURA no menu funciona sem criar personagem, e I
+no refúgio revê com recordCompletion=false. A demo não dispara automaticamente.
+OpeningScreen desenha layers ordenados por SpriteBatch, interpola zoom/posição/
+alfa e mantém a base dos pés na respiração. Sete poses de personagem usam
+regiões de 432×480 no atlas cinematográfico. Legendas têm área própria 960×540
+com letterbox. Sons saem no update, nunca em draw. O atlas cinematográfico é
+próprio da tela, com filtro Linear e dispose ao sair.
+
+Espaço pausa, Enter/Próximo avança após 1,5 s, Esc/Pular pede confirmação de
+0,2 s/soltura e F2 sobrepõe vídeo sem avançar o filme. Pausa da aplicação
+congela a cena; dispose não registra conclusão nem cria o destino. A tela
+limita delta a 0,1 s para não consumir trechos durante arrasto/parada longa.
+
+CampaignProfile acrescenta cinematics opcional como array de {id,state}.
+CinematicState tem UNSEEN, COMPLETED, SKIPPED e LEGACY; openingPending consulta
+UNSEEN. Ausência do array com attempts>0 migra LEGACY, sem alegar exibição.
+JSONs novos sempre escrevem o array para impedir inferência por tentativas
+em arquivos modernos. ProfileService.markOpening(characterId, skipped) verifica
+profissão/identidade e só registra UNSEEN; demais estados são idempotentes.
+Falha de IO mantém o registro em memória para S no refúgio. Concluir/pular/
+rever não liquida tentativa, dá moedas, concede Centelha ou marca leitura do
+desfecho. Excluir personagem limpa seu registro, preservando SharedProgress.
+
+## Marco 7 — controles remapeáveis
+
+Incremento implementado e aprovado em **424 testes de lógica, sem falhas ou
+erros, integração OpenGL e execução nativa do pacote Windows**.
+Os 412 testes e as aprovações do lote acima são históricos da abertura.
+[Contrato, controles e verificações](MARCO_7_CONTROLES.md).
+
+ControlAction contém 11 ações de gameplay. InputBinding identifica KEY/MOUSE e
+código, rótulo e estado físico. ControlSettings mantém uma ou duas associações
+por ação, imutáveis, sem comandos duplicados entre ações; todas permanecem com
+ao menos uma entrada. Teclas de menus/atalhos são reservadas, Enter pertence
+somente a INTERACT e os botões de mouse aceitos vão de 0 a 4. A mira continua
+com o mouse; menus e confirmações preservam navegação própria.
+
+Main.controlSettings fornece ControlSettingsService e Main.controls fornece
+GameControls. Os construtores de testes usam store em memória. A versão de
+produção usa FileControlSettingsStore e control-settings.json fora da instalação,
+separado de CampaignProfile, SharedProgress, áudio e vídeo. O JSON versão 1
+valida tipos, campos duplicados/desconhecidos, ações completas, códigos e
+conflitos. Versões futuras são identificadas antes do schema: um principal
+futuro não usa fallback; um backup futuro impede sobrescrita mesmo com principal
+válido. Gravação usa temporário, movimento atômico quando possível e
+backup validado. Falha de IO mantém preferências na sessão e permite retry S
+no painel; falha de leitura aplica padrão na sessão, sem sobrescrever o original.
+
+ControlsSettingsScreen abre pelo menu, por F3 ou botão CONTROLES. ControlsPanel
+é sobreposto no refúgio, GameScreen e BossRoomScreen sem trocar a tela. Dois
+grupos de até seis ações permitem editar principal/alternativo; o rascunho só
+vale após Enter/Salvar. Restaurar padrão altera o rascunho. Captura aguarda
+0,2 s e soltura dos comandos; Esc cancela e Delete/Backspace remove sem zerar
+uma ação. Conflitos são exibidos e conservam a associação anterior.
+
+Abrir/fechar consome o quadro e pausa a simulação antes do update, conservando
+estados de consulta de dádivas, pausa, escolha, diálogo, altar e chefe. Aplicar
+ou fechar chama blockUntilReleased. GameControls.poll libera entradas soltas;
+pressed/justPressed respeitam o bloqueio. physicallyPressed permite que os
+guardas de escolha continuem exigindo soltura do ataque físico mesmo enquanto
+o comando está bloqueado. Rótulos de ajuda consultam as associações atuais.
+
+ControlSettingsTest acrescenta 12 testes de lógica, totalizando 424 aprovados.
+ControlSmoke passou na integração OpenGL, com M7_CONTROLS_OK e DEMO_SMOKE_OK,
+exercitando os fluxos reais, execução de controles personalizados, captura,
+persistência e overlays pausados. As capturas nas duas resoluções estão no
+documento do incremento. PackageWinX64 e a verificação do executável encerraram
+com código zero e WINDOWS_PACKAGE_OK, com Java incluído, PATH sem Java externo,
+stores em memória e OpenAL null com 24 efeitos e streaming. O launcher renderiza
+ControlsSettingsScreen no quadro 29, após a abertura, e emite
+PACKAGED_CONTROLS_SMOKE_OK. A revisão humana dos controles continua.
+Remapeamento não encerra M7, revisão visual do M6, playtests ou o incremento
+separado de retomada de tentativa. O ajuste de HUD pertence ao incremento abaixo.
+
+## Marco 7 — tamanho do HUD de combate
+
+Implementado em **28/10/2026**, com **439 testes de lógica sem falhas ou erros,
+integração OpenGL e execução nativa do pacote Windows aprovadas**. A base
+histórica anterior é de 424 testes do remapeamento; este lote acrescenta 12
+de preferências e três de layout. [Contrato e validação](MARCO_7_ESCALA_HUD.md).
+
+HudSettings guarda percent inteiro em 80–125, padrão 100. HudSettingsService
+aplica a confirmação e mantém uma gravação falha pendente. A produção usa
+FileHudSettingsStore com hud-settings.json separado de vídeo, controles e
+personagens, UTF-8, temporário, troca atômica e backup validado. JSON versão 1
+valida campos/tipos/limites; uma versão futura é reconhecida antes do schema.
+Principal futuro impede fallback; backup futuro também é protegido na escrita.
+Falha de leitura permite somente preferência na sessão, conservando o arquivo.
+
+VideoPanel abre HudPanel em uma página própria por F2 → TAMANHO DO HUD. A
+prévia local mostra jogador/relógio; rascunho não afeta a arena. Barra ajusta
+1 ponto percentual; setas/−/+ ajustam 5; presets são 80/100/125. Enter salva,
+restaurar altera o rascunho, S repete gravação, Esc volta à página de imagem
+e F2 fecha. A página usa a pausa existente de vídeo, consome entrada/saída e
+bloqueia comandos segurados ao aplicar/fechar.
+
+F3/pausa da aplicação cancelam o arrasto e reiniciam a proteção de input,
+exigindo soltura do mouse e 0,2 s antes de editar novamente. HudSmoke cobre a
+regressão em arena, refúgio e chefe, além da pausa da tela de vídeo independente.
+Após essa proteção, a suíte completa passou com M7_HUD_OK e DEMO_SMOKE_OK.
+
+HudLayout define âncoras esquerda (14,526) e direita (946,526) na área 960×540.
+HudScaleRenderer reutiliza/restaura matrizes de transformação entre grupos,
+sem alterar projeções, viewports, câmera do mundo ou coordenadas de input.
+Player, metas/relógio e barra/aviso do Guardião escalam juntos com seus ícones,
+fontes e barras. O aviso ocupa outra caixa de 422×42 na coluna direita, abaixo
+da barra do chefe, com até duas linhas. Em 125%, a separação horizontal de
+jogador/chefe é de 92 unidades lógicas.
+
+Menus, diálogos, cutscenes, rodapés contextuais, números de dano, barra sobre
+o Carrasco, telegráficos e borda de dano conservam a apresentação atual.
+O tamanho do HUD não inicia a prévia nativa de 15 s, muda regras/economia ou
+implementa retomada de tentativa, que tem seu incremento separado abaixo.
+A abertura atual permanece preservada.
+O diagnóstico do launcher usa o construtor de VideoSettingsScreen que abre
+diretamente HudPanel, desenha os indicadores de amostra e emite
+PACKAGED_HUD_SMOKE_OK no quadro 29. PackageWinX64 e verify_windows_package.ps1
+encerraram com código zero, WINDOWS_PACKAGE_OK, Java incluído, PATH sem Java
+externo, perfis/preferências em memória e OpenAL null com 24 efeitos e música
+em streaming. Construtores legados de Main usam HudSettingsStore em memória.
+Revisão humana e as demais entregas do M7 continuam pendentes.
+
+## Cutscenes futuras — direção registrada, sem implementação
+
+Em **27/10/2026**, o autor definiu Symphony of the Night e Metal Slug como
+referências para cenas/diálogos com atuação em sprites na sala. A abertura
+existente fica preservada. O [contrato futuro](CUTSCENES_E_ABERTURA.md) registra
+gatilhos por cruzamento em coordenadas do mundo, modo CUTSCENE, diretor de
+ações por eventos, sincronismo de voz/animação/objetos, estado final idempotente
+e planos ou geometria 3D texturizados para efeitos de perspectiva.
+
+OpeningStory/OpeningPlayback continuam específicos do piloto. Planejar modelos
+separados para sequências gerais e um canal de voz com término identificável,
+alternativa sem áudio e limite para esperas. O GameAudio.play atual informa
+reprodução aceita, não conclusão de diálogo. DialoguePlayback cuida da leitura;
+texto revelado, fim de áudio e confirmação do jogador são eventos distintos.
+
+Main.setScreen descarta a tela anterior: uma cena dentro da arena precisará de
+modo/overlay na própria sala ou posse explícita do mundo. Suspender combate,
+spawn, coleta, tempo da run e Fúria enquanto atores/câmera da cena atualizam.
+Retornar ao mesmo GameScreen descartado não é uma estratégia válida. Novos
+IDs/políticas de registro devem conservar a compatibilidade de opening-v1.
+Nenhuma API nova, troca de renderer ou migração de save foi feita nesta anotação.
+
 ## Arquitetura planejada após os playtests
 
 O [roteiro de 13/10/2026](ROTEIRO_DE_MELHORIAS.md) prioriza HUD/áudio/Guardião,
@@ -84,18 +513,20 @@ As responsabilidades abaixo descrevem o sistema atual; a ampliação deverá:
 
 - Expandir o piloto visual mantendo dano, navegação e persistência fora
   da apresentação e preservando a correspondência das máscaras.
-- Definir dádivas por dados, com região de obtenção, raridade, recarga e limites;
-  poderes obtidos continuam nas transições. Catalogar novas compras do altar.
-- Externalizar falas/opções/condições e modelar missão do NPC do Fazendeiro com
-  progresso e conclusão identificáveis. O desbloqueio compartilhado é uma proposta;
-  recompensa e falhas de gravação precisam ser tratadas antes de habilitar a classe.
-- Modelar troca ancinho/foice dentro da profissão, com recarga compartilhada,
-  atributos da ferramenta ativa e forja única; ampliar a paginação de profissões.
+- Ampliar a definição de dádivas para conteúdo por dados: o M4 já oferece região
+  de obtenção, raridade, recarga, limites e seis compras do altar. Novas regiões
+  deverão reutilizar o filtro e conservar os poderes adquiridos na tentativa.
+- Externalizar mais falas/opções/condições, reutilizando o estado de missão e
+  desbloqueio compartilhado do M5. Verificar migração e recuperação antes de
+  ampliar o catálogo de desafios.
+- Comparar as duas ferramentas do Fazendeiro nas três dificuldades, preservando
+  recarga compartilhada, atributos ativos e forja única ao ajustar os valores.
 
 HUD, visibilidade sonora e métricas entraram no M1; dificuldade/economia no M2.
 O M3 incorporou fontes e o pacote piloto; a expansão antecipou parte do M6 para
-todo o elenco atual. Missões, novas compras, futuros personagens e poses corporais
-adicionais continuam planejadas nos respectivos marcos.
+todo o elenco inicial. M4 ampliou dádivas/altar e M5 acrescentou missão e Fazendeiro.
+Novos desafios, personagens e regiões continuam planejados. Dano/morte e cenários
+do elenco atual já têm implementação; a revisão humana da apresentação permanece.
 
 ## Responsabilidades
 
@@ -103,13 +534,15 @@ adicionais continuam planejadas nos respectivos marcos.
 | --- | --- |
 | SoundCue / GameAudio / AudioBackend / GdxAudioBackend | Sons compartilhados, limites/prioridade de vozes e trilha única em streaming |
 | AudioSettings / AudioSettingsStore / AudioSettingsService / AudioPanel | Volumes/mute independentes de saves, persistência/backup e edição sem avançar o combate |
+| VideoSettings / VideoSettingsService / FileVideoSettingsStore | Preferências globais, prévia monotônica de 15 s, confirmação/reversão e backup |
+| VideoBackend / GdxVideoBackend / WindowPlacement / Lwjgl3WindowPlacement / VideoPanel / VideoSettingsScreen | Três modos, adaptação ao monitor e snapshot de posição/flags, com UI F2 pausada nas quatro entradas |
 | CombatFeedback / FeedbackVisuals | Pulsos limitados, cores de armas e indicação de dano/defesa/proteção baseada em resultado efetivo |
-| RunSession | Modo, arena, abates, poderes, Almas pendentes, ID e métricas da tentativa |
+| RunSession | Modo, arena, abates, poderes, objetivos da missão, Almas pendentes, ID e métricas da tentativa |
 | RunStatistics / RunReport / RunReportScreen | Agregados por sala/origem, snapshot imutável e consulta do histórico |
-| SharedProgress / SharedProgressService / FileSharedProgressStore | Almas, acesso lendário e 20 relatórios; gravação global com backup |
+| SharedProgress / SharedProgressService / FileSharedProgressStore | Almas, acessos lendário/épico e 20 relatórios; gravação global com backup |
 | PlayerState | Profissão, arma, atributos, XP, vida, estamina e recargas, sem recursos gráficos |
-| Profession / WeaponType / WeaponAttack | Armas iniciais, valores provisórios e geometria dos golpes de espada e socos |
-| ProfessionScreen / DifficultyScreen | Pergunta do narrador e confirmação das duas escolhas na criação do save |
+| Profession / WeaponType / WeaponAttack | Armas, bases provisórias e geometria de espada, socos, ancinho e foice |
+| ProfessionScreen / DifficultyScreen / MenuPages | Nove profissões em três páginas e confirmação de profissão/dificuldade na criação do save |
 | GameDifficulty | Multiplicadores fixos de inimigos e percentuais das moedas elegíveis |
 | SaveSlots / SaveSelectionScreen | Oito perfis independentes em duas páginas e seleção de personagem |
 | EnemyType / EnemyWaves | Atributos e XP por tipo; sorteio de ondas mistas ou de um único tipo |
@@ -120,7 +553,9 @@ adicionais continuam planejadas nos respectivos marcos.
 | EnemyNavigation | Campo de caminhos compartilhado, desvios e colisão do corpo |
 | RegionDefinition / ArenaDefinition | Salas, metas e destinos imutáveis, carregados de JSON |
 | GameScreen / Jogador | Combate, entrada, entidades, mapa e recursos gráficos da arena |
-| RouteScreen | Escolha de destino entre arenas |
+| RouteScreen | Cartões de destino com preview proporcional, evento/recompensa/metas e entrada protegida |
+| SceneryTheme / TileLayout | Tema e hashes visuais estáveis; colisão procedural compatível com o Java Random anterior |
+| TileMap / SceneryArt / SceneryVisuals | Cache visual limitado separado da navegação, atlas compartilhado e bordas fora dos bounds |
 | BossEncounter / CombatGeometry | Máquina de estados do chefe, padrões, dano e colisão por percurso, sem OpenGL |
 | SpriteHitbox / Art / ExpandedArt | Formas de alfa por quadro, posições independentes por corpo e contato/percurso vinculados à escala e direção predominante |
 | ActorAnimation / PlayerAnimation / EquippedArt | Oito direções, passada/transição, equipamento incorporado à pose e máscaras do tronco/pernas |
@@ -130,21 +565,29 @@ adicionais continuam planejadas nos respectivos marcos.
 | ChoiceInputGuard / BoonPanel | Espera e liberação do ataque antes de escolher; consulta paginada das dádivas com tempo congelado |
 | BossRoomScreen | Arena fechada, armas, poderes, avisos, HUD e resultado do combate com o chefe |
 | RefugeScreen / CaronteDialogue | Área segura, conversa, altar e preparação da nova tentativa |
-| CampaignProfile / PermanentBonuses | Moeda, compras limitadas, profissão e fatos; atributos iniciais da campanha |
+| DialogueLine / DialoguePortrait / DialoguePlayback / DialoguePanel | Dados imutáveis, retrato por fala, leitura Unicode e apresentação compartilhada dos três NPCs |
+| BlacksmithDialogue / CamponesaDialogue | Falas condicionais de forja e etapas da promessa, sem ações de economia/progressão |
+| TutorialTopic / TutorialGuide / TutorialPanel | Lições pessoais, tempo/contexto, ações observadas e guia F1 compartilhado |
+| UnderworldStory / UnderworldEndingScreen | JSON do desfecho, leitura protegida e consulta da conquista já liquidada |
+| OpeningStory / OpeningPlayback / OpeningScreen | Dados/linha do tempo da introdução, camadas, legendas, sons e pulo protegido |
+| CampaignProfile / PermanentBonuses | Moeda, compras, profissão, missão pessoal e fatos; atributos iniciais da campanha |
 | ProfileService / ProfileStore / FileProfileStore | Compra confirmada por gravação, retorno único, arquivo com cópia anterior |
 | RunChests | Surgimento alcançável, limite de objetos e benefícios locais da arena |
-| RunEncounters | Sorteio único do ferreiro e bloqueio de material por região |
+| RunEncounters | Sorteios únicos de ferreiro/Camponesa e bloqueio de material por região |
+| FarmerQuest / FarmerQuestScreen | Objetivos persistentes e encontro opcional seguro com aceitação da missão |
 | Luck / BoonRarity / UpgradeChoices | Multiplicador de sorte, categorias e três escolhas ponderadas sem repetição |
 | MiniBossEncounter | Perseguição, giro, pedras, vida/dano escalados |
 | WeaponRarity / BlacksmithScreen | Arma permanente no perfil e encontro seguro com compra por material |
 | ArenaReward / ArenaRewardScreen | Recompensa única da sala, escolhida em segurança antes do destino |
 | ArenaVariation | Pesos das hordas sorteados uma vez por sala/tentativa e anunciados na rota |
+| RunCheckpoint / RunRandom / SnapshotJson | Envelope imutável, RNG exportável e validação dos snapshots de pontos seguros |
+| RunSettlement / ResumeRunScreen / CheckpointSaveErrorScreen | Recibo durável do retorno, retomada/abandono confirmado e retry das transições |
 
 A troca de sala libera recursos gráficos e entidades locais. PlayerState continua
-na mesma tentativa, sem guardar texturas ou telas. Reiniciar preserva a profissão,
-mas limpa poderes, XP e contagens. Abandonar/fechar descarta o estado temporário;
-o retorno guarda Óbolos e eventos no perfil. Fechar no meio da tentativa descarta
-o que ainda não foi guardado. Inventário e retomada ainda não existem.
+na mesma tentativa, sem guardar texturas ou telas. Uma nova tentativa preserva a profissão,
+mas limpa poderes, XP e contagens. Abandonar encerra a tentativa e recolhe seus ganhos.
+Fechar durante o combate retorna ao último checkpoint; salvar e sair nos pontos
+seguros mantém a tentativa aberta. Inventário geral continua pendente.
 
 ## Áudio e feedback
 
@@ -206,7 +649,7 @@ O narrador pergunta a profissão somente na criação do save; CampaignProfile e
 ProfileService impedem alterações posteriores. As escolhas ainda não mudam
 diálogos posteriores. Nomes e valores precisam de playtests. Os corpos atuais
 são distintos por profissão, com arma integrada e poses de ataque. Atlas e efeitos
-são compartilhados; poses de dano/morte continuam pendentes.
+são compartilhados; as novas poses de dano/morte estão implementadas e verificadas.
 [Revisão de animação](ANIMACOES_E_EQUIPAMENTOS.md) e
 [polimento vigente](POLIMENTO_VISUAL_E_REFUGIO.md).
 
@@ -216,6 +659,30 @@ PlayerState mantém os ataques/s reais. Jogador.update(delta,map,false) permite
 movimento no refúgio sem consumir disparo ou animar ataques. Durante seus painéis,
 Jogador.idle(delta) apenas anima o repouso. Caronte/altar/travessia usam 12 regiões
 no atlas compartilhado; ProfessionScreen também usa o repouso animado.
+
+## Marco 4 implementado
+
+[Regras e valores](MARCO_4_DADIVAS_E_ALTAR.md). BoonState pertence ao PlayerState e
+controla sete poderes temporários, com recargas globais por efeito. WeaponBonus é
+um token de uso único por ataque/projétil; atravessar inimigos não duplica a Emboscada.
+CombatEffects resolve Eco atrasado e Convergência por DamageSink, sem encadear onHit;
+paredes e targetable continuam válidos. As duas telas usam o mesmo modelo.
+RunSession centraliza cura/estamina por abate, evitando duplicação nas telas.
+DamageSource distingue Emboscada, Convergência e Eco nos relatórios.
+
+Upgrade.availableIn filtra região e pré-requisito da Convergência somente na oferta.
+A aquisição não é removida ao trocar de sala; novas regiões jogáveis ainda são futuras.
+PermanentBonuses carrega seis níveis imutáveis: vida, dano, movimento, capacidade
+de estamina, recuperação e Armadura. Campos novos ausentes do perfil v1 leem zero;
+COLLECTION antigo migra para ARMOR, preservando o nível. Se ambas as chaves
+existirem, ARMOR prevalece e ambas são validadas; a próxima gravação escreve apenas
+ARMOR. Os três atributos originais continuam obrigatórios. ProfileService mantém
+gravação antes da compra. O altar tem duas páginas, previsão atual/próxima e seis
+atributos. Armadura aplica 0,03 de resistência por nível, até 0,15, pelo mesmo
+caminho de redução de dano de contato/projétil/chão; soma com a resistência existente
+até 0,75. Amparo continua multiplicativo sobre o restante. Não há bônus permanente
+de alcance de coleta; ímã e Rastro continuam temporários.
+ExpandedArt incorpora o atlas M4 (128 KiB RGBA), descartado com os demais recursos.
 
 ## Interface e geometria de combate
 
@@ -322,7 +789,8 @@ RunEncounters sorteia o ferreiro uma vez (3% base) na criação da tentativa e o
 na derrota do mini-boss (1,5% base). Luck aplica a sorte da profissão: 12% e 6% para
 o Apostador. O limite é uma unidade por região por save, independente das salas/runs. Main.offerRoute abre
 BlacksmithScreen antes da primeira escolha de destino se foi sorteado. Continuar
-fecha o encontro e abre RouteScreen; próximas salas não sorteiam outro ferreiro.
+fecha o encontro e retorna a offerRoute para apresentar a Camponesa, se sorteada,
+ou RouteScreen; próximas salas não sorteiam outro ferreiro.
 Menus e encontro seguro não avançam o tempo de combate.
 
 ProfileService.prepareRun sincroniza o bloqueio do perfil com RunEncounters ao
@@ -443,17 +911,68 @@ resultado de morte/vitória ou por abandono. RefugeScreen contém um jogador nov
 de preparação; não guarda a tentativa anterior. Main cria a próxima RunSession
 com um snapshot PermanentBonuses. A demo não aplica esse snapshot.
 
-Compras ficam no perfil; dádivas continuam em RunSession e nunca são serializadas.
-O retorno concede moeda uma vez por sessão encerrada; reabrir o resultado ou
+Compras ficam no perfil; dádivas pertencem à RunSession e passam a integrar o
+snapshot da tentativa ativa. O retorno concede moeda uma vez por tentativa encerrada; reabrir o resultado ou
 repetir a chamada não concede novo saldo. Uma morte sem abates/baús não dá moeda.
 ProfileService preserva os ganhos na memória se o autosave falha, permitindo
 repetir a gravação; a compra só desconta saldo após gravar com sucesso.
 
-O arquivo é UTF-8, versão 1, fora da instalação. A gravação usa um arquivo
+O arquivo é UTF-8, versão 2 com leitura/migração da versão 1, fora da instalação. A gravação usa um arquivo
 temporário, mantém uma cópia anterior válida e troca o principal ao final.
 Principal corrompido pode ser lido pela cópia. Um perfil de versão desconhecida
-não é sobrescrito. Falha de leitura preserva os arquivos e permite jogar com
-estado apenas na sessão; compras ficam indisponíveis. Falhas aparecem na interface.
+não é sobrescrito. Falha de leitura preserva os arquivos e impede compras e o
+início de uma campanha com checkpoint não gravável. Falhas aparecem na interface.
+
+## Checkpoints entre salas e áreas seguras — 29/10/2026
+
+O contrato aprovado grava somente pontos seguros. RunCheckpoint fica dentro de
+CampaignProfile; não há arquivo de arena separado. O envelope versão 1 valida
+UUID da tentativa/personagem, sequência, revisão, profissão, dificuldade, etapa
+e fingerprint do conteúdo da região. ROOM_START aceita uma sala ainda não
+simulada; ARENA_REWARD, BLACKSMITH, FARMER e ROUTE exigem arena concluída e
+flags coerentes. Nenhum ponto admite jogador morto ou subida de nível pendente.
+
+Main prepara a tentativa e grava ROOM_START antes de criar GameScreen/BossRoomScreen.
+offerRoute decide uma única vez a recompensa/encontro e grava a etapa antes de
+construir a tela. As opções de dádiva rara são sorteadas antes da gravação.
+enterNextArena muda a sala uma vez e aguarda o commit antes de construir a arena.
+Uma falha preserva a transição já decidida em CheckpointSaveErrorScreen; o retry
+grava o mesmo estado, sem recolher outra recompensa ou avançar outra sala.
+
+saveAndExit grava novamente o ponto seguro e retorna ao menu sem end/settle.
+ResumeRunScreen oferece continuação e abandono confirmado. A restauração
+reconstrói RunSession e seus modelos, reconecta PlayerState/RunStatistics e
+Necromancy e então cria a tela indicada pelo envelope. prepareRun reconcilia
+fatos pessoais como forja, semente e limite do material; não reaplica os bônus
+permanentes capturados no começo da tentativa. Conteúdo incompatível mantém
+o personagem e exige confirmação para descartar somente o snapshot da tentativa.
+
+PlayerState/BoonState conservam campos brutos e janelas temporárias sem repetir
+upgrades. RunSession conserva UUID, relógios, estatísticas, moedas fracionárias,
+variantes, escolhas, aliados e RNGs relevantes aos sorteios persistidos.
+GameScreen usa o boonRandom da sessão. Texturas, telas, mapa, posição do jogador,
+entidades hostis, projéteis e perigos locais não são serializados. Uma interrupção
+de combate recria a sala a partir do último checkpoint.
+
+O encerramento usa RunSettlement: o perfil grava recompensas pessoais, invalida
+o checkpoint e conserva o recibo pendente na mesma alteração. Só depois dessa
+gravação SharedProgressService consome o recibo, creditando saldo/histórico e
+maior sequência concluída por UUID no mesmo valor. Por fim o perfil confirma
+o recibo. O registro de sequências não depende dos 20 relatórios visíveis.
+Repetir/recarregar qualquer etapa não concede novo crédito; pendências são
+retomadas antes de iniciar outra tentativa ou excluir o personagem.
+
+FileProfileStore.saveTerminal remove o fallback ativo e espelha o estado terminal;
+FileSharedProgressStore.saveSettlement espelha saldo e sequência consumida juntos.
+Assim, a recuperação por backup não deve reabrir uma tentativa encerrada ou
+voltar o registro global para antes do crédito. Perfis antigos sem identidade
+recebem UUID durável; a sequência é reconciliada com o registro global quando
+não há tentativa/recibo pendente. Arquivos de versão futura são preservados.
+
+Contrato, limitações e estado da verificação: [MARCO_7_CHECKPOINTS.md](MARCO_7_CHECKPOINTS.md).
+O fechamento do M7 ainda requer partidas completas, comparação das profissões
+e revisão em hardware Windows real. Cutscenes futuras seguem SOTN/Metal Slug,
+gatilhos e eventos; o piloto atual da abertura não é refeito neste incremento.
 
 RefugeScreen expira confirmações após 3,5 segundos de tela; falhas de persistência
 são apresentadas separadamente até a resolução. XpAttraction aproxima cristais
@@ -503,6 +1022,22 @@ IDs únicos, destinos válidos, alcance de todas as salas e ausência de ciclos
 são verificados. durationSeconds foi removido; não há condição de limpar a horda.
 
 ## Validação
+
+A revisão de cenários/rotas de **25/10/2026** passou em **336 testes de lógica,
+sem falhas**. As novas verificações cobrem temas pelos IDs reais, variantes,
+equivalência do RNG físico, coordenadas negativas/extremas, rejeição de nextInt,
+área segura, bounds, navegação sem alocar tiles, revisita/evicção, zoom e teto do
+cache. A integração OpenGL também passou após a revisão dos contornos dos rótulos
+e avisos. O ZIP Windows foi gerado e `verify_windows_package.ps1` retornou
+`WINDOWS_PACKAGE_OK`: Java incluído, PATH sem Java externo, 24 efeitos e música
+com OpenAL nativo silenciado, sem alterar saves reais. O teste usa saves em memória.
+Leitura em partidas, equilíbrio e aceite artístico humano continuam pendentes.
+
+A entrega do M5 passou nos 290 testes unitários e na integração OpenGL, incluindo
+o fluxo completo da missão, criação do Fazendeiro, ferramentas e 1.504 poses.
+O pacote Windows também passou na verificação nativa com Java incluído, PATH sem
+Java externo, áudio nulo e sem alterar saves reais. Os playtests humanos continuam
+necessários para avaliar equilíbrio, animação e ritmo.
 
 `build` testa metas independentes, XP/tipos, geração prolongada, armas, preservação
 de profissão e estado e navegação em pilares, quinas, estruturas em U, corredores
@@ -559,17 +1094,20 @@ invulnerabilidade não incrementam dano. Pausas/menus seguem congelando os mesmo
 Morte, vitória e abandono encerram os agregados e criam RunReport imutável,
 incluindo abates, metas, tempo, vida, raridade, dádivas e recompensas.
 SharedProgressService guarda relatório e crédito de Almas na mesma operação.
-O ID e a marca da sessão impedem processar o retorno duas vezes; retrySave não
-aplica a recompensa novamente. A demo também entra no histórico, com moedas zero.
+Para tentativas com checkpoint, o recibo pessoal e o registro durável da maior
+sequência concluída por personagem impedem processar o retorno duas vezes;
+retrySave não aplica a recompensa novamente. A demo também entra no histórico,
+com moedas zero e seu fluxo local de identificação.
 
 SharedProgress mantém 20 relatórios recentes, sem texturas, alvos ou eventos por
 quadro. RunReportScreen filtra o save atual; R abre no resultado/refúgio, setas
 laterais paginam e acima/baixo consultam tentativas. Atualizar/consultar a tela
 não altera a sessão nem concede ganhos. RunStatistics é recriado na próxima run.
 
-O novo arquivo shared-progress.json usa UTF-8, versão 1, backup válido e troca por
+O arquivo shared-progress.json usa UTF-8, versão 2 com leitura/migração da versão 1, backup válido e troca por
 arquivo temporário. Falha de leitura preserva arquivos e impede compras; falha de
 autosave conserva ganhos em memória. S no refúgio tenta gravar os stores pendentes.
-Óbolos mantêm uma gravação pessoal separada. Fechar a janela no meio da tentativa
-ainda não encerra nem salva a run. Valores e validação:
+Óbolos mantêm uma gravação pessoal separada, ligada ao recibo da tentativa.
+Fechar a janela no combate retoma o último checkpoint, sem liquidar a tentativa.
+Valores históricos e validação da economia:
 [ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).

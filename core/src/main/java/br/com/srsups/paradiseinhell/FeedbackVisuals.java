@@ -14,6 +14,7 @@ public final class FeedbackVisuals {
         case BOW->Color.GOLD;case SWORD->Color.ORANGE;case PISTOL->Color.WHITE;
         case FISTS->Color.CORAL;case WAND->Color.SKY;case CURSE->Color.MAGENTA;
         case SOUL->Color.LIME;case SHIELD->Color.CYAN;
+        case RAKE->Color.GOLD;case SCYTHE->Color.LIME;
     };}
     public static void sprites(SpriteBatch batch,PilotArt art,CombatFeedback feedback) {
         for(CombatFeedback.Pulse pulse:feedback.pulses()) {

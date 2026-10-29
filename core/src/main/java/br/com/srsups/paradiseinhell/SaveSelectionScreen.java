@@ -107,7 +107,8 @@ public final class SaveSelectionScreen extends ScreenAdapter {
                 font.draw(batch, profile.profession().title + " | " + profile.profession().weapon.label + " | " + profile.weaponRarity().label, card.x + 18, card.y + 105);
                 font.draw(batch, "Óbolos: " + profile.obols() + " | Fragmentos: " + profile.forgeMaterials(), card.x + 18, card.y + 80);
                 font.draw(batch, profile.difficulty().label + " | Retornos: " + profile.attempts() + " | Vitórias: " + profile.victories(), card.x + 18, card.y + 58);
-                font.setColor(Color.LIGHT_GRAY); font.draw(batch, "Continuar personagem", card.x + 18, card.y + 28);
+                font.setColor(profile.checkpoint()!=null?UiTheme.TEAL:Color.LIGHT_GRAY);
+                font.draw(batch, profile.checkpoint()!=null?"Tentativa para retomar":"Continuar personagem", card.x + 18, card.y + 28);
             } else {
                 font.draw(batch, "Novo personagem", card.x + 18, card.y + 95);
                 font.draw(batch, "Escolha a profissão uma vez.\nProgresso próprio deste personagem.", card.x + 18, card.y + 65);

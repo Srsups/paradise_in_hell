@@ -19,6 +19,8 @@ public enum WeaponRarity {
             case SOUL -> "Chance de reviver +25%; aliados duram 75s.";
             case SHIELD -> "35% de chance de revidar um ataque bloqueado.";
             case FISTS -> "Socos alcançam 34 unidades e continuam em um alvo.";
+            case RAKE -> "Estocadas de 64 unidades. A forja melhora as duas ferramentas.";
+            case SCYTHE -> "Giros de 44 unidades. A forja melhora as duas ferramentas.";
         };
     }
 }

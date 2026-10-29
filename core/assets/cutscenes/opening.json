@@ -1,0 +1,503 @@
+{
+  "id": "opening-v1",
+  "title": "O começo da travessia",
+  "shots": [
+    {
+      "id": "HOME",
+      "duration": 6,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.02,
+      "layers": [
+        {
+          "asset": "background-home",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -42,
+          "endY": -20,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "hero-idle",
+          "x": 270,
+          "y": 132,
+          "width": 150,
+          "height": 225,
+          "endX": 273,
+          "endY": 132,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 2
+        },
+        {
+          "asset": "wife-idle",
+          "x": 455,
+          "y": 132,
+          "width": 150,
+          "height": 225,
+          "endX": 451,
+          "endY": 132,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 1.5
+        },
+        {
+          "asset": "foreground-home",
+          "x": -20,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -35,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.25,
+          "speaker": "Narrador",
+          "text": "Um dia comum. Nenhum motivo para ter problemas com deuses."
+        }
+      ],
+      "cues": []
+    },
+    {
+      "id": "ARRIVAL",
+      "duration": 7,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.03,
+      "layers": [
+        {
+          "asset": "background-home",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -46,
+          "endY": -20,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "hero-idle",
+          "x": 265,
+          "y": 132,
+          "width": 150,
+          "height": 225,
+          "endX": 263,
+          "endY": 132,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 2
+        },
+        {
+          "asset": "wife-idle",
+          "x": 455,
+          "y": 132,
+          "width": 150,
+          "height": 225,
+          "endX": 452,
+          "endY": 132,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 1.5
+        },
+        {
+          "asset": "portal",
+          "x": 634,
+          "y": 134,
+          "width": 290,
+          "height": 290,
+          "endX": 630,
+          "endY": 134,
+          "startAlpha": 0.1,
+          "endAlpha": 0.9,
+          "breath": 0,
+          "fadeStart": 0,
+          "fadeEnd": 0.28
+        },
+        {
+          "asset": "zeus-idle",
+          "x": 706,
+          "y": 150,
+          "width": 180,
+          "height": 270,
+          "endX": 689,
+          "endY": 150,
+          "startAlpha": 0,
+          "endAlpha": 1,
+          "breath": 2,
+          "fadeStart": 0,
+          "fadeEnd": 0.28
+        },
+        {
+          "asset": "foreground-home",
+          "x": -25,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -40,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.5,
+          "speaker": "Zeus",
+          "text": "Mortais, interrompo este momento em nome do Olimpo."
+        },
+        {
+          "at": 3.3,
+          "speaker": "Zeus",
+          "text": "Ela vem comigo. O Olimpo merece uma companhia à altura."
+        }
+      ],
+      "cues": [
+        {
+          "at": 0.35,
+          "sound": "BOSS_WARNING"
+        }
+      ]
+    },
+    {
+      "id": "ABDUCTION",
+      "duration": 7,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.03,
+      "layers": [
+        {
+          "asset": "background-home",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -49,
+          "endY": -20,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "hero-reach",
+          "x": 260,
+          "y": 132,
+          "width": 190,
+          "height": 285,
+          "endX": 282,
+          "endY": 132,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 1
+        },
+        {
+          "asset": "portal",
+          "x": 625,
+          "y": 145,
+          "width": 305,
+          "height": 305,
+          "endX": 625,
+          "endY": 145,
+          "startAlpha": 0.75,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "wife-resist",
+          "x": 490,
+          "y": 142,
+          "width": 165,
+          "height": 247.5,
+          "endX": 640,
+          "endY": 205,
+          "startAlpha": 1,
+          "endAlpha": 0,
+          "breath": 1,
+          "fadeStart": 0.35,
+          "fadeEnd": 0.95
+        },
+        {
+          "asset": "zeus-cast",
+          "x": 694,
+          "y": 150,
+          "width": 185,
+          "height": 277.5,
+          "endX": 698,
+          "endY": 150,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 1
+        },
+        {
+          "asset": "foreground-home",
+          "x": -28,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -42,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.1,
+          "speaker": "Esposa",
+          "text": "Não vou com você."
+        },
+        {
+          "at": 3.1,
+          "speaker": "Protagonista",
+          "text": "Ela disse não. Solte-a."
+        }
+      ],
+      "cues": [
+        {
+          "at": 1.1,
+          "sound": "PASSAGE"
+        }
+      ]
+    },
+    {
+      "id": "CURSE",
+      "duration": 9,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.03,
+      "layers": [
+        {
+          "asset": "background-home",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -52,
+          "endY": -20,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "portal",
+          "x": 625,
+          "y": 145,
+          "width": 305,
+          "height": 305,
+          "endX": 637,
+          "endY": 155,
+          "startAlpha": 0.75,
+          "endAlpha": 0.2,
+          "breath": 0
+        },
+        {
+          "asset": "hero-reach",
+          "x": 305,
+          "y": 132,
+          "width": 190,
+          "height": 285,
+          "endX": 307,
+          "endY": 98,
+          "startAlpha": 1,
+          "endAlpha": 0.12,
+          "breath": 0.5,
+          "fadeStart": 0.5,
+          "fadeEnd": 1
+        },
+        {
+          "asset": "zeus-cast",
+          "x": 692,
+          "y": 150,
+          "width": 185,
+          "height": 277.5,
+          "endX": 701,
+          "endY": 170,
+          "startAlpha": 1,
+          "endAlpha": 0.7,
+          "breath": 1
+        },
+        {
+          "asset": "foreground-home",
+          "x": -30,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -44,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.15,
+          "speaker": "Zeus",
+          "text": "Então viva para lamentar a perda dela. De novo e de novo."
+        },
+        {
+          "at": 5.6,
+          "speaker": "Protagonista",
+          "text": "Isso ainda não acabou."
+        }
+      ],
+      "cues": [
+        {
+          "at": 1.2,
+          "sound": "ATTACK_CURSE"
+        },
+        {
+          "at": 5.2,
+          "sound": "DEATH"
+        }
+      ]
+    },
+    {
+      "id": "STYX",
+      "duration": 7,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.02,
+      "layers": [
+        {
+          "asset": "background-styx",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -43,
+          "endY": -18,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "hero-idle",
+          "x": 355,
+          "y": 137,
+          "width": 165,
+          "height": 247.5,
+          "endX": 360,
+          "endY": 141,
+          "startAlpha": 0.45,
+          "endAlpha": 1,
+          "breath": 2,
+          "fadeStart": 0,
+          "fadeEnd": 0.25
+        },
+        {
+          "asset": "foreground-styx",
+          "x": -20,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -37,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.8,
+          "speaker": "Protagonista",
+          "text": "Morri? E por que ainda estou aqui?"
+        }
+      ],
+      "cues": [
+        {
+          "at": 0.4,
+          "sound": "RESURRECTION"
+        }
+      ]
+    },
+    {
+      "id": "CHARON",
+      "duration": 9,
+      "minReadSeconds": 1.5,
+      "startZoom": 1,
+      "endZoom": 1.03,
+      "layers": [
+        {
+          "asset": "background-styx",
+          "x": -30,
+          "y": -18,
+          "width": 1024,
+          "height": 576,
+          "endX": -46,
+          "endY": -18,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        },
+        {
+          "asset": "hero-idle",
+          "x": 315,
+          "y": 137,
+          "width": 165,
+          "height": 247.5,
+          "endX": 319,
+          "endY": 137,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 2
+        },
+        {
+          "asset": "charon",
+          "x": 575,
+          "y": 130,
+          "width": 190,
+          "height": 285,
+          "endX": 570,
+          "endY": 130,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 2
+        },
+        {
+          "asset": "foreground-styx",
+          "x": -24,
+          "y": -8,
+          "width": 1000,
+          "height": 562,
+          "endX": -43,
+          "endY": -8,
+          "startAlpha": 1,
+          "endAlpha": 1,
+          "breath": 0
+        }
+      ],
+      "subtitles": [
+        {
+          "at": 0.15,
+          "speaker": "Caronte",
+          "text": "Outro problema que Zeus largou na minha margem."
+        },
+        {
+          "at": 3.5,
+          "speaker": "Protagonista",
+          "text": "Quero voltar."
+        },
+        {
+          "at": 5.8,
+          "speaker": "Caronte",
+          "text": "Pelo jeito, você vai."
+        }
+      ],
+      "cues": []
+    }
+  ]
+}

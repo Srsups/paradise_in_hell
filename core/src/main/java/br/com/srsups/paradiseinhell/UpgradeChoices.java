@@ -16,7 +16,7 @@ public final class UpgradeChoices {
         if (count < 1 || count > 3) throw new IllegalArgumentException("Invalid choice count");
         EnumMap<BoonRarity, List<Upgrade>> pool = new EnumMap<>(BoonRarity.class);
         for (Upgrade boon : Upgrade.values()) {
-            if (boon.rarity.ordinal() < minimum.ordinal() || session.rank(boon) >= boon.maxRank) continue;
+            if (!boon.availableIn(session)||boon.rarity.ordinal() < minimum.ordinal() || session.rank(boon) >= boon.maxRank) continue;
             if (boon == Upgrade.CURA && session.player().getVida() >= session.player().getVidaMaxima()) continue;
             pool.computeIfAbsent(boon.rarity, key -> new ArrayList<>()).add(boon);
         }

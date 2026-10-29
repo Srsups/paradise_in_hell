@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-27",
+  "mode": "built-in image_gen",
+  "generationCalls": 9,
+  "jobs": [
+    {
+      "file": "background-home-original.png",
+      "prompt": "Use case: illustration-story. Asset type: original background painting for a 2D Greek-mythology game cutscene, intended as a separate parallax layer. Primary request: a wide cinematic 16:9 Greek village courtyard outside a modest cream-stone house, terracotta tiled roof, distant olive hills and a glimpse of the Mediterranean coast. Style: polished painterly pixel-art illustration, elegant semi-realistic forms, warm bronze and muted teal palette, textured but not noisy, matching a Greek myth roguelite. Composition: no people or creatures; broad clear stone ground across the lower third for adult characters to stand in front; house frames one edge, open luminous pale golden sky across the upper half so a god can appear later. Camera at adult chest height, three-quarter scenic depth, calm inviting late-afternoon light. The center must remain uncluttered, with environmental details concentrated at the edges. The complete background must be opaque. No lettering, captions, logos, borders, UI, watermarks, dramatic lightning or existing characters. Create a finished game background in a very wide 16:9 landscape composition.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new scene; no input images",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-b2059032-ade8-47b0-812a-e0f875821316.png",
+      "transparentBackground": false
+    },
+    {
+      "file": "background-styx-original.png",
+      "prompt": "Use case: illustration-story. Asset type: original 16:9 background layer for a 2D Greek mythology game cinematic. Primary request: the misty shore of the River Styx, a dark blue-purple river, broken ancient Greek stone ruins on the distant opposite bank and a modest worn wooden ferryman's boat tied beside a small landing on the right. No people, no human silhouettes, no creatures. Style: polished painterly pixel-art illustration, atmospheric layered depth, elegant semi-realistic materials, muted midnight teal, slate blue and violet with subtle bronze warmth, matching a Greek myth roguelite. Composition: wide cinematic landscape, a large clear walkable strip of old pale gray stone/soil across the lower third for full-body characters to be composited on; river and distant ruins occupy middle and upper areas; sparse scenery at the edges, open quiet center. Ground visible from lower edge up to approximately one-third image height. Moody but readable, luminous mist, dignified slight comedy-adventure mood rather than horror. Fully opaque complete backdrop. No writing, logos, UI, borders, watermark, bodies, weapons or foreground character figures. Finished game background, very wide 16:9 composition.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new scene; no input images",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-be205e7f-3cfb-4c3f-a70a-c05dedc7bea2.png",
+      "transparentBackground": false
+    },
+    {
+      "file": "hero-poses-original.png",
+      "prompt": "Use case: identity-preserve. Asset type: transparent two-pose full-body character sheet for a 2D Greek mythology game cutscene. Input image: supporting identity reference portrait of the protagonist; preserve exactly this adult man's recognizable face, dark wavy/curly hair, short dark beard, olive skin and teal cloak with bronze clasp. Primary request: extend him to a complete full-body illustration in TWO EQUAL COLUMNS on one wide transparent sheet. Left cell: relaxed standing pose, three-quarter facing right, arms naturally low. Right cell: same man reaching/defiantly extending one open hand horizontally toward the right, tense but grounded; do not raise hand above his head. He wears the same cream Greek tunic, muted teal shoulder cloak and simple sandals, no armor, no weapon, no class-specific tool. All figures must include the entire head, both hands, feet and sandals, uncropped. Critical registration: each figure's torso is centered at exactly its own cell center, feet aligned on the same baseline, head the same height and identical scale in both columns. Clear transparent empty gutter between cells. Preserve full natural anatomy, five fingers, one pair of arms and legs, no duplicated limbs. Style: polished painterly pixel-art, warm bronze and muted teal edges, semi-realistic Greek game illustration matching the reference; crisp painted texture, clean silhouette. Genuine alpha transparency everywhere outside the two figures, not a checkerboard drawing, no floor or shadows, no background, no labels, no text, no borders. The character faces right in both poses.",
+      "mode": "built-in image_gen",
+      "referenceRole": "identity-preserve edit from existing portrait",
+      "reference": "reference-protagonist.png",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-f66ce952-63d2-498a-ab86-8be841a8afb2.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "charon-original.png",
+      "prompt": "Use case: identity-preserve. Asset type: single transparent full-body character cutout for a Greek mythology game cinematic. Input image: Charon identity/style reference; preserve exactly the elderly ferryman's recognizable gaunt adult face, long gray-white beard, teal hood/cloak, bronze round clasp and worn wooden oar. Primary request: extend this portrait to one complete full-body Charon, standing three-quarter facing left, dignified, dryly amused expression. The hooded cloak falls to his ankles, worn dark sandals visible, he holds one long wooden oar nearly vertical by his side so its complete blade/top and lower end remain within the frame. Old and lean but visibly a clothed living mythic character, not a bare skeleton. Critical composition: centered torso, complete head, both hands and feet, no cropped oar, moderate transparent margin around all extremities. Matching polished painterly pixel-art/semi-realistic Greek game illustration with muted midnight teal, slate gray, bronze details and clean cutout silhouette. Single figure, no duplicate limbs, no boat, no ground plane, no cast shadow, no additional character. Genuine alpha transparency around the entire figure, not a checkerboard drawing. No text, labels, UI or borders.",
+      "mode": "built-in image_gen",
+      "referenceRole": "identity-preserve edit from existing portrait",
+      "reference": "reference-charon.png",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-78ccc7d3-d1fc-4a6f-b12e-3ce4844d5b2b.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "wife-poses-original.png",
+      "prompt": "Use case: illustration-story. Asset type: transparent two-pose full-body character sheet for a Greek mythology 2D cinematic. Primary request: one adult Greek mortal woman, approximately 30 years old, warm olive skin, expressive dark eyes, dark brown hair partly braided and gathered back, wearing a modest cream and muted terracotta chiton, teal shoulder shawl, small bronze earrings and simple leather sandals. She is the protagonist's wife, a grounded ordinary adult, no royal crown, no magical weapon. Produce TWO EQUAL COLUMNS on a single wide transparent sheet, same woman and exactly same outfit, scale and facial identity. LEFT cell: calm standing pose, looking three-quarter to the left, hands naturally low, warm composed expression. RIGHT cell: resisting and stepping back, also looking left, worried and defiant, one open hand raised only to shoulder height as if pushing away an unwanted magical pull, other hand near chest; not floating, no touching other character. Critical registration: torso centered in each individual cell, heads at same height and feet/sandals on exactly the same baseline, clean transparent gutter between cells. Full figures uncropped from hair to feet, moderate margin for hands. Polished painterly pixel-art game illustration, semi-realistic Greek features, bronze highlights and muted teal fabric, natural anatomy, two arms/two legs, five-finger hands. Genuine alpha transparency everywhere outside the figures, not painted checkerboard; no background, floor, cast shadow, halo, other characters, text, labels, borders or watermark.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new generated cutout",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-8205fe97-2b8d-4ebe-8c82-928891c29aac.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "zeus-poses-original.png",
+      "prompt": "Use case: illustration-story. Asset type: transparent two-pose full-body Zeus character sheet for a Greek mythology 2D cinematic with light satirical tone. Primary request: one imposing older adult Zeus, broad-shouldered, long flowing white hair and full white beard, golden laurel, white Greek robe with rich gold edging and a muted royal purple sash, ornate bronze-gold belt and sandals. Regal, handsome but arrogant and self-satisfied, not grotesque; dignified Greek god design suited to a painterly pixel-art roguelite. Produce TWO EQUAL COLUMNS on one wide transparent sheet. LEFT cell: arriving/standing proudly three-quarter facing left, chest lifted and one hand resting loosely at his side, confident smug expression. RIGHT cell: exactly same Zeus/outfit/face/scale, sternly casting a curse by extending one hand and arm horizontally to the left, fingers open; arm never above his head. No lightning effects built into the figure and no carried weapon. Critical registration: torso centered in each cell, head at same height and both sandaled feet aligned on identical baseline; clear transparent gutter, full unclipped body, no cropped crown/hair/hands/feet. Warm gold, ivory, muted purple colors, semi-realistic painted pixel-art texture, consistent natural anatomy, only two arms and legs. Genuine alpha transparency around both cutouts, not a checkerboard drawing; no background, clouds, ground, cast shadow, halo, text, captions, logos, border or extra character.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new generated cutout",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-25e306ea-fe02-4aa3-accf-8a52fdcf3a30.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "foreground-home-original.png",
+      "prompt": "Use case: illustration-story. Asset type: transparent foreground parallax layer for a 16:9 Greek village courtyard game cutscene. Primary request: sparse olive branches and a few warm pale sandstone fragments confined to the far lower left and lower right corners, with a small leafy olive twig entering from the uppermost far corner. Match a polished painterly pixel-art Mediterranean scene: muted olive green leaves, subtle bronze light, cream weathered stone, terracotta warmth. Composition is an EXTREMELY WIDE 16:9 canvas. At least the central 75 percent of the canvas must be entirely transparent and clear; no branch, stone or object may cross the central acting area. Most of the top and bottom center must remain empty alpha. These isolated edge details will move slightly independently in front of a complete background. No complete ground plane, no background sky, no people, no building, no border frame, no text. Genuine PNG alpha transparency everywhere except the sparse painted edge objects; no checkerboard drawing and no opaque vignette, no central objects, no cast shadow layer.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new generated cutout",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-e28c5a5a-e465-4f0e-8f82-e00975d0fa9c.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "foreground-styx-original.png",
+      "prompt": "Use case: illustration-story. Asset type: transparent foreground parallax layer for a 16:9 River Styx Greek game cinematic. Primary request: sparse dark blue-purple reeds and a few pale gray ancient stone fragments confined to the far lower left and lower right corners, with very thin wisps of luminous muted teal mist near only the extreme bottom edge. Match a polished painterly pixel-art Greek underworld river scene, slate blue, desaturated violet and midnight teal. Composition is an EXTREMELY WIDE 16:9 canvas, the central 75 percent completely transparent and clear for full-body actors. No foreground element may cross the center; most of the upper area must be entirely transparent. These edge objects will move independently over a complete opaque scenic background. No river or sky painted into this layer, no boats, no people, no bodies or creatures, no full ground plane, no border. Genuine PNG alpha transparency around the sparse objects, not a checkerboard drawing, no opaque vignette or text.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new generated cutout",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-4a891eac-b94e-4c4b-98d2-0fd227af2e85.png",
+      "transparentBackground": true
+    },
+    {
+      "file": "portal-original.png",
+      "prompt": "Use case: illustration-story. Asset type: four-frame transparent magical portal effect sheet for a Greek mythology 2D game cinematic. Primary request: one reusable luminous circular swirl of muted teal and antique-gold energy, with soft locally glowing clouds, a few small lightning curls and abstract ancient Greek ornamental marks that are decorative shapes rather than readable text. Exactly FOUR equal SQUARE cells in a clean 2 by 2 grid, no labels. Each cell shows the same effect at a successive animation phase: swirling golden/teal wisps gradually rotate and change shape, visibly distinct while preserving the same center and scale. Stable center pivot in every cell, generous transparent margins, no glow touching the cell borders, no element crossing gutters. Interior is mostly transparent so a character can appear through it. Polished painterly pixel-art matching a semi-realistic Greek roguelite; elegant restrained supernatural light rather than a solid bright disk. Strong enough to read over warm stone or dark blue river scenery, without a screen-filling white flash. Genuine alpha transparency in the center, around the effect and in all gutters, not painted checkerboard. No characters, weapons, portal architecture or door, no background, no frames or UI, no captions, no readable words, no watermark.",
+      "mode": "built-in image_gen",
+      "referenceRole": "brand-new generated cutout",
+      "output": "C:\\Users\\Usuario\\.codex\\generated_images\\01a17e10-bd13-7020-bf9f-bc4d32e3c646\\exec-774a57b4-dabe-4f73-b183-be40e9e890d3.png",
+      "transparentBackground": true
+    }
+  ]
+}

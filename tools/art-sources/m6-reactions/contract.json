@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-23",
+  "actors": [
+    "cacador",
+    "ferreiro",
+    "vigilante",
+    "apostador",
+    "feiticeira",
+    "sacerdote",
+    "necromante",
+    "guerreiro",
+    "farmer-rake",
+    "farmer-scythe",
+    "common",
+    "fast",
+    "tank",
+    "archer",
+    "carrasco",
+    "guardian"
+  ],
+  "sourceFile": "{actor}-reactions-original.png",
+  "sourceGrid": [
+    7,
+    5
+  ],
+  "sourceCanvas": [
+    1792,
+    1280
+  ],
+  "canonicalDirections": [
+    "down",
+    "up",
+    "left",
+    "up-left",
+    "down-left"
+  ],
+  "columns": {
+    "hurt": [
+      0,
+      1,
+      2
+    ],
+    "death": [
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "regionNames": {
+    "hurt": "{actor}-hurt-{direction}-{0..2}",
+    "death": "{actor}-death-{direction}-{0..3}"
+  },
+  "targetRegion": [
+    64,
+    64
+  ],
+  "atlas": [
+    2048,
+    2048
+  ],
+  "regions": 560,
+  "logicalDirections": 8,
+  "mirrorRight": true,
+  "rgbaBytes": 16777216,
+  "scale": "one fixed scale per actor calibrated from standing hurt frames; never normalize a lying corpse's height",
+  "noArtPainting": true
+}

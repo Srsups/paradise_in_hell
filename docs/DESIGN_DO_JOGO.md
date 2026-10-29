@@ -14,6 +14,7 @@ playtests. Este documento descreve a campanha planejada, ainda em desenvolviment
 | Protagonista | Um mortal comum que decide enfrentar os deuses |
 | Motivação | Resgatar a esposa, raptada por Zeus para ser sua concubina |
 | Jornada | Buscar um item ou poder no submundo e alcançar o Olimpo |
+| Poder buscado | Centelha da Insurgência: permitirá ferir deuses; conquista narrativa permanente sem efeito no combate neste incremento |
 | Desfecho principal | Confrontar Zeus e completar a história |
 | Tom | Sátira, humor leve e ação frequente |
 | Estrutura de tentativa | Percorrer a jornada inteira, com duração aproximada de 30–40 minutos |
@@ -33,11 +34,33 @@ Essas novas direções foram confirmadas em 13/10/2026. O M1 foi implementado
 em 14/10/2026: HUD essencial, visibilidade sonora do Carrasco, revisão do Guardião
 e métricas do encontro. O M2 também está implementado: dificuldade fixa e moedas
 por modo. O M3 piloto entrou em 15/10/2026 com fontes, sprites direcionais,
-efeitos e conversa com retrato de Caronte. M4–M7 continuam planejados.
+efeitos e conversa com retrato de Caronte. O M4 entrou em 22/10/2026 com sete
+dádivas novas e três compras do altar. O M5 entrou em 23/10/2026 com Camponesa,
+missão persistente e Fazendeiro Épico: 290 testes unitários, OpenGL e pacote Windows
+aprovados. Playtests/balanceamento continuam; o M7 maior segue em aberto e parte do M6
+foi antecipada. [Entrega do M4](MARCO_4_DADIVAS_E_ALTAR.md) e
+[entrega do M5](MARCO_5_FAZENDEIRO.md).
+O lote de diálogos do M6 entrou em 23/10/2026: expressões e falas condicionais de
+Caronte, Ferreiro e Camponesa, com leitura compartilhada. O lote passou em 302
+testes unitários, OpenGL e execução nativa do pacote Windows. O M6 geral segue em
+andamento, com o [lote de dano/morte](MARCO_6_DANO_E_MORTE.md) aprovado em 320 testes,
+OpenGL e pacote Windows. Em **25/10/2026**, o lote de
+[cenários e rotas](MARCO_6_CENARIOS_E_ROTAS.md) acrescentou cinco temas e passagem
+animada, com **336 testes de lógica/0 falhas, integração OpenGL e execução nativa
+do pacote Windows aprovados**. O M6 continua em revisão humana.
+Em **27/10/2026**, o primeiro incremento do M7 implementou tutorial contextual,
+guia por F1 e desfecho da Centelha da Insurgência, **implementados e verificados**. O autor
+aprovou o nome e sua função de permitir ferir deuses; este lote registra somente
+a conquista narrativa, sem efeito nos atributos ou combate.
+Os **372 testes de lógica passaram sem falhas**, incluindo 36 novos: 18 de
+persistência, 11 do guia e sete da história. **Integração OpenGL aprovada**;
+**execução nativa do pacote Windows aprovada** em 27/10. Playtests humanos continuam pendentes.
+[Entrega do incremento](MARCO_7_TUTORIAL_E_CENTELHA.md).
+[Entrega do lote](MARCO_6_DIALOGOS_E_NPCS.md).
 A dificuldade fixa e o desbloqueio por NPC foram esclarecidos pelo autor.
 Multiplicadores iniciais estão em [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
-Conteúdo da missão, efeitos e direção artística final continuam
-propostos no [roteiro de melhorias](ROTEIRO_DE_MELHORIAS.md).
+A missão do M5 já está implementada; próximos conteúdos e acabamento da região
+seguem o [roteiro de melhorias](ROTEIRO_DE_MELHORIAS.md).
 
 Os 30–40 minutos são uma meta para uma tentativa bem-sucedida. Tentativas que
 terminam em morte podem ser curtas. Conversas opcionais, pausa e escolhas podem
@@ -81,9 +104,17 @@ de Zeus, criada para fazer o protagonista sofrer eternamente com a perda da espo
 O protagonista aproveita esse retorno para tentar novamente, aprender e conseguir
 novos recursos e aliados. Os NPCs lembram dos encontros entre tentativas.
 
-O item ou poder procurado no submundo continua tendo lugar na história: sua função
-proposta será ajudar a enfrentar os deuses ou compreender a maldição. Seu efeito
-exato ainda será discutido.
+O poder procurado no Submundo foi definido pelo autor em 27/10/2026 como a
+**Centelha da Insurgência**, que permitirá ferir os deuses e abre o próximo arco.
+Vencer o Guardião na campanha conquista esse avanço permanente por personagem.
+Neste incremento ela não concede bônus de combate. A aplicação jogável contra
+deuses pertence à expansão; nome e função narrativa já estão definidos.
+
+Depois da vitória, Caronte e protagonista escolhem retornar voluntariamente ao
+refúgio para preparar a ascensão. A maldição continua explicando o retorno após
+morte. O desfecho avisa que a continuação está em desenvolvimento; resgate e
+confronto com Zeus ainda não são conteúdo jogável. A descoberta e a leitura
+permanecem no save, com consulta por V no refúgio ou C no resultado.
 
 ## Progressão durante a tentativa e entre tentativas
 
@@ -93,11 +124,13 @@ exato ainda será discutido.
 | Vida e estado de combate | Mantidos; descanso pode oferecer recuperação | Reiniciados conforme os atributos iniciais |
 | Itens temporários e consumíveis | Mantidos | Reiniciados |
 | Moeda para compras da tentativa | Mantida | Reiniciada; regra exata ainda a definir |
-| Profissão e arma inicial | Fixas para o save; Fazendeiro poderá alternar suas duas ferramentas | Mantidas; outra profissão exige outro save |
+| Profissão e arma inicial | Fixas para o save; Fazendeiro alterna ancinho/foice por Q e mantém a ferramenta entre salas | Mantidas; Fazendeiro começa com ancinho; outra profissão exige outro save |
 | Dificuldade implementada | Fixa para o save, sem troca no meio da tentativa | Mantida; personagens antigos assumem Média |
-| Desafio do NPC do Fazendeiro | Condições ainda propostas; progresso deverá ter regra de persistência explícita | Desbloqueio concedido é permanente; persistência da missão incompleta a confirmar |
+| Desafio da Camponesa | Aceitação e semente mantidas no personagem | Aceitação/semente persistem; conclusão libera novos Fazendeiros em todos os saves |
 | Armas futuras desbloqueadas | Disponíveis conforme as regras da profissão | Permanecem disponíveis; catálogo e regras ainda a definir |
 | Informações e eventos de história | Mantidos | Permanecem registrados |
+| Centelha e leitura do desfecho | Mantidas por personagem após a vitória do Submundo | Permanecem no save; não concedem atributos neste lote |
+| Dicas aprendidas e preferência H | Mantidas por personagem | Mantidas; F1 continua disponível para consulta |
 | Óbolos e atributos comprados no refúgio | Atributos mantidos; Óbolos da travessia guardados no retorno | Saldo e compras preservados |
 | Relações e encontros com NPCs | Atualizados pelos eventos | Memória dos encontros preservada |
 | Fragmentos de Forja | Guardados imediatamente no save | Mantidos até gastar |
@@ -146,7 +179,7 @@ incluindo Zeus. Esse recorte é uma proposta de escopo, ainda sujeita à discuss
 - Inimigos devem contornar estruturas para continuar perseguindo o jogador.
 - Na criação de um save, o narrador pergunta a profissão uma única vez. Ela muda
   a arma e as bases de atributos: arco, espada, pistola ou socos no protótipo. Outra
-  profissão exige outro save. Caçador, Ferreiro, Vigilante, Apostador, Feiticeira, Sacerdote, Necromante e Guerreiro
+  profissão exige outro save. Caçador, Ferreiro, Vigilante, Apostador, Feiticeira, Sacerdote, Necromante, Guerreiro e Fazendeiro
   são profissões implementadas com nomes/valores provisórios.
 - O Apostador luta com socos em um alvo e tem sorte elevada. O protótipo usa 4×,
   favorecendo material, encontro com ferreiro e categorias superiores de dádivas.
@@ -199,6 +232,13 @@ Cinzas oferece um baú de recuperação/moeda; Sombras oferece uma dádiva extra
 Rara ou superior. Cada sala sorteia um evento de hordas, mantido ao reabrir a rota
 e apresentado antes da entrada. O protótipo registra a forja permanentemente no save.
 Regras: [ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md).
+
+O M5 acrescentou a Camponesa das Cinzas: 10% base por tentativa, ou 40% para o
+Apostador, em encontro opcional seguro após liberar a passagem do Estige.
+Aceitar, obter uma semente garantida de um Carrasco e vencer o Guardião do Submundo
+libera o Fazendeiro para novos personagens. Aceitação/semente são pessoais e
+persistem entre mortes, abandonos e sessões; a recompensa é compartilhada e não
+gasta moedas. J consulta o diário no refúgio e Tab mostra o objetivo aceito.
 
 Os sistemas abaixo permanecem como propostas de conteúdo:
 
@@ -289,9 +329,20 @@ da conclusão ainda estão abertos. As propostas acima não são roteiro aprovad
 
 ## Próximo marco: uma região completa
 
-Construir primeiro uma travessia curta no submundo para validar o ciclo da campanha.
-Recorte proposto: três arenas de combate, um encontro seguro, dois NPCs e um chefe.
+Concluir primeiro uma travessia curta no submundo para validar o ciclo da campanha.
+O protótipo já oferece Estige, duas rotas opcionais alternativas, três NPCs e
+o Guardião. O tutorial contextual e o fechamento narrativo da primeira vitória
+entraram no primeiro incremento do M7 em 27/10/2026, implementado e verificado. F1 consulta
+o guia e H controla dicas pessoais; a Centelha encerra o arco local sem concluir
+o resgate. A revisão de apresentação do M6 continua em partidas.
 A quantidade de arenas poderá mudar ao medir a duração e o ritmo.
+
+Refúgio, Estige/demo, Cinzas, Sombras e sala do Guardião receberam temas próprios
+em 25/10/2026. Pisos/obstáculos, prévias dos destinos e a porta animada pertencem
+à apresentação das salas existentes. E/Enter continua avançando de qualquer
+posição após as metas; bordas desenhadas ficam fora dos limites originais.
+Os cartões mantêm evento, recompensa e objetivos; economia, saves e RNG de
+gameplay conservam as regras anteriores. Não foi acrescentado outro andar/região.
 
 Critérios de conclusão:
 
@@ -309,10 +360,14 @@ Critérios de conclusão:
 - [x] Escolher entre acesso direto ao chefe e combates opcionais com metas e intensidade diferentes.
 - [x] Acrescentar recompensas próprias às rotas: baú em Cinzas e dádiva Rara ou superior em Sombras.
 - [x] Variar a composição das hordas por tentativa e anunciar os eventos na escolha de caminho.
+- [x] Diferenciar os cinco ambientes atuais com cenário próprio, prévias de rota e passagem animada.
+- [x] Verificar cenários e rotas nos 336 testes de lógica, OpenGL e pacote Windows nativo.
+- [ ] Validar leitura dos cenários, perigos e cartões de rota em partidas completas.
 - [ ] Ampliar desafios opcionais e validar o valor de cada rota em playtests.
 - [x] Preservar vida, XP, nível, dádivas, estamina e recargas ao mudar de arena.
 - [ ] Introduzir inventário temporário e preservá-lo nas transições.
 - [x] Interagir com Caronte e o Ferreiro Errante, com presente, eventos e melhoria permanente da arma.
+- [x] Implementar retratos/expressões e leitura compartilhada dos três NPCs, com falas condicionais de missão/forja.
 - [x] Enfrentar um chefe com ataques sinalizados e vitória por derrota do chefe no protótipo.
 - [x] Morrer, retornar ao refúgio e iniciar outra tentativa com o estado temporário limpo.
 - [x] Preservar uma compra permanente e eventos de Caronte após morrer e após fechar o jogo.
@@ -321,8 +376,13 @@ Critérios de conclusão:
 - [ ] Validar a travessia inteira na matriz de profissões, dificuldades e progressão.
 - [x] Aplicar o HUD essencial, regra sonora de visibilidade e ajuste do Guardião.
 - [ ] Validar a dificuldade/ritmo do Guardião revisado em partidas completas.
-- [ ] Incorporar Fazendeiro/NPC de desafio, dádiva regional e novas compras do altar.
+- [x] Incorporar Fazendeiro/NPC de desafio, dádiva regional e novas compras do altar.
 - [ ] Revisar tipografia, conversas, sprites e animações da região completa.
+- [x] Implementar tutorial contextual, guia e desfecho da Centelha da Insurgência no primeiro incremento do M7.
+- [x] Verificar o incremento em 372 testes de lógica, sem falhas (36 novos).
+- [x] Verificar o guia/desfecho do incremento em integração OpenGL.
+- [x] Verificar o incremento no pacote Windows nativo, com Java incluído e perfis em memória.
+- [ ] Validar o novo incremento em partidas completas.
 
 ## Ordem de implementação
 
@@ -334,10 +394,10 @@ anteriores permanece registrada no plano de lançamento; os próximos marcos sã
 | M1 — implementado; playtests pendentes | HUD essencial, áudio do mini-boss e chefe mais exigente | Barra de XP/Tab, visibilidade por máscara/câmera, padrões variados e novas métricas |
 | M2 — implementado; playtests pendentes | Três dificuldades fixas por save | Migração para Média, moedas fracionárias e modos distintos; 222 testes/OpenGL |
 | M3 — piloto implementado; revisão do autor pendente | Base visual e conversa piloto | Noto Sans/Cinzel, atlas, caminhada direcional e Caronte; 228 testes/OpenGL |
-| M4 | Catálogo de dádivas e altar | Seis gerais + uma regional e três compras como primeiro lote proposto |
-| M5 | Desafio de NPC e Fazendeiro Épico | Encontro por run, progresso/recompensa persistentes e duas ferramentas úteis |
-| M6 | Arte de toda a primeira região | Classes/inimigos distintos, VFX por sprites e direção suave |
-| M7 | Fechar região e preparar expansão | Variedade/narrativa, playtests, produção das regiões seguintes e Zeus |
+| M4 — implementado; playtests pendentes | Catálogo de 22 dádivas e seis compras do altar | Seis gerais + Eco regional, três compras novas, migração e 263 testes/OpenGL |
+| M5 — implementado; playtests pendentes | Desafio de NPC e Fazendeiro Épico | 290 testes/OpenGL/Windows aprovados; missão persistente e duas ferramentas; validar equilíbrio em partidas |
+| M6 — em andamento | Arte, diálogos, dano/morte e cenários/rotas implementados | Cenários: 336 testes/0 falhas, OpenGL/Windows aprovados; aceite humano da apresentação |
+| M7 — primeiro incremento implementado e verificado | Tutorial contextual e desfecho da Centelha | 372 testes/0 falhas, OpenGL/Windows aprovados; playtests, vídeo, remapeamento, retomada e expansão em aberto |
 
 Critérios completos e decisões ainda abertas: [ROTEIRO_DE_MELHORIAS.md](ROTEIRO_DE_MELHORIAS.md).
 
@@ -357,13 +417,13 @@ os testes manuais de equilíbrio continuam pendentes.
 ## Decisões ainda abertas
 
 - Ajustes dos multiplicadores iniciais após partidas; regras implementadas no M2.
-- Identidade/chance do NPC, condições/persistência do desafio e escopo compartilhado do acesso ao Fazendeiro.
-- Bases, alcance, recarga de troca e poder de forja de ancinho/foice.
+- Ajustar a chance inicial de 10% da Camponesa e o ritmo da missão após partidas.
+- Balancear dano/alcance de ancinho e foice, mantendo recarga compartilhada e forja única.
 - Novas dádivas gerais/regionais e limites/preços do altar.
 - Revisão do estilo piloto em escala real antes de expandir a arte do elenco.
 
 - Condições da maldição, impedimento para Zeus revogá-la e seu estado após o resgate.
-- Função do item ou poder buscado no submundo.
+- Aplicação jogável futura da Centelha contra deuses; nome e função narrativa já aprovados.
 - Identidade dos primeiros aliados e do chefe do submundo.
 - Quais escolhas de dádivas envolvem custos, rivalidades ou condições.
 - Nome final da moeda, fontes, custos e balanceamento das melhorias permanentes.
@@ -392,6 +452,11 @@ nas rotas, eventos de hordas e forja permanente já estão em
 [ROTAS_DO_SUBMUNDO.md](ROTAS_DO_SUBMUNDO.md);
 Novas classes, sinergias e Fúria dos Deuses estão em
 [CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md).
+O M5 implementado em 23/10/2026 amplia o catálogo para nove profissões em três
+páginas, mantendo oito saves em duas. A Camponesa oferece uma missão pessoal
+persistente e seu desafio desbloqueia o Fazendeiro globalmente para novos
+personagens. Regras, capturas e validação de 290 testes/OpenGL/Windows estão em
+[MARCO_5_FAZENDEIRO.md](MARCO_5_FAZENDEIRO.md); playtests humanos continuam necessários.
 A primeira região tem áudio/feedback provisórios com volumes persistentes.
 Ainda precisa de revisão sonora, arte e playtests. Origem e critérios:
 [AUDIO_E_FEEDBACK.md](AUDIO_E_FEEDBACK.md).

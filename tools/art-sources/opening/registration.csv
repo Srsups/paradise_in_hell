@@ -1,0 +1,16 @@
+region,source,source_x,source_y,source_width,source_height,target_width,target_height,draw_x,draw_y,draw_width,draw_height,group_scale,pivot_x,pivot_y
+background-home,background-home-original.png,0,0,1672,941,960,540,0,0,960,540,0.574162679,480.0000,270.0000
+background-styx,background-styx-original.png,0,0,1672,941,960,540,0,0,960,540,0.574162679,480.0000,270.0000
+foreground-home,foreground-home-original.png,0,0,1672,941,960,540,0,0,960,540,0.574162679,480.0000,270.0000
+foreground-styx,foreground-styx-original.png,0,0,1672,941,960,540,0,0,960,540,0.574162679,480.0000,270.0000
+hero-idle,hero-poses-original.png,0,0,750,1024,432,480,28,20,336,458,0.447427293,216.0000,464.0000
+hero-reach,hero-poses-original.png,750,0,786,1024,432,480,72,24,352,458,0.447427293,216.0000,464.0000
+wife-idle,wife-poses-original.png,0,0,760,1024,432,480,-1,9,350,472,0.460905350,216.0000,464.0000
+wife-resist,wife-poses-original.png,760,0,776,1024,432,480,55,10,358,472,0.460905350,216.0000,464.0000
+zeus-idle,zeus-poses-original.png,0,0,674,1024,432,480,67,61,271,411,0.401606426,216.0000,464.0000
+zeus-cast,zeus-poses-original.png,674,0,862,1024,432,480,0,63,346,411,0.401606426,216.0000,464.0000
+charon,charon-original.png,0,0,1024,1536,432,480,35,8,310,466,0.303112314,216.0000,464.0000
+portal-0,portal-original.png,0,0,768,512,256,256,-88,9,359,240,0.467836257,128.0000,128.0000
+portal-1,portal-original.png,768,0,768,512,256,256,-15,9,359,240,0.467836257,128.0000,128.0000
+portal-2,portal-original.png,0,512,768,512,256,256,-89,15,359,240,0.467836257,128.0000,128.0000
+portal-3,portal-original.png,768,512,768,512,256,256,-15,15,359,240,0.467836257,128.0000,128.0000

@@ -89,7 +89,7 @@ class CampaignProfileTest {
     }
     @Test void malformedProfileDoesNotCreateNegativeMoneyOrUnboundedAttributes() {
         String json = new CampaignProfile().toJson();
-        assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"version\": 1", "\"version\": 2")));
+        assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"version\": 2", "\"version\": 3")));
         assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"obols\": 0", "\"obols\": -1")));
         assertThrows(IllegalArgumentException.class, () -> CampaignProfile.fromJson(json.replace("\"VITALITY\": 0", "\"VITALITY\": 999")));
         assertThrows(IllegalArgumentException.class, () -> new PermanentBonuses(0, 0, 6));

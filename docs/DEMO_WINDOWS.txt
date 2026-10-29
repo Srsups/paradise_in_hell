@@ -16,22 +16,169 @@ Caronte, altar e travessia usam sprites animadas no refugio.
 No refugio nao e possivel atacar; caminhar, conversar e interagir continuam disponiveis.
 Corpos proprios para comum, rapido, tank, arqueiro, Carrasco e Guardiao.
 Baus de suprimentos/Cinzas com abertura animada; recompensa unica.
-Escolha de dadiva em tela inteira, icones proprios das 15 dadivas e consulta TAB.
+Escolha de dadiva em tela inteira, icones proprios das 22 dadivas e consulta TAB.
 Arqueiro puxa/solta a corda com arco integrado. Carrasco gira espada e lanca pedras.
 Guardiao respira na espera, corre com ombrada, salta e aterrissa com joelho/punho.
-Avisos animados em imagens conservam as areas reais. Poses de dano/morte pendentes.
+Avisos animados em imagens conservam as areas reais.
 
 Na conversa de Caronte:
 ENTER/E/clique revela a fala; o comando seguinte avanca uma fala.
 T alterna texto gradual/instantaneo nesta sessao. ESC fecha sem concluir.
 O presente de 5 Obolos continua unico, concedido ao terminar a primeira conversa.
 
+DIALOGOS E EXPRESSOES (LOTE M6 - 23/10/2026)
+Caronte, Ferreiro e Camponesa usam o mesmo painel de leitura e expressoes por fala.
+Caronte comenta a promessa da Camponesa e a arma forjada sem entregar outro presente.
+O Ferreiro reage a sua profissao, arma, material e raridade, com resposta ao resultado da melhoria.
+Na forja, ESPACO ou clique NA FALA revela/avanca; T alterna texto gradual/instantaneo.
+1/E ou o botao de melhoria compra. 2/ENTER/ESC continua a travessia.
+Ler a fala nao gasta fragmentos. Falha na melhoria preserva o material.
+T preserva o texto ja mostrado; uma acao revela a fala ou avanca para a seguinte.
+Camponesa: uma fala por etapa; aceitacao mantem espera de 1,5 s e exige soltar o mouse para clicar.
+J no refugio abre o diario com o objetivo revelado. Os encontros nao avancam o combate.
+
+REACOES DE DANO E MORTE (LOTE M6 - 23/10/2026)
+As nove profissoes e os seis tipos de inimigo tem poses proprias de impacto e queda.
+Ancinho e foice do Fazendeiro mantem seus corpos e armas integrados.
+A reacao de dano dura 0,18 s. Voce continua podendo andar, atacar e defender.
+Carrasco e Guardiao conservam seus avisos e animacoes de ataque ao sofrer dano.
+Inimigos derrotados deixam uma queda breve; seus corpos nao colidem nem atacam.
+XP, abates e recompensas continuam sendo resolvidos imediatamente na derrota.
+A morte final tem uma apresentacao de 0,65 s; a queda do Guardiao dura 1 s.
+Os ganhos ja estao guardados durante essa apresentacao. ESC pausa/retoma a queda.
+Ressurreicao continua a tentativa. A apresentacao nao acrescenta tempo aos relatorios.
+
+CENARIOS E ROTAS (LOTE M6 - 25/10/2026)
+Refugio, Margem do Estige/demo, Caminho das Cinzas, Patio das Sombras e sala do
+Guardiao tem pisos e obstaculos proprios. As bordas respeitam os limites anteriores.
+Cada tema tem seis pisos e tres obstaculos; os detalhes de piso sao discretos.
+As rotas mostram ilustracoes sem esticar, mantendo titulo, descricao, evento,
+recompensa e metas. Passe o mouse para destacar um destino; clique ou use 1, 2, 3.
+Um unico destino fica centralizado. A entrada espera 0,2 s e exige soltar o mouse
+antes de aceitar outro clique. Escolher o caminho nao avanca o combate.
+A passagem liberada usa uma porta luminosa animada em quatro quadros.
+E/ENTER continua funcionando de qualquer posicao depois de cumprir as metas.
+O cenario nao altera colisoes, economia, sorteios de gameplay ou saves.
+Nao foi acrescentado outro andar/regiao neste lote.
+Rotulos do refugio e avisos contextuais tem contorno para leitura sobre os pisos.
+
+GUIA E CENTELHA DA INSURGENCIA (27/10/2026)
+Uma dica contextual aparece por vez e desaparece ao realizar a acao ou apos sete segundos ativos.
+F1 abre o guia no refugio, na arena e no chefe. O jogo fica pausado.
+Na campanha sao duas paginas; na demo, uma pagina de combate.
+Setas ou Anterior/Proxima trocam a pagina. F1/ESC fecha.
+H ativa/desativa dicas para o personagem. O guia continua acessivel por F1.
+Aprendizados da campanha ficam no save; as licoes da demo ficam locais.
+
+Vencer o Guardiao do Submundo na campanha conquista a Centelha da Insurgencia.
+Ela permitira ferir os deuses na continuacao; agora e uma conquista da historia,
+sem bonus de dano, atributos ou mudanca no combate.
+Depois da queda do Guardiao, Caronte e protagonista conversam antes do resultado.
+O retorno ao refugio e voluntario, para preparar a ascensao e continuar o resgate.
+A continuacao da campanha esta em desenvolvimento; Zeus ainda nao e um chefe jogavel.
+Espere 1,5 s e solte o ataque para confirmar a fala.
+ENTER/E/ESPACO ou clique NA FALA revela o texto; o comando seguinte avanca.
+T alterna texto gradual/instantaneo. ESC adia a leitura sem marca-la como concluida.
+V no refugio ou C no resultado da campanha retoma/reve o desfecho conquistado.
+Rever nao concede moedas, outra Centelha ou um retorno adicional.
+Depois de ler ate o fim, o desfecho nao abre automaticamente nas proximas vitorias.
+
+VIDEO E JANELA
+F2 abre video no menu, refugio, arena e chefe. O jogo fica pausado no painel.
+Escolha Janela, Janela sem bordas ou Tela cheia, VSync e o tamanho da janela.
+Presets: 800x450, 960x540, 1280x720, 1600x900 e 1920x1080.
+Janela tem bordas e pode ser redimensionada; o tamanho se ajusta a area util do monitor.
+Janela sem bordas ocupa a area total do monitor atual sem entrar no modo exclusivo.
+Tela cheia usa o modo exclusivo na resolucao atual do monitor.
+Os dois modos guardam o tamanho preferido para voltar a Janela.
+O monitor e identificado automaticamente onde a janela esta, inclusive em outra tela.
+Tamanhos grandes sao ajustados proporcionalmente para caber na area util e na moldura.
+VSync desligado limita a 120 FPS. Ligado sincroniza a imagem com o monitor.
+Clique ou use setas acima/abaixo para escolher e esquerda/direita para ajustar.
+1 a 5 ou teclado numerico escolhem o tamanho, somente no modo janela.
+ENTER ou Aplicar testa a imagem por 15 segundos de tempo real.
+ENTER ou Manter confirma; ESC ou Reverter desfaz. Sem confirmar, reverte pelo prazo.
+Reverter tenta restaurar tamanho, posicao, monitor e bordas da janela anterior.
+Se o monitor anterior foi removido, tenta uma janela segura no monitor disponivel.
+ESC durante a previa volta ao painel. ESC novamente ou F2 fecha o painel.
+Fechar o painel/jogo ou pausar a aplicacao tambem cancela uma previa nao confirmada.
+Espere a protecao inicial de 0,2 s e solte o botao esquerdo para confirmar.
+Se a gravacao falhar, a imagem fica ativa; S NO PAINEL DE VIDEO tenta salvar novamente.
+As preferencias sao globais e ficam em video-settings.json com copia .bak.
+Trocar ou excluir personagem nao apaga essas preferencias.
+As configuracoes anteriores de janela/tela cheia sao migradas para os tres modos.
+O tamanho do HUD tem pagina propria nas opcoes de video. Controles ficam em F3.
+
+TAMANHO DO HUD (28/10/2026)
+F2 > TAMANHO DO HUD abre o ajuste no menu, refugio, arena e chefe.
+Escolha de 80% a 125%, com padrao de 100%. A previa e local ate salvar.
+Setas esquerda/direita ou botoes -/+ mudam 5 pontos percentuais.
+Clique em 80%, 100% ou 125%, ou clique/arraste a barra para ajustar de 1 em 1%.
+ENTER ou SALVAR aplica e guarda para todos os personagens.
+RESTAURAR 100% altera o rascunho; salve para aplicar.
+ESC ou VOLTAR A VIDEO retorna a pagina de imagem. F2 fecha as opcoes.
+Sair descarta mudancas que ainda nao foram aplicadas.
+O painel pausa a tentativa e preserva conversa, pausa, escolha e consultas anteriores.
+Depois de aplicar/fechar, solte os comandos segurados antes de agir outra vez.
+Se a gravacao falhar, o tamanho fica ativo nesta sessao; S NA PAGINA DO HUD tenta novamente.
+As preferencias usam hud-settings.json e backup .bak, separados de video e personagens.
+Trocar/excluir um save conserva esse tamanho. Falha de leitura preserva o arquivo original.
+Escalam vida, estamina, XP, nivel/dash, metas, relogio e barra/aviso do Guardiao.
+Menus, dialogos, cutscenes, rodapes e elementos no mundo conservam seu tamanho.
+Camera, personagens e areas de colisao continuam iguais.
+Esse ajuste nao muda o modo fisico do monitor nem usa a previa de imagem de 15 s.
+
+CONTROLES REMAPEAVEIS
+F3 abre controles no menu, refugio, arena e chefe. No menu tambem ha o botao CONTROLES.
+O painel pausa a simulacao e conserva pausa, consulta de dadivas, escolha e conversa anteriores.
+Sao duas paginas, com um comando principal e um alternativo por acao.
+Setas esquerda/direita ou Anterior/Proxima trocam a pagina.
+Clique em uma associacao ou em Adicionar. Solte todos os controles e espere 0,2 s.
+Depois, pressione a nova tecla ou botao do mouse. ESC cancela a captura.
+Delete/Backspace remove uma associacao durante a captura, mantendo ao menos uma por acao.
+Comandos em conflito ou teclas reservadas mostram uma mensagem e conservam o anterior.
+ENTER ou SALVAR aplica e guarda para todos os personagens.
+RESTAURAR PADRAO altera apenas o rascunho; salve para usar a configuracao inicial.
+ESC fora da captura, F3 ou VOLTAR fecha. Sair descarta edicoes nao aplicadas.
+Se a gravacao falhar, controles ficam ativos nesta sessao; S NO PAINEL tenta salvar novamente.
+As preferencias usam control-settings.json e backup .bak, separados dos personagens.
+Excluir ou trocar um save nao apaga controles. Falha de leitura preserva o arquivo original.
+Depois de aplicar/fechar, solte os comandos segurados antes de usalos novamente.
+
+Padroes: WASD/setas movem; Shift esquerdo/direito usa dash; mouse esquerdo ataca;
+mouse direito defende; E/ENTER interage/atravessa; F abre bau; Q troca ferramenta;
+TAB consulta dadivas em combate. Mira continua pelo mouse. Refugio nao permite atacar.
+ENTER no refugio continua partindo. Menus, dialogos e confirmacoes conservam controles fixos.
+ESC, F1, F2, F3, O, H, C, L, P, R, J, V, I e M sao reservados a menus/atalhos.
+ENTER so pode ser associado a Interagir. Delete/Backspace ficam para remover associacoes.
+Sao aceitos teclado e ate cinco botoes do mouse, incluindo central e dois laterais.
+Gamepad, combinacoes de teclas, roda do mouse e remapeamento dos menus nao estao incluidos.
+
+ABERTURA EM CAMADAS
+I ou ABERTURA no menu permite assistir sem criar um personagem.
+I no refugio permite rever a introducao sem alterar suas conquistas.
+Na campanha, personagens novos veem a abertura depois de confirmar profissao/dificuldade,
+antes de chegar ao primeiro refugio. A demo nao abre essa historia automaticamente.
+Saves antigos com tentativas anteriores nao sao obrigados a rever a introducao.
+Sao seis cenas, com cerca de 45 segundos de historia, legendas e sons.
+ESPACO ou Pausar: pausa/continua. Ao voltar de uma pausa da aplicacao, use ESPACO.
+ENTER ou Proximo avanca depois de pelo menos 1,5 s na cena atual.
+ESC ou Pular abre uma confirmacao. ESC/Continuar vendo cancela o pulo.
+ENTER/Pular abertura confirma, apos 0,2 s e soltar o botao esquerdo.
+F2 abre video sem avancar a historia; fechar o painel preserva a cena.
+Concluir ou pular na primeira entrada registra somente a apresentacao no personagem.
+Rever pelo menu/refugio nao concede moedas, dadivas, Centelha ou outro retorno.
+Fechar o jogo no meio nao conclui a abertura; ela recomeca na proxima entrada pendente.
+Se a gravacao falhar, o registro fica na memoria; S no refugio tenta salvar novamente.
+Os visuais e o movimento desta abertura sao um piloto que continuara sendo aperfeicoado.
+
 No menu:
 Enter ou clique em Demo: sobreviver por cinco minutos.
 C ou clique em Campanha: refugio, hordas, caminhos e chefe.
+I ou ABERTURA: assistir a introducao sem criar um save.
 
 Escolha um dos 8 saves em duas paginas. Setas ou Anterior/Proxima trocam a pagina.
-Clique ou 1, 2, 3, 4 escolhem o cartao da pagina atual; profissoes tambem tem 2 paginas.
+Clique ou 1, 2, 3, 4 escolhem o cartao da pagina atual; 9 profissoes usam 3 paginas.
 Um save vazio cria um personagem. O narrador pergunta sua profissao uma vez:
 1 - Cacador: arco e flecha.
 2 - Ferreiro: espada, golpe em area na direcao do mouse.
@@ -42,6 +189,8 @@ Na segunda pagina:
 2 - Sacerdote: maldicao em area causa dano por 3 segundos.
 3 - Necromante (lendaria): reviver inimigos como aliados; exige desbloqueio.
 4 - Guerreiro: espada e escudo; segure o botao direito para defesa frontal.
+Na terceira pagina:
+1 - Fazendeiro (epica): ancinho em estocada e foice circular; exige desafio da campanha.
 Os cartoes de profissao mostram nomes sem prefixos numericos.
 Depois da profissao, escolha a dificuldade e confirme em Criar personagem/ENTER.
 Voltar/ESC descarta as escolhas sem criar o save. Falha de gravacao permite tentar novamente.
@@ -58,7 +207,8 @@ Na selecao de saves, Excluir abre uma confirmacao para esvaziar aquele slot.
 Cancelar ou ESC preserva o personagem; Excluir personagem ou ENTER confirma.
 DEL alterna o modo de exclusao por teclado; 1-4 escolhem o slot da pagina atual.
 Excluir reseta profissao, Obolos, arma, compras, eventos, material e estatisticas.
-Almas e acesso ao Necromante permanecem compartilhados.
+Almas e acessos ao Necromante/Fazendeiro permanecem compartilhados.
+Excluir apaga uma missao incompleta; uma conclusao pendente deve preservar o desbloqueio antes da exclusao.
 Apos confirmar, o slot permite criar outro personagem. R mostra apenas seu historico.
 Falha de gravacao preserva o personagem; backups antigos nao recuperam saves excluidos.
 Cacador: 100 de vida, 60 de velocidade e 5 de dano base.
@@ -95,6 +245,7 @@ No altar, N ou clique: desbloquear Necromante por 1.000 Almas compartilhadas.
 O personagem atual mantem sua profissao. Obolos nao sao gastos nessa compra. O desbloqueio permite criar novos Necromantes.
 Falha ao salvar nao gasta moedas; compra repetida nao gasta novamente.
 R: resumo da ultima tentativa deste personagem; setas consultam paginas e historico.
+J: diario da promessa da Camponesa das Cinzas.
 P: escolher save. A profissao do personagem nao muda.
 Enter: iniciar uma tentativa.
 Tambem pode mover-se e usar E perto de Caronte, altar ou passagem.
@@ -126,13 +277,33 @@ Vencer o chefe concede mais 10. Alguns baus dao 3.
 Esses ganhos sao guardados ao retornar, inclusive por morte ou abandono.
 O altar vende ate 5 niveis de vida maxima (+10%), dano (+5%) e velocidade (+3%).
 Os bonus se somam sobre as bases da profissao, preservando dano fracionario.
-Custos por nivel: 5, 9, 13, 17, 21 Obolos.
+Custos de vida/dano/movimento/Armadura: 5, 9, 13, 17, 21 Obolos.
+A segunda pagina do altar oferece reserva de estamina (+5% por nivel),
+recuperacao (+8% por nivel) e Armadura (+3 pontos percentuais de reducao de dano
+por nivel, ate 15%), ate 5 niveis.
+Reserva custa 6/11/16/21/26; recuperacao 7/12/17/22/27 Obolos.
+Setas ou Anterior/Proxima: mudar pagina. 1-3/clique: comprar na pagina atual.
+A previsao mostra o valor atual e o proximo. Armadura substitui alcance de coleta:
+niveis antigos sao convertidos sem custo; perfis sem a compra comecam em zero.
+A reducao soma com resistencia ate 75% no total. Amparo reduz o dano restante.
+Ima e Rastro continuam sendo bonus temporarios de coleta de XP.
 Compras permanentes continuam; dadivas, XP, nivel e recargas reiniciam.
+
+DADIVAS NOVAS (M4 - 22/10/2026)
+Amparo de Hestia: protecao temporaria depois de sofrer dano.
+Furor de Ares: mais dano com pouca vida.
+Folego de Iris: estamina por abate, com recarga global.
+Rastro de Demeter: coleta de XP ampliada por um tempo apos dash.
+Emboscada de Artemis: um alvo do proximo ataque apos dash recebe bonus de DPS.
+Convergencia de Hefesto: arma em alvo ja queimando/amaldicoado causa explosao.
+So aparece se voce tiver queimadura ou for Sacerdote.
+Eco do Estige: somente no Submundo; dash deixa explosao atrasada em sua origem.
+Os poderes usam recargas proprias e reiniciam em novas tentativas.
 
 HUD E DETALHES
 Vida, folego/estamina e XP sao barras, com nivel e disponibilidade do dash.
 Metas ficam no canto direito e viram o acesso E/ENTER quando concluidas.
-Um marcador dourado mostra a passagem; E/ENTER funciona em qualquer posicao.
+Uma porta luminosa animada mostra a passagem; E/ENTER funciona em qualquer posicao.
 O cronometro permanece na demo de cinco minutos.
 TAB mostra dano, ataques/s, movimento, sorte, vida/estamina, XP, moedas e dadivas.
 Instrucoes iniciais desaparecem apos oito segundos. Recompensas/perigos sao contextuais.
@@ -188,7 +359,7 @@ Um comum rende 2,5 XP; um bau de 12 XP base concede e anuncia 30 XP.
 A barra representa as fracoes, conservadas no estado e consultadas em TAB. O bonus permanece entre salas e reinicia na nova tentativa.
 Colheita de Demeter: ima de XP, com ate 3 niveis de alcance e atracao.
 O ima reinicia junto com as outras dadivas na proxima tentativa.
-15 dadivas: agora incluem choque em cadeia, queimadura e empurrao, com recargas proprias.
+22 dadivas: incluem choque, queimadura, empurrao e os sete poderes novos do M4.
 Choque causa dano extra em alvos queimando/amaldicoados; aura reforca empurrao.
 Dadivas: Comum, Rara, Epica e Mitologica conforme a forca do efeito.
 Chances base: 70%, 23%, 6%, 1%; Apostador: aprox. 21,7%, 28,6%, 29,8%, 19,9%.
@@ -213,7 +384,8 @@ Outra regiao tera seu proprio limite. O prototipo atual tem apenas o Submundo.
 Material e regiao premiada sao salvos imediatamente e permanecem entre tentativas.
 Ferreiro Errante: 3% base por tentativa; Apostador: 12%. Sorteado uma vez.
 Se sorteado, aparece em seguranca depois da primeira sala concluida.
-1 ou E: gastar 1 fragmento para transformar a arma Comum em Rara.
+1 ou E ou botao Melhorar arma: gastar 1 fragmento para transformar a arma Comum em Rara.
+ESPACO ou clique na fala: ler, sem comprar. T: alternar texto gradual/instantaneo.
 Rara: +25% de dano base e +10% de cadencia.
 Arco perfura mais um alvo; pistola ricocheteia uma vez; espada tem maior alcance.
 Socos raros passam de alcance 24 para 34, mantendo um alvo e sem projeteis.
@@ -232,6 +404,27 @@ O prototipo oferece uma melhoria por personagem: Comum para Rara.
 Dadivas, XP e nivel continuam reiniciando. Material restante fica no save.
 Se a compra nao puder ser salva, o material e preservado.
 A demo de sobrevivencia nao tem mini-boss, material ou ferreiro.
+
+FAZENDEIRO E CAMPONESA DAS CINZAS (M5 - 23/10/2026)
+Encontro, promessa e Fazendeiro disponiveis na campanha. Valores iniciais para playtests.
+Camponesa: 10% base por tentativa, ou 40% para Apostador, pela sorte 4x.
+Um sorteio independente ocorre depois de liberar a passagem do Estige.
+O encontro e opcional e seguro, depois de eventuais recompensa e ferreiro.
+Menus do encontro nao avancam o tempo de combate. Reabrir nao sorteia novamente.
+Aceite a missao, derrote um Carrasco para receber uma semente garantida e venca o Guardiao do Submundo.
+O Carrasco derrotado antes de aceitar nao conta. A semente nao depende do Fragmento de Forja ou de seu limite.
+Aceitacao e semente pertencem ao personagem e persistem entre mortes, abandonos e sessoes.
+Nao e necessario cumprir tudo na mesma tentativa ou reencontrar a Camponesa.
+A conclusao libera novos Fazendeiros em todos os saves, sem mudar personagens ou gastar moedas.
+Fazendeiro: vida 120, movimento 57, dash 195, sorte 1x.
+Ancinho: dano 9 a cada 0,70 s; estocada estreita, alcance 52 comum ou 64 raro.
+Foice: dano 6 a cada 0,85 s; corte de 360 graus, alcance 34 comum ou 44 raro.
+Q alterna ferramentas apenas em combate ativo. A recarga e compartilhada; trocar nao concede golpe extra.
+Bonus percentuais usam a ferramenta ativa. Uma forja permanente melhora ambas.
+A ferramenta continua entre salas; cada nova tentativa comeca com ancinho.
+Falhas de autosave conservam ganhos de missao na memoria para repetir a gravacao.
+Se o arquivo global falhar, o perfil concluido permite recuperar o acesso.
+J no refugio consulta o diario; TAB mostra o objetivo aceito durante a tentativa.
 
 Quando cumprir as metas, E ou Enter escolhe o destino.
 Inimigos vivos nao bloqueiam a passagem.
@@ -273,10 +466,20 @@ WASD ou setas: mover
 Shift em movimento: dash
 Mouse: mirar
 Segure o botao esquerdo: atacar
+Q com Fazendeiro, durante combate ativo: alternar ancinho/foice
+ESPACO ou clique na fala do Ferreiro: revelar/avancar sem comprar
+J no refugio: consultar o diario da Camponesa
+F1 no refugio, arena ou chefe: abrir/fechar guia (setas: paginas; ESC fecha)
+F2 no menu, refugio, arena ou chefe: video (ENTER aplica/confirma; ESC reverte/volta)
+I no menu/refugio: assistir/rever a abertura
+H: ativar/desativar dicas do personagem
+V no refugio / C no resultado: retomar/rever o desfecho da Centelha conquistada
 Botao direito com Guerreiro: defender mirando para o ataque
 Setas / PageUp / PageDown / Anterior / Proxima: trocar pagina dos menus
 Clique ou 1, 2, 3, 4: escolher save ou profissao na pagina atual
 Clique ou 1, 2, 3: escolher dadiva, destino ou compra
+F5 nas telas seguras da campanha: salvar a tentativa e sair ao menu
+ENTER / DEL na retomada: continuar / pedir abandono com confirmacao
 F: abrir bau proximo
 E ou Enter apos cumprir metas: sair da arena
 TAB: consultar/fechar as dadivas da tentativa (setas: paginas)
@@ -289,22 +492,45 @@ PERFIL SALVO
 No Windows: %LOCALAPPDATA%\ParadiseInHell\
 Save 1: profile.json (preserva o perfil anterior).
 Saves 2 a 8: profile-2.json ate profile-8.json.
-Saldo, compras, profissao, raridade da arma, eventos, fragmentos e regioes ja premiadas
-sao independentes. Almas, desbloqueio do Necromante e historico ficam em shared-progress.json.
+Saldo, compras, profissao, raridade da arma, eventos, missao da Camponesa, fragmentos e regioes ja premiadas
+sao independentes. Centelha, leitura do desfecho, dicas aprendidas e preferencia de dicas tambem pertencem ao personagem.
+Excluir o save limpa esses dados. Outro personagem comeca independentemente.
+Saves antigos com vitoria recebem a Centelha, com leitura disponivel por V/C.
+Almas, desbloqueios do Necromante/Fazendeiro e historico ficam em shared-progress.json.
 Esse arquivo e compartilhado e tem sua propria copia .bak.
-Desbloqueio de Necromante permite novos personagens em outros saves.
+Desbloqueios do Necromante e Fazendeiro permitem novos personagens em outros saves.
 Cada arquivo tem uma copia .bak por save. Saves anteriores continuam funcionando.
-Fechar no meio da tentativa descarta dadivas e ganhos ainda nao guardados.
-Nao ha retomada de uma tentativa. S no refugio repete autosaves pendentes do personagem e do arquivo compartilhado.
+RETOMADA POR CHECKPOINTS (29/10/2026)
+A campanha grava o inicio de cada sala e as telas seguras de recompensa, Ferreiro,
+Camponesa e escolha de destino. Nessas telas, F5 ou SALVAR E SAIR guarda e volta ao menu.
+Se F5 estiver associado a um controle personalizado, use o botao SALVAR E SAIR.
+Isso nao conta como morte ou abandono e nao recolhe Obolos/Almas.
+Ao selecionar esse personagem: ENTER continua; ESC volta ao menu; DEL pede confirmacao para abandonar.
+Abandonar recolhe os ganhos do checkpoint e encerra a tentativa.
+Fechar durante o combate volta ao ultimo checkpoint gravado; os inimigos da sala sao recriados.
+Dadivas, nivel, vida, recursos, aliados e escolhas ja sorteadas daquele ponto sao mantidos.
+Ganhos posteriores ao checkpoint precisam ser conquistados novamente.
+A demo de cinco minutos nao substitui a tentativa salva da campanha.
+Falha ao gravar pausa a transicao: ENTER/S ou o botao tenta novamente.
+Se fechar durante essa falha, somente o ultimo checkpoint gravado estara disponivel.
+Morte, vitoria e abandono invalidam a retomada e registram as recompensas uma vez.
+S no refugio repete autosaves e registros pendentes do personagem e do arquivo compartilhado.
+Os arquivos pessoais/compartilhados migram de versao 1 para 2, mantendo os personagens antigos.
+Checkpoint incompativel bloqueia a continuacao e oferece descarte confirmado somente da tentativa.
+Falha ao gravar conquista, leitura ou dicas conserva o progresso na memoria para tentar novamente com S.
+Resolva a falha antes de fechar o jogo para preservar o que ainda nao foi gravado.
 Uma compra so desconta moedas se puder ser salva.
-Falha de leitura preserva os arquivos; a campanha continua apenas na sessao.
+Falha de leitura preserva os arquivos; compras e inicio de campanha ficam bloqueados ate resolver a gravacao.
 
 O tempo para durante pausa e escolhas.
 Audio/efeitos sao provisorios. Ainda faltam revisao sonora/artistica, outros encontros,
 inventario geral, proximas regioes e controles.
-Os atlas foram gerados com IA. Refugio e outros NPCs ainda precisam de arte de mundo.
+Os atlas foram gerados com IA. Refugio e as salas atuais ja tem temas proprios;
+novos NPCs e regioes ainda precisam de conteudo e arte.
 Movimento, retratos, baus e poderes foram ampliados; revisar o conjunto em partidas.
 Nome da moeda, custos e recompensas precisam de playtests.
+O guia contextual e o desfecho da primeira travessia estao disponiveis.
+A campanha atual termina no Submundo; a Ascensao ao Olimpo e o resgate continuam em desenvolvimento.
 
 Para relatar um problema, informe seu Windows, placa de video,
 o que estava acontecendo e os passos para repetir o problema.

@@ -1,0 +1,43 @@
+{
+  "title": "Centelha da Insurgência",
+  "subtitle": "Primeira travessia do Submundo concluída.",
+  "nextObjective": "Preparar a ascensão ao Olimpo para resgatar sua esposa e enfrentar Zeus.",
+  "continuationNotice": "A continuação da campanha está em desenvolvimento.",
+  "lines": [
+    {
+      "speaker": "Caronte",
+      "text": "O Guardião caiu. A Centelha da Insurgência agora está com você.",
+      "portrait": "CHARON_PLEASED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Se eu já volto da morte, para que preciso dela?",
+      "portrait": "PROTAGONIST"
+    },
+    {
+      "speaker": "Caronte",
+      "text": "A maldição faz você retornar. A Centelha permitirá ferir os deuses. Chegar ao Olimpo será só metade do trabalho.",
+      "portrait": "CHARON_NEUTRAL"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Ótimo. Falta subir até Zeus e trazer minha esposa de volta.",
+      "portrait": "PROTAGONIST"
+    },
+    {
+      "speaker": "Caronte",
+      "text": "O caminho acima exige preparo. Pode voltar comigo ao refúgio antes da ascensão.",
+      "portrait": "CHARON_CONCERNED"
+    },
+    {
+      "speaker": "Protagonista",
+      "text": "Por vontade própria, desta vez. E nada de cobrar passagem de ida e volta.",
+      "portrait": "PROTAGONIST"
+    },
+    {
+      "speaker": "Caronte",
+      "text": "Vamos negociar quando Zeus pagar a conta.",
+      "portrait": "CHARON_AMUSED"
+    }
+  ]
+}

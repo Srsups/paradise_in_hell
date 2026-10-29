@@ -30,9 +30,14 @@ ao converter o total para inteiros. XP e probabilidades mantêm suas regras;
 Caronte, saldos antigos e custos não são multiplicados.
 Detalhes e validação: [MARCO_2_DIFICULDADES_E_ECONOMIA.md](MARCO_2_DIFICULDADES_E_ECONOMIA.md).
 
-O Fazendeiro Épico, a dádiva exclusiva do Submundo e as novas compras do altar
-são entregas seguintes. Comparar classes/builds em personagens novos e evoluídos,
-com/sem Atena e forja, nas rotas direta/opcionais e nas três dificuldades.
+O **M4 foi implementado em 22/10/2026**, com seis novas dádivas gerais,
+Eco do Estige regional e três compras do altar. [Tabela completa](MARCO_4_DADIVAS_E_ALTAR.md).
+O **M5 foi implementado em 23/10/2026**: missão persistente da Camponesa das Cinzas
+e Fazendeiro Épico com duas ferramentas. Os 290 testes unitários, a verificação
+OpenGL e o pacote Windows foram aprovados; o balanceamento em partidas continua.
+[Regras do marco](MARCO_5_FAZENDEIRO.md).
+Comparar classes/builds em personagens novos e evoluídos, com/sem Atena e forja,
+nas rotas direta/opcionais e nas três dificuldades.
 As seções seguintes descrevem as regras já implementadas.
 
 ## Base visual e expansão do elenco atual
@@ -57,7 +62,8 @@ Detalhes: [MARCO_3_BASE_VISUAL.md](MARCO_3_BASE_VISUAL.md).
 
 ## Profissão fixa por personagem
 
-O menu oferece oito saves em duas páginas (setas ou Anterior/Próxima). Em um save vazio, o narrador pergunta a profissão.
+O menu oferece oito saves em duas páginas (setas ou Anterior/Próxima). As nove
+profissões usam três páginas. Em um save vazio, o narrador pergunta a profissão.
 A tela seguinte confirma profissão e dificuldade juntas; o personagem mantém ambas entre tentativas e sessões.
 Para experimentar outra, crie outro personagem em um save vazio.
 Na seleção de saves, **Excluir** abre uma confirmação para esvaziar o slot.
@@ -67,7 +73,9 @@ página atual e também abrem a confirmação. Slots vazios não precisam de exc
 A página fica congelada enquanto a confirmação está aberta.
 
 Excluir remove profissão, Óbolos, forja, compras, eventos, fragmentos, limites
-regionais e estatísticas pessoais. Almas e acesso ao Necromante continuam globais.
+regionais, missão incompleta e estatísticas pessoais. Almas e acessos ao Necromante
+e Fazendeiro continuam globais. Uma missão concluída ainda não gravada globalmente
+precisa ter seu desbloqueio preservado antes de excluir o personagem.
 A exclusão só muda o personagem em memória após gravar o perfil vazio; backups
 anteriores são invalidados para evitar recuperar o personagem excluído.
 Falhas são mostradas e preservam o personagem. O slot pode ser usado novamente
@@ -91,12 +99,66 @@ No Windows, os arquivos ficam em `%LOCALAPPDATA%\ParadiseInHell\`:
 Saldo, compras, eventos e estatísticas são independentes. A demo usa a profissão
 do save escolhido, com seus atributos base, sem compras ou recompensas da campanha.
 Selecionar um personagem pela primeira vez também salva sua profissão na demo.
+
+## Retomada da campanha por checkpoints
+
+Decisão confirmada pelo autor em **29/10/2026**: guardar a tentativa entre salas
+e áreas seguras. O checkpoint é gravado antes de entrar em uma sala e ao chegar
+à recompensa, ao Ferreiro, à Camponesa e à escolha de rota. **Salvar e sair [F5]**
+nessas telas volta ao menu sem morte, abandono, crédito de moedas ou novo retorno.
+A demo de cinco minutos conserva seu fluxo próprio e não sobrescreve essa tentativa.
+
+O cartão do personagem indica uma tentativa disponível. Selecioná-lo abre a
+retomada: **Enter** continua, **Esc** volta ao menu e **Del** pede confirmação
+para abandonar. Abandonar recolhe os ganhos do checkpoint e limpa as dádivas da
+tentativa; atributos permanentes, arma, missão e desbloqueios permanecem.
+Não se pode iniciar outra tentativa por cima de um checkpoint ativo.
+
+Fechar durante um combate retorna ao último ponto gravado. A sala começa de
+novo, com suas entidades recriadas; não se recuperam posição, projéteis ou
+inimigos no instante do fechamento. O snapshot conserva vida, estamina, nível/XP,
+dádivas e recargas, ferramenta ativa, ressurreição consumida, aliados, tempo e
+estatísticas, frações de recompensa, variantes e escolhas/sorteios já decididos.
+As melhorias permanentes aplicadas no começo da tentativa não são somadas outra vez.
+
+Forja e aceitação da missão atualizam o perfil e o checkpoint no mesmo commit.
+Semente e limite regional do material permanecem fatos pessoais já conquistados,
+inclusive quando o combate volta ao checkpoint. O limite de um fragmento por
+região/personagem continua valendo entre tentativas e retomadas.
+
+Perfis e progresso compartilhado usam formato **2**, lendo os arquivos de
+formato **1**. O checkpoint tem sua própria versão e identifica personagem,
+tentativa, sequência e conteúdo da região. Conteúdo incompatível bloqueia a
+continuação e oferece descarte confirmado somente da tentativa.
+Morte, vitória e abandono gravam um recibo pessoal e depois o crédito compartilhado;
+um registro durável de sequências consumidas impede créditos repetidos após recarga,
+mesmo fora do histórico visual de 20 relatórios. Falhas pausam as transições ou
+deixam a liquidação pendente para retry, antes de iniciar outra tentativa ou excluir o save.
+
+Implementação e validação final: [MARCO_7_CHECKPOINTS.md](MARCO_7_CHECKPOINTS.md).
+Este incremento não altera bases de atributos, custos, probabilidades ou a curva
+de dificuldade. O próximo trabalho continua sendo jogar o Submundo completo e
+comparar classes/rotas/dificuldades antes de ampliar a campanha.
+
+## Moedas e desbloqueios compartilhados
+
 O desbloqueio do Necromante custa **1.000 Almas compartilhadas** no altar.
 Almas são somadas entre os oito saves e gastas uma vez para liberar novos personagens.
 Óbolos, arma, compras e fragmentos continuam independentes. Ganhos por derrota:
 comum 1, arqueiro 3, rápido 2, tank 5, mini-boss 20 e chefe 100, com redução por Fúria para
 inimigos. São guardados após morte, vitória ou abandono; a demo não concede moedas.
 Desbloqueios antigos são preservados. Regras: [ALMAS_E_RELATORIOS.md](ALMAS_E_RELATORIOS.md).
+
+A Camponesa das Cinzas tem 10% de chance base por tentativa, multiplicada pela
+sorte: 40% para o Apostador. O sorteio é único e independente, após liberar a
+passagem do Estige; o encontro opcional ocorre em segurança, depois de eventuais
+recompensa e ferreiro. Não avança o relógio de combate.
+Aceite a missão, derrote um Carrasco para obter uma semente garantida e vença o
+Guardião do Submundo. A semente independe do Fragmento de Forja e de seu limite.
+Aceitação/semente persistem no personagem após morte, abandono e recarga; a
+conclusão libera o Fazendeiro para novos personagens, sem gastar moedas.
+O perfil concluído permite recuperar o desbloqueio após falha no arquivo global.
+J abre o diário no refúgio; Tab mostra o objetivo aceito durante a tentativa.
 
 ## Preferências e leitura do combate
 
@@ -132,13 +194,22 @@ Testar tentativas completas, avaliando também legibilidade, ritmo e vontade de 
 | Sacerdote / maldição | 105 | 3 | 0,80 s | 56 | 190 |
 | Necromante / cajado | 85 | 4 | 0,65 s | 58 | 195 |
 | Guerreiro / espada e escudo | 150 | 7 | 0,70 s | 50 | 175 |
+| Fazendeiro / ancinho | 120 | 9 | 0,70 s | 57 | 195 |
+| Fazendeiro / foice | 120 | 6 | 0,85 s | 57 | 195 |
 
 Na escolha da profissão, o valor de movimento foi substituído por **ataques/s**.
 O refúgio e a consulta por Tab mostram a taxa atual, incluindo dádivas e
 forja, com até duas casas decimais. Taxa = 1 / intervaloAtual. Bases:
 Caçador 1,54; Ferreiro 1,67; Vigilante 4; Apostador 3,33; Feiticeira 1,33;
-Sacerdote 1,25; Necromante 1,54; Guerreiro 1,43 ataques/s.
+Sacerdote 1,25; Necromante 1,54; Guerreiro 1,43; Fazendeiro 1,43 com ancinho
+ou 1,18 com foice, em ataques/s.
 A velocidade de movimento e seus bônus continuam existindo.
+
+O Fazendeiro tem sorte 1×. Ancinho: estocada estreita de alcance 52, ou 64 raro.
+Foice: corte de 360°, alcance 34, ou 44 raro. Q troca somente no combate ativo,
+preservando a recarga de ataque compartilhada. A ferramenta permanece entre salas
+e volta ao ancinho na próxima tentativa. Uma forja melhora ambas; bônus de dano
+e cadência são calculados sobre a base da ferramenta ativa, sem acumular ao trocar.
 
 A espada pode atingir vários alvos, mas exige proximidade. O Vigilante é mais
 rápido e tem menos vida; o Ferreiro tem mais vida e menor velocidade. Intervalo,
@@ -156,11 +227,22 @@ têm sorte 1×. Classificação e probabilidades das dádivas:
 | Vitalidade no altar | +10% da vida base | 5 | Permanente no save |
 | Força no altar | +5% do dano base | 5 | Permanente no save |
 | Agilidade no altar | +3% da velocidade base | 5 | Permanente no save |
+| Reserva de estamina | +5% da capacidade base | 5 | Permanente no save |
+| Recuperação de estamina | +8% da regeneração base | 5 | Permanente no save |
+| Armadura | +3 pontos percentuais de redução de dano | 5 | Permanente no save |
 
 Os percentuais se somam sobre a base da profissão, sem multiplicar os bônus
 anteriores. Uma dádiva de força aumenta o dano do arco de 5 para 6 e o da pistola
 de 2 para 2,4: ambos recebem 20%. Uma compra de força e uma dádiva dão +25% no total.
 Dano e vida mantêm frações; a interface mostra até uma casa decimal.
+
+Armadura substitui o alcance de coleta do altar e chega a 15% de redução em cinco
+níveis. Soma com a resistência existente até o limite total de 75%; Amparo reduz
+o dano restante em 30% enquanto ativo. Um golpe de 100 causa 85 com Armadura
+máxima, ou 59,5 sob Amparo. Contato, projéteis e áreas usam a mesma redução.
+Níveis antigos de COLLECTION migram para ARMOR sem custo; se ambas as chaves
+existirem, ARMOR prevalece e ambas são validadas. Ímã e Rastro continuam
+temporários, e o alcance inicial de atração sem dádivas permanece 36.
 
 Cadência calcula intervalo = intervaloBase / (1 + 0,12 × níveis), respeitando o
 intervalo mínimo da arma. Cura imediata, cura por abate, XP e poderes como a aura
@@ -249,7 +331,7 @@ O total de inimigos ao longo da fase continua ilimitado e a meta de rápidos nã
 Cada rápido alterna **1 s a 70 unidades/s** e **1 s a 24 unidades/s**.
 Os ciclos são defasados por spawn, evitando arrancadas sincronizadas de toda a horda.
 Ciano indica arrancada; tom verde-azulado indica recuperação. A média de um ciclo
-em caminho livre é 47 unidades/s, abaixo da velocidade base das oito profissões.
+em caminho livre é 47 unidades/s, abaixo da velocidade base das nove profissões.
 Isso cria espaço para reposicionar sem Hermes; obstáculos e múltiplas direções
 ainda exigem reação. Vida, dano, XP/Almas e escala continuam próprios do rápido.
 Pausa, Tab e escolhas também congelam esse ciclo.
@@ -307,11 +389,12 @@ Atena permanece entre salas e reinicia ao voltar para uma nova tentativa.
 Relatórios anteriores com duas/três escolhas continuam legíveis e preservam
 o histórico e as Almas compartilhadas; novas tentativas continuam limitadas a uma.
 
-Com todas as categorias e efeitos disponíveis, a chance no **primeiro cartão**
-de uma profissão com sorte 1 é 6% / 3 = **2%**, contra aproximadamente 3,3% antes.
-Essa não é a chance de aparecer entre as três opções. O Apostador continua
-favorecendo poderes Épicos pela sua sorte; sua chance inicial de Atena é
-aproximadamente 9,9%. Não alteramos os pesos gerais das categorias.
+Com o M4, a chance de Atena no **primeiro cartão** depende da origem e das
+sinergias disponíveis. No Submundo, há quatro Épicas elegíveis normalmente:
+6% / 4 = **1,5%** para sorte 1. Com Convergência elegível (Sacerdote ou queimadura),
+passam a cinco: **1,2%**. O Apostador tem aproximadamente **7,45%** ou **5,96%**.
+Na demo sem Convergência, continuam três: 2% e aproximadamente 9,9%.
+São chances do primeiro cartão, não do conjunto de três. Pesos das categorias intactos.
 Regras: [SORTE_E_RARIDADE.md](SORTE_E_RARIDADE.md).
 
 ## Ímã de XP

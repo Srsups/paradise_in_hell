@@ -15,7 +15,14 @@ public enum Upgrade {
     CHOQUE("Faísca de Zeus", "Raio em cadeia; recarga própria de 0,8s.", 3, BoonRarity.RARE),
     QUEIMADURA("Brasa de Héstia", "Ataques queimam por 3s; recarga própria de 0,8s.", 3, BoonRarity.RARE),
     IMPACTO("Martelo de Hefesto", "Ataques empurram; a aura reforça o impacto.", 3, BoonRarity.RARE),
-    RESSURREICAO("Favor de Asclépio", "Uma segunda chance com 50% da vida.", 1, BoonRarity.MYTHOLOGICAL);
+    RESSURREICAO("Favor de Asclépio", "Uma segunda chance com 50% da vida.", 1, BoonRarity.MYTHOLOGICAL),
+    AMPARO("Amparo de Héstia", "Após sofrer dano, recebe 30% menos por 2s. Recarga: 8s.", 1, BoonRarity.RARE),
+    FUROR("Furor de Ares", "+25% do dano base por nível enquanto estiver com até 35% da vida.", 2, BoonRarity.RARE),
+    FOLEGO("Fôlego de Íris", "Abates recuperam 6 de estamina por nível. Recarga: 2s.", 2, BoonRarity.RARE),
+    RASTRO("Rastro de Deméter", "Dash atrai XP: +96 de raio e +120 de atração por 1,5s. Recarga: 3s.", 1, BoonRarity.RARE),
+    EMBOSCADA("Emboscada de Ártemis", "Após dash, o próximo ataque ganha 45% do DPS por nível em um alvo. Janela/recarga: 2s.", 2, BoonRarity.RARE),
+    CONVERGENCIA("Convergência de Hefesto", "Arma em alvo já queimando/amaldiçoado explode: 30% do DPS por nível. Raio 28; recarga 1,5s.", 2, BoonRarity.EPIC),
+    ECO_DO_ESTIGE("Eco do Estige", "Dash deixa um eco: após 0,35s, causa 60% do DPS por nível em raio 44. Recarga: 3s.", 2, BoonRarity.EPIC);
 
     public static final float ATHENA_XP_BONUS = 1.5f;
 
@@ -31,6 +38,11 @@ public enum Upgrade {
     public String description(PlayerState player) {
         return this == CADENCIA ? description + "\n" + CombatNumbers.formatRate(player.attacksPerSecond())
             + " para " + CombatNumbers.formatRate(player.attacksPerSecondAfterCadence()) + " ataques/s." : description;
+    }
+    public String originLabel(){return this==ECO_DO_ESTIGE?"Exclusiva do Submundo":"Dádiva geral";}
+    public boolean availableIn(RunSession session){
+        if(this==ECO_DO_ESTIGE&&(session.isDemo()||!RegionDefinition.PROTOTYPE_ID.equals(session.region().id())))return false;
+        return this!=CONVERGENCIA||session.player().burnRank()>0||session.player().getWeapon()==WeaponType.CURSE;
     }
     public void apply(PlayerState player) {
         switch (this) {
@@ -49,6 +61,7 @@ public enum Upgrade {
             case QUEIMADURA -> player.addBurn();
             case IMPACTO -> player.addImpact();
             case RESSURREICAO -> player.ganharRessurreicao();
+            case AMPARO,FUROR,FOLEGO,RASTRO,EMBOSCADA,CONVERGENCIA,ECO_DO_ESTIGE -> player.boons().learn(this);
         }
     }
 }

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "status": "approved packing contract; sources selected by built-in image_gen",
+  "tool": "built-in image_gen",
+  "page": {"width": 2048, "height": 2048, "rgbaBytes": 16777216, "filter": "Linear"},
+  "regions": {
+    "background-home": [960, 540],
+    "background-styx": [960, 540],
+    "foreground-home": [960, 540],
+    "foreground-styx": [960, 540],
+    "hero-idle": [432, 480],
+    "hero-reach": [432, 480],
+    "wife-idle": [432, 480],
+    "wife-resist": [432, 480],
+    "zeus-idle": [432, 480],
+    "zeus-cast": [432, 480],
+    "charon": [432, 480],
+    "portal-0": [256, 256],
+    "portal-1": [256, 256],
+    "portal-2": [256, 256],
+    "portal-3": [256, 256]
+  },
+  "actorRegistration": {"pivot": "feet center from each pose's bottom body band", "targetPivot": [216, 464], "maximumVisibleBody": [400, 448], "uniformScalePerActor": true, "cropSeams": "actual transparent gutter, not necessarily the nominal sheet midpoint"},
+  "allowedOperations": ["crop", "uniform-scale-nearest-neighbor", "foot-pivot registration", "packing"],
+  "preserveGeneratedAlphaAndColors": true,
+  "paintOrRecolor": false
+}

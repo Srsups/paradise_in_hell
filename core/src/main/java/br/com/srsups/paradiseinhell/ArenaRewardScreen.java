@@ -22,6 +22,7 @@ public final class ArenaRewardScreen extends ScreenAdapter {
     private final BoonPanel boonPanel;
     private final List<Upgrade> choices;
     private final Rectangle[] cards;
+    private final SafeRunExit safeExit;
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
@@ -31,8 +32,10 @@ public final class ArenaRewardScreen extends ScreenAdapter {
     public ArenaRewardScreen(Main game, RunSession session) {
         if (!session.canClaimArenaReward()) throw new IllegalStateException("No pending arena reward");
         this.game = game; this.session = session;
-        boonPanel = new BoonPanel(session);
+        boonPanel = new BoonPanel(session,game.controls());
         recovery = session.arena().reward() == ArenaReward.RECOVERY_CHEST;
+        safeExit=new SafeRunExit(game,session,RunCheckpoint.Stage.ARENA_REWARD,
+            new Rectangle(650,recovery?365:452,265,35));
         choices = recovery ? List.of() : session.arenaRewardChoices();
         int count = recovery ? 2 : Math.max(1, choices.size());
         cards = recovery ? new Rectangle[count] : BoonChoiceView.cards(count);
@@ -45,7 +48,7 @@ public final class ArenaRewardScreen extends ScreenAdapter {
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
     @Override public void render(float delta) {
         boolean panelWasOpen = boonPanel.open();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) boonPanel.toggle();
+        if (game.controls().justPressed(ControlAction.BOONS)) boonPanel.toggle();
         else if (boonPanel.open() && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) boonPanel.close();
         if (boonPanel.open()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) boonPanel.movePage(-1);
@@ -54,9 +57,11 @@ public final class ArenaRewardScreen extends ScreenAdapter {
         boolean showingPanel = panelWasOpen || boonPanel.open();
         if (!showingPanel) {
             inputDelay -= delta;visualTime+=delta;
-            if (!recovery) choiceGuard.advance(delta, Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+            if (!recovery) choiceGuard.advance(delta, Gdx.input.isButtonPressed(Input.Buttons.LEFT)
+                || game.controls().physicallyPressed(ControlAction.ATTACK));
         }
         Vector2 pointer = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        if(!showingPanel&&safeExit.input(delta,pointer))return;
         if (!showingPanel && (recovery ? inputDelay <= 0 : choiceGuard.ready())) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                 game.finishRun(session, RunOutcome.ABANDONED); return;
@@ -65,7 +70,7 @@ public final class ArenaRewardScreen extends ScreenAdapter {
                 boolean number = Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)
                     || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1 + i);
                 boolean open = i == 0 && (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                    || recovery && Gdx.input.isKeyJustPressed(Input.Keys.F));
+                    || recovery && game.controls().justPressed(ControlAction.OPEN_CHEST));
                 if (number || open || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cards[i].contains(pointer)) {
                     if (recovery) session.claimRecoveryReward(i == 0);
                     else session.claimBoonReward(choices.isEmpty() ? null : choices.get(i));
@@ -76,8 +81,10 @@ public final class ArenaRewardScreen extends ScreenAdapter {
         if(!recovery) {
             viewport.apply();shapes.setProjectionMatrix(viewport.getCamera().combined);batch.setProjectionMatrix(viewport.getCamera().combined);
             BoonChoiceView.draw(batch,shapes,font,game.visuals(),session,choices,cards,"RECOMPENSA DAS SOMBRAS",
-                choiceGuard.ready()?"Dádiva extra Rara ou superior.":choiceGuard.notice(),"abandonar",visualTime);
-            if(boonPanel.open())boonPanel.draw(batch,shapes,font,game.visuals());return;
+                choiceGuard.ready()?"Dádiva extra Rara ou superior.":choiceGuard.notice(),"abandonar",visualTime,game.controls().label(ControlAction.BOONS));
+            if(boonPanel.open())boonPanel.draw(batch,shapes,font,game.visuals());
+            else safeExit.draw(batch,shapes,font,pointer);
+            return;
         }
         ScreenUtils.clear(0.045f, 0.055f, 0.085f, 1); viewport.apply();
         shapes.setProjectionMatrix(viewport.getCamera().combined);
@@ -120,13 +127,15 @@ public final class ArenaRewardScreen extends ScreenAdapter {
         font.setColor(Color.LIGHT_GRAY);
         font.draw(batch, "Vida: " + CombatNumbers.format(session.player().getVida()) + "/"
             + CombatNumbers.format(session.player().getVidaMaxima()) + " | Óbolos ao retornar: " + session.earnedObols(), 180, 110);
-        font.draw(batch, recovery ? "F/ENTER: recuperação | 1, 2 ou clique: escolher | TAB: dádivas | ESC: abandonar"
-            : "1, 2, 3 ou clique: escolher | ENTER: primeira opção | ESC: abandonar", 180, 65);
+        font.draw(batch, recovery ? game.controls().label(ControlAction.OPEN_CHEST)+" / ENTER: recuperação | 1, 2 ou clique: escolher | "
+            +game.controls().label(ControlAction.BOONS)+": dádivas | ESC: abandonar"
+            : "1, 2, 3 ou clique: escolher | ENTER: primeira opção | ESC: abandonar", 35, 65,890,8,true);
         if (!recovery && !choiceGuard.ready()) {
             font.setColor(Color.GOLD); font.draw(batch, choiceGuard.notice(), 180, 35);
         }
         batch.end();
         if (boonPanel.open()) boonPanel.draw(batch, shapes, font,game.visuals());
+        else safeExit.draw(batch,shapes,font,pointer);
     }
     @Override public void dispose() { batch.dispose(); shapes.dispose(); font.dispose(); }
 }

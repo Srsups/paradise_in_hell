@@ -18,6 +18,10 @@ public final class BoonChoiceView {
     }
     public static void draw(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,PilotArt art,
                             RunSession session,List<Upgrade> choices,Rectangle[] cards,String title,String footer,String escapeHint,float time) {
+        draw(batch,shapes,font,art,session,choices,cards,title,footer,escapeHint,time,"TAB");
+    }
+    public static void draw(SpriteBatch batch,ShapeRenderer shapes,BitmapFont font,PilotArt art,
+                            RunSession session,List<Upgrade> choices,Rectangle[] cards,String title,String footer,String escapeHint,float time,String boonsKey) {
         com.badlogic.gdx.utils.ScreenUtils.clear(UiTheme.INK);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(UiTheme.INK);shapes.rect(0,0,960,540);
@@ -43,11 +47,11 @@ public final class BoonChoiceView {
                 :boon.description(session.player());
             font.draw(batch,description,card.x+112,card.y+62,715,com.badlogic.gdx.utils.Align.left,true);
             font.setColor(Color.LIGHT_GRAY);font.getData().setScale(.85f);
-            if(boon!=null)font.draw(batch,boon.rarity.label,card.x+112,card.y+20);
+            if(boon!=null)font.draw(batch,boon.rarity.label+(boon==Upgrade.ECO_DO_ESTIGE?" | "+boon.originLabel():""),card.x+112,card.y+20);
         }
         font.getData().setScale(.95f);font.setColor(Color.GOLD);font.draw(batch,footer,45,53);
         font.setColor(Color.LIGHT_GRAY);font.getData().setScale(.9f);
-        font.draw(batch,"1, 2, 3 ou clique: escolher | TAB: suas dádivas | ESC: "+escapeHint,45,27);
+        font.draw(batch,"1, 2, 3 ou clique: escolher | "+boonsKey+": suas dádivas | ESC: "+escapeHint,45,27,870,8,true);
         font.getData().setScale(1);font.setColor(Color.WHITE);batch.end();
     }
 }

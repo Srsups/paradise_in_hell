@@ -18,6 +18,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public final class RefugeScreen extends ScreenAdapter {
     private enum State { WALKING, DIALOGUE, SHOP }
     private final Main game;
+    private final TutorialGuide tutorial = new TutorialGuide(false);
+    private final TutorialPanel tutorialPanel;
+    private final VideoPanel videoPanel;
+    private final ControlsPanel controlsPanel;
     private final FitViewport world = new FitViewport(480, 270), hud = new FitViewport(960, 540);
     private final Rectangle[] shopCards = {
         new Rectangle(35, 145, 280, 225), new Rectangle(340, 145, 280, 225), new Rectangle(645, 145, 280, 225)
@@ -29,6 +33,7 @@ public final class RefugeScreen extends ScreenAdapter {
     private ShapeRenderer shapes;
     private BitmapFont font, titleFont;
     private DialoguePlayback playback;
+    private final DialoguePanel dialoguePanel=new DialoguePanel(20,18,920,214,180,1.25f);
     private Texture atlas;
     private TileMap map;
     private Jogador player;
@@ -38,25 +43,35 @@ public final class RefugeScreen extends ScreenAdapter {
     private int line;
     private String notice = "";
     private float noticeTimer, visualTime;
+    private int shopPage;
+    private static final int SHOP_PER_PAGE=3;
+    private final Rectangle previousShopPage=new Rectangle(35,113,125,28),nextShopPage=new Rectangle(800,113,125,28);
+    public int shopPage(){return shopPage;}
+    public int shopPageCount(){return (PermanentAttribute.values().length+SHOP_PER_PAGE-1)/SHOP_PER_PAGE;}
     private boolean disposed;
 
-    public RefugeScreen(Main game) { this.game = game; }
+    public RefugeScreen(Main game) {
+        this.game = game;
+        videoPanel = new VideoPanel(game);
+        controlsPanel = new ControlsPanel(game);
+        tutorialPanel = new TutorialPanel(game, tutorial, game.profiles().profile().characterId(), false);
+    }
     @Override public void show() {
         Gdx.input.setInputProcessor(null);
         batch = new SpriteBatch(); shapes = new ShapeRenderer(); font = UiTheme.bodyFont(); titleFont = UiTheme.titleFont();
         atlas = new Texture(Art.ATLAS);
         atlas.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        map = new TileMap(atlas); map.gerarAreaInicialSegura(240, 135, 64);
+        map = new TileMap(atlas,game.visuals().scenery(),SceneryTheme.REFUGE); map.gerarAreaInicialSegura(240, 135, 64);
         map.setBounds(24, 58, 432, 160);
         refreshPlayer();
-        player = new Jogador(232, 92, atlas, stats, (x, y) -> {}, game.visuals());
+        player = new Jogador(232, 92, atlas, stats, (x, y) -> {}, game.visuals(), game.controls());
         world.getCamera().position.set(240, 135, 0); world.getCamera().update(); map.update(world.getCamera());
     }
     private void refreshPlayer() {
         stats = new PlayerState(game.profiles().profile().profession());
         game.profiles().profile().bonuses().apply(stats);
         if (game.profiles().profile().weaponRarity() == WeaponRarity.RARE) stats.forgeWeapon();
-        if (player != null) player = new Jogador(player.x, player.y, atlas, stats, (x, y) -> {}, game.visuals());
+        if (player != null) player = new Jogador(player.x, player.y, atlas, stats, (x, y) -> {}, game.visuals(), game.controls());
     }
     @Override public void resize(int width, int height) {
         world.update(width, height); hud.update(width, height, true);
@@ -65,6 +80,9 @@ public final class RefugeScreen extends ScreenAdapter {
     }
     @Override public void render(float delta) {
         if (disposed) return;
+        if (controlsPanel.input(delta,hud.unproject(new Vector2(Gdx.input.getX(),Gdx.input.getY())))) { videoPanel.suspendInput();draw(); return; }
+        if (videoPanel.input(delta,hud.unproject(new Vector2(Gdx.input.getX(),Gdx.input.getY())))) { draw(); return; }
+        if (tutorialPanel.input(hud.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY())))) { draw(); return; }
         if(state==State.WALKING && Gdx.input.isKeyJustPressed(Input.Keys.O)) {
             game.setScreen(new AudioSettingsScreen(game,()->new RefugeScreen(game)));return;
         }
@@ -78,6 +96,7 @@ public final class RefugeScreen extends ScreenAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             if(!game.profiles().error().isEmpty()) game.profiles().retrySave();
             if(!game.shared().error().isEmpty()) game.shared().retrySave();
+            game.recoverPendingSettlement();
         }
         switch (state) {
             case DIALOGUE -> {
@@ -86,10 +105,11 @@ public final class RefugeScreen extends ScreenAdapter {
                     game.instantDialogue(!game.instantDialogue()); playback.instant(game.instantDialogue());
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) state = State.WALKING;
-                else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.E) || clicked) {
+                else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || game.controls().justPressed(ControlAction.INTERACT) || clicked) {
                     if(playback.accept()==DialoguePlayback.Action.FINISHED
                         && game.profiles().finishConversation(conversation.event())) {
                         notify(conversation.event() == CampaignProfile.Event.CARONTE_MET ? "Caronte entregou 5 óbolos." : "Conversa registrada.");
+                        tutorialPanel.observe(TutorialTopic.REFUGE);
                         state = State.WALKING;
                     }
                     line=playback.line();
@@ -97,30 +117,50 @@ public final class RefugeScreen extends ScreenAdapter {
             }
             case SHOP -> {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.L)) state = State.WALKING;
+                else if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)||clicked&&previousShopPage.contains(pointer))shopPage=Math.max(0,shopPage-1);
+                else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)||clicked&&nextShopPage.contains(pointer))shopPage=Math.min(shopPageCount()-1,shopPage+1);
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.N) || clicked && legendaryButton.contains(pointer)) unlockLegendary();
                 else for (int index = 0; index < shopCards.length; index++) {
-                    if (numberPressed(index) || clicked && shopCards[index].contains(pointer)) buy(PermanentAttribute.values()[index]);
+                    int attribute=shopPage*SHOP_PER_PAGE+index;
+                    if(attribute<PermanentAttribute.values().length&&(numberPressed(index)||clicked&&shopCards[index].contains(pointer)))
+                        buy(PermanentAttribute.values()[attribute]);
                 }
             }
             case WALKING -> {
+                if(Gdx.input.isKeyJustPressed(Input.Keys.I)) {game.openOpening(()->new RefugeScreen(game),false);return;}
+                if(Gdx.input.isKeyJustPressed(Input.Keys.V) && game.hasUnderworldEpilogue()) {
+                    game.openUnderworldEpilogue(()->new RefugeScreen(game));return;
+                }
+                if(Gdx.input.isKeyJustPressed(Input.Keys.J)) { game.setScreen(FarmerQuestScreen.journal(game));return; }
                 if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
                     if(game.latestReport()==null) notify("Nenhuma tentativa recente deste personagem.");
                     else { game.openLastReport(); return; }
                 }
+                float beforeX = player.x, beforeY = player.y; boolean wasDashing = stats.isDashing();
                 player.update(visualDelta, map, false);
-                boolean interact = Gdx.input.isKeyJustPressed(Input.Keys.E);
+                if(Vector2.dst2(beforeX,beforeY,player.x,player.y)>.0001f)tutorialPanel.observe(TutorialTopic.MOVE);
+                if(!wasDashing && stats.isDashing())tutorialPanel.observe(TutorialTopic.DASH);
+                // ENTER remains the refuge's global departure shortcut, even near an NPC.
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || clicked && startButton.contains(pointer)) {
+                    tutorialPanel.observe(TutorialTopic.REFUGE);game.startCampaign();return;
+                }
+                boolean interact = game.controls().justPressed(ControlAction.INTERACT);
                 if (Gdx.input.isKeyJustPressed(Input.Keys.C) || clicked && talkButton.contains(pointer)
                     || interact && near(120, 145)) talk();
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.L) || clicked && shopButton.contains(pointer)
-                    || interact && near(350, 145)) state = State.SHOP;
+                    || interact && near(350, 145)) {shopPage=0;state=State.SHOP;}
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.P) || clicked && savesButton.contains(pointer)) {
                     game.setScreen(new SaveSelectionScreen(game, false, true)); return;
-                } else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || clicked && startButton.contains(pointer)
-                    || interact && near(240, 190)) { game.startCampaign(); return; }
+                } else if (interact && near(240, 190)) { tutorialPanel.observe(TutorialTopic.REFUGE);game.startCampaign(); return; }
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) { game.setScreen(new MenuScreen(game)); return; }
             }
         }
-        if (game.getScreen() == this) draw();
+        if (game.getScreen() == this) {tutorialPanel.advance(visualDelta,tutorialContext());draw();}
+    }
+    private TutorialGuide.Context tutorialContext() {
+        return new TutorialGuide.Context(TutorialGuide.Place.REFUGE, state == State.WALKING && !controlsPanel.open() && !videoPanel.open() && !tutorialPanel.open(),
+            noticeTimer > 0 || !game.profiles().error().isEmpty() || !game.shared().error().isEmpty(),
+            false, false, game.profiles().profile().attempts() > 0);
     }
     private boolean numberPressed(int index) {
         return Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + index) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1 + index);
@@ -139,7 +179,7 @@ public final class RefugeScreen extends ScreenAdapter {
         CampaignProfile profile = game.profiles().profile();
         if (profile.rank(attribute) >= PermanentAttribute.MAX_RANK) notify("Atributo no nível máximo.");
         else if (!profile.canBuy(attribute)) notify("Óbolos insuficientes.");
-        else if (game.profiles().buy(attribute)) { refreshPlayer(); notify(attribute.title + " melhorada permanentemente."); }
+        else if (game.profiles().buy(attribute)) { tutorialPanel.observe(TutorialTopic.RETURN);refreshPlayer(); notify(attribute.title + " melhorada permanentemente."); }
         else notify("Compra não concluída. Seus óbolos foram preservados.");
     }
     private void draw() {
@@ -153,6 +193,7 @@ public final class RefugeScreen extends ScreenAdapter {
         shapes.rect(0, 58, 24, 160); shapes.rect(456, 58, 24, 160);
         shapes.end();
         batch.begin();
+        SceneryVisuals.boundary(batch,game.visuals().scenery(),SceneryTheme.REFUGE,24,58,432,160);
         batch.setColor(Color.WHITE);
         EquippedArt refugeArt = game.visuals().equipped();
         batch.draw(refugeArt.prop("refuge-crossing", visualTime), 212, 160, 56, 56);
@@ -160,11 +201,13 @@ public final class RefugeScreen extends ScreenAdapter {
         batch.draw(refugeArt.prop("refuge-charon", visualTime), 103, 127, 34, 34);
         batch.draw(refugeArt.prop("refuge-altar", visualTime), 326, 120, 48, 48);
         if (player.y <= 127) player.draw(batch);
-        font.getData().setScale(0.65f); font.setColor(Color.WHITE);
-        font.draw(batch, "Caronte", 101, 177); font.draw(batch, "Altar", 338, 177); font.draw(batch, "Travessia", 220, 156);
-        String nearby = near(120, 145) ? "E: conversar com Caronte" : near(350, 145) ? "E: comprar atributos"
-            : near(240, 190) ? "E: iniciar a travessia" : "Um intervalo entre desastres divinos.";
-        font.draw(batch, nearby, 145, 76);
+        font.getData().setScale(0.65f);
+        UiTheme.caption(batch,font,"Caronte",101,177,UiTheme.IVORY);
+        UiTheme.caption(batch,font,"Altar",338,177,UiTheme.IVORY);
+        UiTheme.caption(batch,font,"Travessia",220,156,UiTheme.IVORY);
+        String nearby = near(120, 145) ? interactionControl("C")+": conversar com Caronte" : near(350, 145) ? interactionControl("L")+": comprar atributos"
+            : near(240, 190) ? interactionControl("ENTER")+": iniciar a travessia" : "Um intervalo entre desastres divinos.";
+        UiTheme.caption(batch,font,nearby,145,76,UiTheme.IVORY);
         batch.end();
         drawHud();
     }
@@ -184,19 +227,26 @@ public final class RefugeScreen extends ScreenAdapter {
         text("Almas compartilhadas: " + game.shared().progress().souls() + " | Fragmentos: " + profile.forgeMaterials(), 540, 459, 1, Color.GOLD);
         text("C: conversar", 62, 71, 1, Color.WHITE); text("L: altar", 321, 71, 1, Color.WHITE);
         text("P: saves", 536, 71, 1, Color.WHITE); text("ENTER: partir", 755, 71, 1, Color.GOLD);
-        if(state!=State.DIALOGUE)text("WASD/setas: mover | E: interagir | R: tentativa | O: áudio | ESC: menu", 25, 25, 1, Color.LIGHT_GRAY);
+        tutorialPanel.footer(batch,font,tutorialContext());
+        if(state==State.WALKING)text(game.hasUnderworldEpilogue()?"I: abertura | V: Centelha":"I: rever abertura",700,112,.85f,Color.GOLD);
         batch.end();
         if (state != State.WALKING) drawOverlay();
         batch.begin();
         String message = !game.shared().error().isEmpty()?game.shared().error():game.profiles().error().isEmpty()?notice:game.profiles().error();
         if (!message.isEmpty()) text(message, 30, state == State.DIALOGUE ? 255 : state == State.WALKING ? 119 : 109, 0.95f, game.profiles().error().isEmpty() && game.shared().error().isEmpty() ? Color.GOLD : Color.SALMON);
         batch.end();
+        if(tutorialPanel.open())tutorialPanel.draw(batch,shapes,font);
+        if(videoPanel.open())videoPanel.draw(batch,shapes,font);
+        if(controlsPanel.open())controlsPanel.draw(batch,shapes,font);
     }
     private void drawOverlay() {
         if(state==State.DIALOGUE){drawDialogue();return;}
         Gdx.gl.glEnable(GL20.GL_BLEND); Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapes.begin(ShapeRenderer.ShapeType.Filled); shapes.setColor(0, 0, 0, 0.9f); shapes.rect(0, 92, 960, 348);
-        if (state == State.SHOP) { shapes.setColor(0.13f, 0.16f, 0.23f, 1); for (Rectangle card : shopCards) rect(card); }
+        if (state == State.SHOP) {
+            shapes.setColor(0.13f, 0.16f, 0.23f, 1); for (Rectangle card : shopCards) rect(card);
+            rect(previousShopPage);rect(nextShopPage);
+        }
         shapes.end(); Gdx.gl.glDisable(GL20.GL_BLEND);
         batch.begin();
             text("ALTAR: ATRIBUTOS PERMANENTES", 210, 425, 1.4f, Color.GOLD);
@@ -204,43 +254,49 @@ public final class RefugeScreen extends ScreenAdapter {
                 : "[N / clique] Desbloquear Necromante: "+SharedProgress.necromancerCostText()+" (saldo compartilhado)", 65, 395, 1, Color.MAGENTA);
             CampaignProfile profile = game.profiles().profile();
             for (int index = 0; index < shopCards.length; index++) {
-                PermanentAttribute attribute = PermanentAttribute.values()[index];
+                int attributeIndex=shopPage*SHOP_PER_PAGE+index;
+                if(attributeIndex>=PermanentAttribute.values().length)continue;
+                PermanentAttribute attribute = PermanentAttribute.values()[attributeIndex];
                 Rectangle card = shopCards[index]; int rank = profile.rank(attribute);
-                text("[" + (index + 1) + "] " + attribute.title, card.x + 18, card.y + 190, 1.2f, Color.GOLD);
-                text("Nível " + rank + " / " + PermanentAttribute.MAX_RANK, card.x + 18, card.y + 150, 1, Color.WHITE);
-                font.draw(batch, attribute.description, card.x + 18, card.y + 110, card.width - 36, 8, true);
+                font.getData().setScale(1);font.setColor(Color.GOLD);
+                font.draw(batch,"["+(index+1)+"] "+attribute.title,card.x+18,card.y+195,card.width-36,8,true);
+                text("Nível " + rank + " / " + PermanentAttribute.MAX_RANK, card.x + 18, card.y + 164, 1, Color.WHITE);
+                font.getData().setScale(.92f);
+                font.draw(batch, attribute.description, card.x + 18, card.y + 137, card.width - 36, 8, true);
+                font.setColor(Color.LIGHT_GRAY);
+                font.draw(batch,attribute.preview(stats,rank),card.x+18,card.y+82,card.width-36,8,true);
                 String price = rank == PermanentAttribute.MAX_RANK ? "NÍVEL MÁXIMO" : attribute.price(rank) + " óbolos";
-                text(price, card.x + 18, card.y + 50, 1.2f, profile.canBuy(attribute) ? Color.GREEN : Color.LIGHT_GRAY);
+                text(price, card.x + 18, card.y + 40, 1.2f, profile.canBuy(attribute) ? Color.GREEN : Color.LIGHT_GRAY);
             }
-            text("Clique ou 1, 2, 3: comprar   |   ESC / L: fechar", 250, 133, 1, Color.WHITE);
+            text("Anterior",55,133,.9f,shopPage>0?Color.WHITE:Color.GRAY);
+            text("Próxima",829,133,.9f,shopPage+1<shopPageCount()?Color.WHITE:Color.GRAY);
+            text("1, 2, 3 / clique: comprar | Setas: página "+(shopPage+1)+"/"+shopPageCount()+" | ESC / L: fechar",205,133,.85f,Color.WHITE);
         batch.end();
     }
     private void drawDialogue() {
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        UiTheme.panel(shapes,20,18,920,214,true);
-        UiTheme.panel(shapes,34,32,180,184,false);
+        dialoguePanel.background(shapes);
         shapes.end();
         batch.begin();
-        boolean charon=playback.current().speaker().equals("Caronte");
-        batch.setColor(Color.WHITE);
-        batch.draw(charon?game.visuals().region("portrait-charon"):game.visuals().expanded().region("portrait-protagonist"),43,34,162,178);
-        batch.setColor(Color.WHITE);
-        titleFont.getData().setScale(.65f);titleFont.setColor(UiTheme.IVORY);
-        titleFont.draw(batch,playback.current().speaker(),236,207);
-        text((line+1)+" / "+conversation.lines().size(),870,206,.85f,Color.LIGHT_GRAY);
-        font.getData().setScale(1.25f);font.setColor(UiTheme.IVORY);
-        font.draw(batch,playback.visibleText(),236,166,670,com.badlogic.gdx.utils.Align.left,true);
-        text(playback.complete()?"ENTER / E / clique: continuar":"ENTER / E / clique: revelar fala",236,70,.9f,UiTheme.TEAL);
-        text("T: texto "+(game.instantDialogue()?"instantâneo":"gradual")+" | ESC: fechar",236,45,.85f,Color.LIGHT_GRAY);
-        if(playback.complete())text(">",899,55,1.2f,Color.GOLD);
+        String readControl=game.controlSettings().value().bindings(ControlAction.INTERACT).equals(ControlSettings.DEFAULT.bindings(ControlAction.INTERACT))
+            ?"ENTER / E / clique":game.controls().label(ControlAction.INTERACT)+" / ENTER / clique";
+        dialoguePanel.draw(batch,titleFont,font,game.visuals(),playback,
+            readControl+(playback.complete()?": continuar":": revelar fala"),
+            "T: texto "+(game.instantDialogue()?"instantâneo":"gradual")+" | ESC: fechar");
         batch.end();
     }
     private void rect(Rectangle r) { shapes.rect(r.x, r.y, r.width, r.height); }
+    private String interactionControl(String fallback) {
+        for (InputBinding binding:game.controlSettings().value().bindings(ControlAction.INTERACT))
+            if (!binding.equals(InputBinding.key(Input.Keys.ENTER))) return binding.label();
+        return fallback;
+    }
     private void text(String value, float x, float y, float scale, Color color) {
         font.getData().setScale(scale); font.setColor(color); font.draw(batch, value, x, y);
     }
+    @Override public void pause() { videoPanel.suspendInput(); }
     @Override public void dispose() {
         if (disposed) return;
-        disposed = true; batch.dispose(); shapes.dispose(); font.dispose(); titleFont.dispose(); atlas.dispose(); map.dispose();
+        disposed = true; controlsPanel.close();videoPanel.close();batch.dispose(); shapes.dispose(); font.dispose(); titleFont.dispose(); atlas.dispose(); map.dispose();tutorialPanel.close();
     }
 }

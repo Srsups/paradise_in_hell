@@ -17,7 +17,7 @@ public final class ProfessionScreen extends ScreenAdapter {
     private final RegionDefinition region;
     private String notice = "";
     private float visualTime;
-    private final MenuPages pages = new MenuPages();
+    private final MenuPages pages = new MenuPages(Profession.values().length);
     private final FitViewport viewport = new FitViewport(960, 540);
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapes = new ShapeRenderer();
@@ -31,7 +31,7 @@ public final class ProfessionScreen extends ScreenAdapter {
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
     @Override public void render(float delta) {
         if (game.profiles().profile().professionChosen()) {
-            if (region == null) game.startDemo(); else game.setScreen(new RefugeScreen(game));
+            if (region == null) game.startDemo(); else game.enterCampaign();
             return;
         }
         visualTime = (visualTime + Math.min(Math.max(delta, 0), .05f)) % 3600;
@@ -39,12 +39,14 @@ public final class ProfessionScreen extends ScreenAdapter {
         Profession[] professions = Profession.values();
         pages.input(pointer);
         for (int index = 0; index < cards.length; index++) {
+            if (pages.index(index) >= professions.length) continue;
             boolean key = Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + index)
                 || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1 + index);
             if (key || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cards[index].contains(pointer)) {
                 Profession profession = professions[pages.index(index)];
-                if (profession == Profession.NECROMANTE && !game.necromancerUnlocked()) {
-                    notice = "Necromante bloqueado: compre o acesso no altar do refúgio."; break;
+                if (!game.professionUnlocked(profession)) {
+                    notice = profession==Profession.FAZENDEIRO ? "Fazendeiro bloqueado: cumpra a promessa da Camponesa das Cinzas."
+                        : "Necromante bloqueado: compre o acesso no altar do refúgio."; break;
                 }
                 game.setScreen(new DifficultyScreen(game, profession, region));
                 return;
@@ -58,7 +60,9 @@ public final class ProfessionScreen extends ScreenAdapter {
         shapes.setProjectionMatrix(viewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.13f, 0.16f, 0.23f, 1);
-        for (Rectangle card : cards) shapes.rect(card.x, card.y, card.width, card.height);
+        for (int index=0; index<cards.length; index++) if(pages.index(index)<professions.length) {
+            Rectangle card=cards[index];shapes.rect(card.x, card.y, card.width, card.height);
+        }
         shapes.end();
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
@@ -68,21 +72,24 @@ public final class ProfessionScreen extends ScreenAdapter {
         font.draw(batch, "Antes de toda essa confusão, qual era sua profissão?", 205, 450);
         font.getData().setScale(1);
         for (int index = 0; index < cards.length; index++) {
+            if (pages.index(index) >= professions.length) continue;
             Profession profession = professions[pages.index(index)];
-            boolean locked = profession == Profession.NECROMANTE && !game.necromancerUnlocked();
+            boolean locked = !game.professionUnlocked(profession);
             Rectangle card = cards[index];
             batch.setColor(locked?Color.GRAY:Color.WHITE);
             batch.draw(game.visuals().equipped().frame(EquippedArt.actor(profession)+"-idle",
                 ActorAnimation.Direction.DOWN,(int)(visualTime/PlayerAnimation.IDLE_FRAME_SECONDS)%4),card.x+card.width-54,card.y+101,44,44);
             batch.setColor(Color.WHITE);
             font.setColor(locked ? Color.SALMON : Color.GOLD);
-            font.draw(batch, profession.title + (profession == Profession.NECROMANTE ? "  [LENDÁRIA]" : ""), card.x + 18, card.y + 130);
+            font.draw(batch, profession.title + (profession == Profession.NECROMANTE ? "  [LENDÁRIA]"
+                : profession == Profession.FAZENDEIRO ? "  [ÉPICA]" : ""), card.x + 18, card.y + 130);
             font.setColor(Color.WHITE);
             font.draw(batch, profession.weapon.label, card.x + 18, card.y + 105);
             font.draw(batch, "Vida: " + (int) profession.baseHealth + " | Atq/s: " + CombatNumbers.formatRate(1 / profession.weapon.interval)
                 + " | Dano: " + profession.weapon.damage + " | Sorte: " + CombatNumbers.format(profession.luckMultiplier) + "x", card.x + 18, card.y + 85);
             font.draw(batch, profession.description, card.x + 18, card.y + 65, card.width - 36, 8, true);
-            String attack = locked ? "Lendária: desbloqueio global por "+SharedProgress.necromancerCostText()+"." : switch (profession.weapon) {
+            String attack = locked ? profession == Profession.FAZENDEIRO ? "Épica: conclua o desafio da Camponesa das Cinzas."
+                : "Lendária: desbloqueio global por "+SharedProgress.necromancerCostText()+"." : switch (profession.weapon) {
                 case FISTS -> "Um alvo próximo; sorte 4x em drops e dádivas.";
                 case SWORD -> "Golpe em área, na direção do mouse.";
                 case PISTOL -> "Tiros rápidos, com dano menor.";
@@ -91,6 +98,7 @@ public final class ProfessionScreen extends ScreenAdapter {
                 case CURSE -> "Maldição em área, com dano contínuo por 3s.";
                 case SOUL -> "Inimigos abatidos podem voltar como aliados.";
                 case SHIELD -> "Direito: defender. Esquerdo: atacar, mesmo defendendo.";
+                case RAKE, SCYTHE -> "Q: alternar estocada do ancinho e giro 360° da foice.";
             };
             font.draw(batch, attack, card.x + 18, card.y + 22, card.width - 36, 8, true);
         }

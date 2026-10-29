@@ -15,8 +15,8 @@ final class CombatVisuals {
         }
         for (CombatEffects.Flash flash : effects.flashes()) {
             shapes.setColor(switch (flash.kind) {
-                case SHOCK -> Color.YELLOW; case SPELL -> Color.SKY;
-                case IMPACT -> Color.CYAN; case FIRE -> Color.ORANGE; case CURSE -> Color.MAGENTA;
+                case SHOCK,AMBUSH -> Color.YELLOW; case SPELL -> Color.SKY;
+                case IMPACT,ECHO -> Color.CYAN; case FIRE,CONVERGENCE -> Color.ORANGE; case CURSE -> Color.MAGENTA;
             });
             if (flash.kind == CombatEffects.Kind.SHOCK) shapes.line(flash.x, flash.y, flash.ox, flash.oy);
             else shapes.circle(flash.x, flash.y, flash.ox, 20);

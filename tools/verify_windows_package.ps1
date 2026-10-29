@@ -14,7 +14,7 @@ $executable = $executables[0]
 if (-not (Test-Path -LiteralPath (Join-Path $executable.DirectoryName 'LEIA-ME.txt'))) {
     throw 'Player instructions are missing from the package.'
 }
-foreach ($diagnostic in @('--smoke-test', '--audio-smoke-test')) {
+foreach ($diagnostic in @('--smoke-test', '--audio-smoke-test', '--display-smoke-test')) {
     $start = New-Object System.Diagnostics.ProcessStartInfo
     $start.FileName = $executable.FullName
     $start.Arguments = $diagnostic
@@ -38,6 +38,12 @@ foreach ($diagnostic in @('--smoke-test', '--audio-smoke-test')) {
     }
     $output = $stdout.Result + $stderr.Result
     if ($process.ExitCode -ne 0) { throw "Packaged game failed ($diagnostic): $output" }
+    if ($diagnostic -eq '--display-smoke-test' -and $output -notmatch 'PACKAGED_DISPLAY_MODES_SMOKE_OK') {
+        throw 'The package did not confirm its native display-mode diagnostic.'
+    }
+    if ($output -notmatch 'PACKAGED_CHECKPOINT_SMOKE_OK') {
+        throw 'The package did not confirm its checkpoint diagnostic.'
+    }
     $process.Dispose()
 }
-Write-Output 'WINDOWS_PACKAGE_OK: bundled Java, gameplay/menu/report/audio assets, 24 native effects, streaming music via OpenAL null device, external working directory'
+Write-Output 'WINDOWS_PACKAGE_OK: bundled Java, gameplay/menu/report/audio assets, checkpoints/resume/settlement, 24 native effects, streaming music via OpenAL null device, three native display modes and restored window, external working directory'

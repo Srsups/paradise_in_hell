@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-23",
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "columns": 7,
+  "rows": 5,
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "up-left",
+    "down-left"
+  ],
+  "actions": {
+    "hurt": [
+      0,
+      1,
+      2
+    ],
+    "death": [
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "images": [
+    {
+      "actor": "common",
+      "file": "tools/art-sources/m6-reactions/common-reactions-original.png",
+      "reference": "tools/art-sources/expansion/common-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-cdb07486-e871-4b85-8873-170aacd70d7e.png",
+      "sha256": "DA30DCB45F5B74D737763DA1FE33C8D76297A868E2A27063C3DF2A3062764787",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts.json#common"
+    },
+    {
+      "actor": "fast",
+      "file": "tools/art-sources/m6-reactions/fast-reactions-original.png",
+      "reference": "tools/art-sources/expansion/fast-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-357492cd-d432-4514-8bc2-852b98150f1c.png",
+      "sha256": "21C26F85F1863D2AC6B498D8FDF41FDE0AB70AB24EAD1B1AB7B600808DA3AC36",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts-revisions.json#fast-revision-1"
+    },
+    {
+      "actor": "tank",
+      "file": "tools/art-sources/m6-reactions/tank-reactions-original.png",
+      "reference": "tools/art-sources/expansion/tank-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-4b152d64-da4a-4a5f-a5bc-deb464cfd5ed.png",
+      "sha256": "68A4B886976B4197C1F2E317A5A06E797D099B4A513D6BE5B58ACA037BA91331",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts.json#tank"
+    },
+    {
+      "actor": "archer",
+      "file": "tools/art-sources/m6-reactions/archer-reactions-original.png",
+      "reference": "tools/art-sources/equipped/archer-walk-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-d59e0e0c-657b-4ac2-8fc7-164fdc054b36.png",
+      "sha256": "A2B76E8A3FCB1DAF8EA96E3E0EB4652E00218924D13B7166FA76E476BBDA88D4",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts-revisions.json#archer"
+    },
+    {
+      "actor": "carrasco",
+      "file": "tools/art-sources/m6-reactions/carrasco-reactions-original.png",
+      "reference": "tools/art-sources/equipped/carrasco-walk-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-51d1a8ec-798e-455b-a0d8-0fe5a25e4a03.png",
+      "sha256": "A76ECFCD5319E4CEB9CEB7E70E2F606E7D6FF8DA94E530A66CA5EDFFC230AC07",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts-revisions.json#carrasco"
+    },
+    {
+      "actor": "guardian",
+      "file": "tools/art-sources/m6-reactions/guardian-reactions-original.png",
+      "reference": "tools/art-sources/equipped/guardian-walk-original.png",
+      "generatedImageSource": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-a6ee1e79-ab3c-41b5-b75f-e2ce075965c9.png",
+      "sha256": "6EEE60F11C065C73F9513AABCDD111A3523972A5C3649C30DE06409923484FA1",
+      "width": 1484,
+      "height": 1060,
+      "cellWidth": 212,
+      "cellHeight": 212,
+      "prompt": "enemies-prompts-revisions.json#guardian"
+    }
+  ],
+  "rejectedDrafts": [
+    {
+      "actor": "fast",
+      "source": "C:\\Users\\Usuario\\.codex\\generated_images\\01a16789-98dd-7783-b1d9-fca3c1d738dd\\exec-c7121a72-a04f-4f60-9620-862002ff3b19.png",
+      "reason": "Four occupied rows; regenerated to obtain five."
+    }
+  ]
+}
