@@ -6,7 +6,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
@@ -20,9 +24,12 @@ public final class RunReportScreen extends ScreenAdapter {
     private final List<RunReport> history;
     private int index,page;
     private final SpriteBatch batch=new SpriteBatch();
+    private final ShapeRenderer shapes=new ShapeRenderer();
     private final BitmapFont font=UiTheme.bodyFont();
     private final FitViewport viewport=new FitViewport(960,540);
+    private final Rectangle exportButton=new Rectangle(650,16,275,34);
     private float inputDelay=.2f;
+    private boolean mouseReleased,exportRequested;
     public RunReportScreen(Main game,RunReport report,Supplier<Screen> returnTo) {
         this.game=game; this.returnTo=returnTo;
         history=new ArrayList<>(game.shared().progress().history(report.saveSlot()-1,report.characterId()));
@@ -38,6 +45,8 @@ public final class RunReportScreen extends ScreenAdapter {
     @Override public void resize(int width,int height) { viewport.update(width,height,true); }
     @Override public void render(float delta) {
         inputDelay=Math.max(0,inputDelay-delta);
+        mouseReleased|=!Gdx.input.isButtonPressed(Input.Buttons.LEFT);
+        Vector2 pointer=viewport.unproject(new Vector2(Gdx.input.getX(),Gdx.input.getY()));
         if(inputDelay==0) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.R)) {
                 game.setScreen(returnTo.get()); return;
@@ -46,8 +55,14 @@ public final class RunReportScreen extends ScreenAdapter {
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) page=Math.max(0,page-1);
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && index+1<history.size()) { index++; page=0; }
             if(Gdx.input.isKeyJustPressed(Input.Keys.UP) && index>0) { index--; page=0; }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.E)
+                ||mouseReleased&&Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)&&exportButton.contains(pointer)) {
+                game.reportExports().export(game.shared().progress().history(),report());exportRequested=true;
+            }
         }
         ScreenUtils.clear(.045f,.055f,.085f,1); viewport.apply(); batch.setProjectionMatrix(viewport.getCamera().combined);
+        shapes.setProjectionMatrix(viewport.getCamera().combined);shapes.begin(ShapeRenderer.ShapeType.Filled);
+        UiTheme.panel(shapes,exportButton.x,exportButton.y,exportButton.width,exportButton.height,exportButton.contains(pointer));shapes.end();
         batch.begin(); RunReport r=report();
         text("RESUMO DA TENTATIVA",35,504,1.6f,Color.GOLD);
         text("Save "+r.saveSlot()+" | "+r.profession().title+" | "+(r.demo()?"Demo":"Campanha")+" | "+r.resultLabel()+" | "+r.difficulty().label,35,462,1,Color.WHITE);
@@ -58,7 +73,25 @@ public final class RunReportScreen extends ScreenAdapter {
         else bossFight(bossRooms().get(page-2-roomPages()-boonPages()));
         text("Esquerda/direita: página "+(page+1)+"/"+pageCount()+" | Acima/baixo: tentativas "+(index+1)+"/"+history.size(),35,60,1,Color.LIGHT_GRAY);
         text("R ou ESC: voltar",35,32,1,Color.LIGHT_GRAY);
+        text("Exportar histórico [E]",exportButton.x+44,exportButton.y+23,.95f,UiTheme.IVORY);
+        if(exportRequested) {
+            ReportExportService service=game.reportExports();boolean failed=!service.error().isEmpty();
+            font.getData().setScale(.85f);font.setColor(failed?Color.SALMON:UiTheme.TEAL);
+            String notice=failed?service.error():"Exportado: "+service.directory();
+            font.draw(batch,fitNotice(notice),35,94);
+            if(!failed)text("JSON e CSV de tentativas/salas. Inclui até 20 registros globais e a tentativa aberta.",35,77,.8f,Color.LIGHT_GRAY);
+        }
         batch.end();
+    }
+    private String fitNotice(String value) {
+        if(new GlyphLayout(font,value).width<=890)return value;
+        int left=Math.min(42,value.length()/3),right=value.length()-left;
+        while(right>8) {
+            String candidate=value.substring(0,left)+"..."+value.substring(value.length()-right);
+            if(new GlyphLayout(font,candidate).width<=890)return candidate;
+            right--;
+        }
+        return value.substring(0,Math.min(80,value.length()));
     }
     private void overview(RunReport r) {
         text("VISÃO GERAL",35,416,1.2f,Color.CYAN);
@@ -93,12 +126,14 @@ public final class RunReportScreen extends ScreenAdapter {
         }
     }
     private void damage(RunReport r) {
-        text("DANO EFETIVO POR ORIGEM",35,416,1.2f,Color.CYAN); float y=375;
-        for(DamageSource source:DamageSource.values()) {
+        text("DANO EFETIVO POR ORIGEM",35,416,1.2f,Color.CYAN);
+        DamageSource[] sources=DamageSource.values();int rows=(sources.length+1)/2;
+        for(int index=0;index<sources.length;index++) {
+            DamageSource source=sources[index];float x=index<rows?35:490,y=375-(index%rows)*38;
             float amount=r.dealt().getOrDefault(source,0f), percent=r.damageDealt()==0?0:amount/r.damageDealt()*100;
-            text(source.label+": "+CombatNumbers.format(amount)+" ("+CombatNumbers.format(percent)+"%)",35,y,1.05f,Color.WHITE); y-=32;
+            text(source.label+": "+CombatNumbers.format(amount)+" ("+CombatNumbers.format(percent)+"%)",x,y,.95f,Color.WHITE);
         }
-        text("Bloqueios, invulnerabilidade e dano além da vida restante não entram no total.",35,104,.95f,Color.LIGHT_GRAY);
+        text("Bloqueios, invulnerabilidade e dano além da vida restante não entram no total.",35,125,.95f,Color.LIGHT_GRAY);
     }
     private void bossFight(RunReport.Room room) {
         BossFightSummary fight=room.bossFight();
@@ -113,11 +148,11 @@ public final class RunReportScreen extends ScreenAdapter {
         for(BossEncounter.Attack attack:BossEncounter.Attack.values()) {
             text(attack.label+": "+fight.attacks().getOrDefault(attack,0)+" iniciado(s)",35,y,1,Color.WHITE);y-=31;
         }
-        text("Contagem de avisos iniciados; não representa acertos ou ataques concluídos.",35,104,.9f,Color.LIGHT_GRAY);
+        text("Contagem de avisos iniciados; não representa acertos ou ataques concluídos.",35,125,.9f,Color.LIGHT_GRAY);
     }
     private void text(String value,float x,float y,float scale,Color color) {
         font.getData().setScale(scale); font.setColor(color); font.draw(batch,value,x,y);
     }
-    @Override public void dispose() { batch.dispose(); font.dispose(); }
+    @Override public void dispose() { batch.dispose(); shapes.dispose(); font.dispose(); }
 }
 

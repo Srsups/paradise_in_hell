@@ -6,7 +6,7 @@ import java.util.Random;
 
 /** No total wave/enemy budget. Campaign types are available from the first wave. */
 public final class EnemyWaves {
-    public static final int MAX_FAST = 24, MAX_FAST_PER_WAVE = 2;
+    public static final int MAX_FAST = 16, MAX_FAST_PER_WAVE = 2;
     public static final int MAX_ARCHERS = 6, MAX_ARCHERS_PER_WAVE = 2;
     public static final float ARCHER_CHANCE = .20f;
     private final Random random;

@@ -26,13 +26,16 @@ public class Main extends Game {
     private GameControls controls;
     private final HudSettingsStore hudStore;
     private HudSettingsService hudSettings;
+    private final ReportExportStore reportExportStore;
+    private ReportExportService reportExports;
     private boolean closing;
     public Main() { this(new GdxVideoBackend()); }
     public Main(VideoBackend desktopVideo) { this(SaveSlots.files(FileProfileStore.defaultPath()),
         new FileAudioSettingsStore(FileProfileStore.defaultPath().resolveSibling("audio-settings.json")),null,
         new FileVideoSettingsStore(FileProfileStore.defaultPath().resolveSibling("video-settings.json")),desktopVideo,
         new FileControlSettingsStore(FileProfileStore.defaultPath().resolveSibling("control-settings.json")),
-        new FileHudSettingsStore(FileProfileStore.defaultPath().resolveSibling("hud-settings.json"))); }
+        new FileHudSettingsStore(FileProfileStore.defaultPath().resolveSibling("hud-settings.json")),
+        new FileReportExportStore(FileProfileStore.defaultPath().resolveSibling("exports"))); }
     public Main(ProfileStore first) { this(new SaveSlots(first)); }
     public Main(SaveSlots saves) { this(saves,AudioSettingsStore.memory(),null); }
     public Main(SaveSlots saves,AudioSettingsStore audioStore,AudioBackend output) {
@@ -47,10 +50,18 @@ public class Main extends Game {
     }
     public Main(SaveSlots saves,AudioSettingsStore audioStore,AudioBackend output,VideoSettingsStore videoStore,VideoBackend videoBackend,
                 ControlSettingsStore controlStore,HudSettingsStore hudStore) {
+        this(saves,audioStore,output,videoStore,videoBackend,controlStore,hudStore,ReportExportStore.memory());
+    }
+    public Main(SaveSlots saves,AudioSettingsStore audioStore,AudioBackend output,VideoSettingsStore videoStore,VideoBackend videoBackend,
+                ControlSettingsStore controlStore,HudSettingsStore hudStore,ReportExportStore reportExportStore) {
         this.saves=saves;this.audioStore=audioStore;this.suppliedAudio=output;
         this.videoStore=java.util.Objects.requireNonNull(videoStore);this.suppliedVideo=java.util.Objects.requireNonNull(videoBackend);
         this.controlStore=java.util.Objects.requireNonNull(controlStore);
         this.hudStore=java.util.Objects.requireNonNull(hudStore);
+        this.reportExportStore=java.util.Objects.requireNonNull(reportExportStore);
+    }
+    public ReportExportService reportExports() {
+        if(reportExports==null)reportExports=new ReportExportService(reportExportStore);return reportExports;
     }
     public HudSettingsService hudSettings() {
         if(hudSettings==null)hudSettings=new HudSettingsService(hudStore);return hudSettings;

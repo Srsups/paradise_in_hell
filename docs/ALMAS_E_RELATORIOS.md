@@ -36,8 +36,11 @@ A tabela tem constantes próprias em SoulRewards e ArcherAttack, independentes d
 
 Os ganhos são guardados ao encerrar a campanha por **morte, vitória ou abandono**.
 A demo registra seu resumo, mas concede zero Almas e zero Óbolos.
-Fechar a janela no meio de uma tentativa ainda descarta ganhos não guardados.
-Não foi implementada retomada de run.
+Desde 29/10/2026, fechar durante o combate retoma o último checkpoint da campanha.
+Salvar e sair nos pontos seguros não concede moedas nem conta como retorno;
+morte, vitória e abandono confirmado encerram a tentativa. Ganhos posteriores ao
+último checkpoint ainda precisam ser conquistados novamente.
+[Contrato da retomada](MARCO_7_CHECKPOINTS.md).
 
 A rota direta com as metas mínimas concede ao menos 140 Almas dos inimigos + 100 do chefe,
 na Média, antes da Fúria. Cada arqueiro dentro da meta comum acrescenta 2 Almas sobre esse exemplo.
@@ -69,6 +72,26 @@ O histórico mantém as **20 últimas tentativas de todos os saves**, incluindo 
 e abandono. A consulta filtra o personagem atual. Relatórios antigos saem do
 histórico, sem retirar Almas ou desbloqueios. Uma nova run começa com métricas vazias.
 
+## Exportação local para playtests — 04/11/2026
+
+Na tela do relatório, **E** ou **Exportar histórico** cria uma pasta em
+`%LOCALAPPDATA%\ParadiseInHell\exports\run-history-<id>\`, com `history.json`,
+`attempts.csv` e `rooms.csv`. Inclui até 20 relatórios globais disponíveis e o
+relatório aberto se ele estiver fora desse conjunto. O modo/resultado distingue
+campanha, demo, morte, vitória e abandono. Não é um histórico vitalício.
+
+JSON preserva os dados originais. Os CSVs permitem comparar rotas, dano efetivo,
+moedas por minuto, tempo até a passagem e tempo restante na sala após liberá-la,
+além das fases/padrões iniciados do chefe quando disponíveis. Campos ausentes
+permanecem vazios: os relatórios atuais não guardam atributos iniciais do altar,
+variação da sala ou revisão de balanceamento. Esses dados precisam de anotação
+manual nas partidas; não podem ser reconstruídos a partir dos atributos finais.
+
+Exportar só lê snapshots e grava uma pasta própria, sem alterar os saldos,
+recompensas, histórico ou arquivos de save. Falha mostra erro e pode ser repetida.
+Não há envio automático desses arquivos. As medições e a rodada inicial estão no
+[marco de balanceamento do Submundo](MARCO_7_BALANCEAMENTO_SUBMUNDO.md).
+
 ## Métricas do chefe no marco 1
 
 Em 14/10/2026, as salas de chefe passaram a guardar bossFight opcional:
@@ -89,9 +112,12 @@ No Windows, o novo arquivo é:
 
 `%LOCALAPPDATA%\ParadiseInHell\shared-progress.json`
 
-Ele contém versão 1, saldo, acesso lendário e histórico. A cópia anterior válida
-usa `shared-progress.json.bak`. Os oito arquivos pessoais conservam seus nomes
-e formato. Compra global não altera saldo ou profissão de um personagem.
+Ele escreve versão 2 e lê/migra a versão 1, conservando saldo, desbloqueios e
+histórico. O registro da maior sequência concluída por personagem é separado
+dos 20 relatórios visíveis. A cópia válida usa `shared-progress.json.bak`.
+Os oito arquivos pessoais conservam seus nomes e também escrevem formato 2,
+lendo a versão 1. Os snapshots de relatório continuam no formato 1; exportar
+não migra esses documentos. Compra global não altera a profissão do personagem.
 
 Desbloqueios pagos nas versões anteriores são migrados gratuitamente. Um perfil
 já criado como Necromante também preserva o acesso. Não é necessário pagar outra
@@ -104,9 +130,13 @@ ilegíveis são preservados. Falha de autosave mantém Almas e resumo na memóri
 leitura. Fechar com uma falha ainda pendente perde os ganhos apenas em memória.
 
 Cada tentativa possui um ID; retorno e relatório são processados uma vez.
-Reabrir resultados, consultar histórico ou repetir a gravação não concede moeda
-novamente. Saldo e histórico compartilhados são gravados na mesma operação;
-Óbolos do personagem têm sua própria gravação e mensagem de falha.
+Na campanha com checkpoint, o perfil grava o retorno e um recibo pendente antes
+de o arquivo compartilhado consumir esse recibo e guardar Almas, relatório e
+sequência concluída juntos. O perfil então confirma o consumo. A repetição de
+uma etapa não concede moeda outra vez, mesmo após a saída do relatório dos 20
+registros visíveis. Pendências são recuperadas antes de nova tentativa ou exclusão.
+Backups terminais não reabrem tentativas encerradas. Reabrir resultados, exportar,
+consultar histórico e repetir a gravação não executam uma nova liquidação.
 
 ## Exclusão e reutilização de personagens
 
@@ -118,11 +148,12 @@ Perfis e relatórios novos incluem um characterId. O histórico consultado por R
 filtra slot e identidade, evitando mostrar as tentativas do personagem excluído
 quando aquele slot é reutilizado. Os relatórios antigos podem permanecer entre os
 20 registros globais até serem substituídos, mas não entram na consulta do novo
-personagem. O slot vazio tem uma identidade nova, persistida com o reset.
+personagem. Criar outro personagem no slot vazio gera outra identidade.
 
 O campo é opcional no formato versão 1: perfis e relatórios anteriores usam a
-identidade legada vazia e preservam sua consulta. Cópias e compras conservam a
-identidade; apenas criar/resetar um personagem a renova. Backups anteriores do
+identidade legada vazia e preservam sua consulta; antes de gravar o primeiro
+checkpoint, o perfil legado recebe uma identidade persistente. Cópias e compras
+conservam a identidade. Backups anteriores do
 perfil pessoal são invalidados no reset; os demais arquivos não são modificados.
 
 ## Responsabilidades e verificação

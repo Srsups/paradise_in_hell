@@ -8,7 +8,7 @@ import java.util.List;
 /** One bounded encounter with an introductory cycle and seedable later attack order. All attack geometry is also used by the renderer. */
 public final class BossEncounter implements CombatTarget {
     public static final String NAME = "Guardião do Tártaro";
-    public static final float MAX_HEALTH = 500, RADIUS = 18, PLAYER_RADIUS = 8;
+    public static final float MAX_HEALTH = 800, RADIUS = 18, PLAYER_RADIUS = 8;
     public static final float DRAW_SIZE = 46;
     public static final float LEAP_DURATION = 3, LEAP_LOCK_DURATION = 1;
     public static final float LEAP_START_RADIUS = PLAYER_RADIUS, LEAP_MAX_RADIUS = DRAW_SIZE * 0.75f;
@@ -42,7 +42,8 @@ public final class BossEncounter implements CombatTarget {
     private float contactCooldown,recoveryDuration;
     private boolean poweredAttack, marksResolved, chargeResolved, leapResolved;
     private float leapX, leapY, leapElapsed;
-    public static final float RECOVERY_SECONDS = .95f, ENRAGED_RECOVERY_SECONDS = .65f;
+    public static final float RECOVERY_SECONDS = .75f, ENRAGED_RECOVERY_SECONDS = .45f;
+    public static final int MAX_SHOTS = 11;
     private final java.util.random.RandomGenerator random;
     private final Attack[] order = Attack.values();
     private int nextAttack;
@@ -224,6 +225,7 @@ public final class BossEncounter implements CombatTarget {
             marks.add(new Mark(playerX, playerY, 32));
             if (poweredAttack) {
                 marks.add(new Mark(clamp(playerX + (playerX < 240 ? 64 : -64), 48, 432), playerY, 30));
+                marks.add(new Mark(playerX, clamp(playerY + (playerY < 120 ? 60 : -60), 48, 192), 30));
             }
         } else if (attack == Attack.CHARGE) {
             float directionX = (float) Math.cos(aimAngle), directionY = (float) Math.sin(aimAngle);
@@ -233,7 +235,7 @@ public final class BossEncounter implements CombatTarget {
             if (directionY > 0.001f) distance = Math.min(distance, (MAX_Y - RADIUS - y) / directionY);
             if (directionY < -0.001f) distance = Math.min(distance, (MIN_Y + RADIUS - y) / directionY);
             endX = x + directionX * distance; endY = y + directionY * distance;
-            activeDuration = Math.max(0.2f, distance / (poweredAttack ? 275 : 200));
+            activeDuration = Math.max(0.2f, distance / (poweredAttack ? 310 : 230));
         }
     }
     private void updateLeap(float delta, float playerX, float playerY) {
@@ -266,10 +268,11 @@ public final class BossEncounter implements CombatTarget {
         else {
             timer = 0.3f;
             if (attack == Attack.VOLLEY) {
-                int count = poweredAttack ? 9 : 5;
-                float speed = poweredAttack ? 150 : 115;
+                int count = poweredAttack ? MAX_SHOTS : 5;
+                float speed = poweredAttack ? 165 : 115;
                 for (int index = 0; index < count; index++) {
-                    float angle = aimAngle + (float) Math.toRadians((index - (count - 1) / 2f) * (poweredAttack ? 14 : 17));
+                    // Keep the announced cone at +/-56 degrees while tightening its phase-two gaps.
+                    float angle = aimAngle + (float) Math.toRadians((index - (count - 1) / 2f) * (poweredAttack ? 11.2f : 17));
                     float directionX = (float) Math.cos(angle), directionY = (float) Math.sin(angle);
                     shots.add(new Shot(x + directionX * (RADIUS + 5), y + directionY * (RADIUS + 5), directionX * speed, directionY * speed, poweredAttack ? 14 : 12));
                 }

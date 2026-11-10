@@ -37,7 +37,8 @@ public final class PlayerState {
     public boolean tryShock() { if (shockRank == 0 || shockCooldown > 0) return false; shockCooldown = 0.8f; return true; }
     public boolean tryBurn() { if (burnRank == 0 || burnCooldown > 0) return false; burnCooldown = 0.8f; return true; }
     public boolean tryImpact() { if (impactRank == 0 || impactCooldown > 0) return false; impactCooldown = 0.8f; return true; }
-    public boolean trySpell() { if (spellCooldown > 0) return false; spellCooldown = 0.8f; return true; }
+    // The wand's innate splash follows its shot cadence; an upgrade must not skip more explosions.
+    public boolean trySpell() { if (spellCooldown > 0) return false; spellCooldown = Math.min(0.8f, getAttackInterval()); return true; }
     public boolean guarding() { return guarding; }
     public float guardAngle() { return (float) Math.toDegrees(Math.atan2(guardY, guardX)); }
     public void setGuard(boolean held, float dx, float dy) {

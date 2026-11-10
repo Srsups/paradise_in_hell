@@ -122,6 +122,26 @@ passaram sem falhas ou erros; integração OpenGL e execução nativa do pacote 
 aprovadas.** Os 457 testes acima pertencem aos modos de vídeo.
 [Contrato e limites](docs/MARCO_7_CHECKPOINTS.md).
 
+O lote de **balanceamento do Submundo**, iniciado em **04/11/2026**, inclui
+exportação local de relatórios por **E** e uma tarefa de desenvolvimento,
+`core:balanceBaseline`, para comparar classes e fornecimento das metas com regras
+reais em cenários controlados. Corrige também a explosão da varinha, cuja recarga
+podia reduzir o DPS de área ao melhorar Cadência. A normalização também reduz
+o crescimento de dano em grupos de builds aceleradas com arma Rara.
+**515 testes de lógica, integração OpenGL e pacote Windows aprovados**; partidas completas continuam necessárias
+para avaliar o equilíbrio.
+[Condições das medições e rodada de playtests](docs/MARCO_7_BALANCEAMENTO_SUBMUNDO.md).
+
+O novo feedback de **04/11/2026** orienta o lote de **hordas periódicas e voadores**:
+bandos homogêneos entram com aviso e interrupção dos spawns normais antes/depois,
+o Morcego do Estige tem voo e sprites próprios, e o Guardião recebe mais vida e
+menos recuperação. A presença dos rápidos diminui por pesos e limite simultâneo.
+As três metas permanecem separadas. **534 testes de lógica passaram sem falhas
+ou erros**; a integração gráfica e a execução nativa do pacote Windows foram aprovadas.
+O comparativo indica maior espera pela meta dos rápidos e mais XP potencial em
+algumas variações; esses efeitos precisam ser avaliados nas partidas.
+[Regras, arte e critérios das partidas](docs/MARCO_7_HORDAS_E_VOADORES.md).
+
 ## Direção da versão completa
 
 A campanha planejada acompanha um mortal comum tentando resgatar a esposa,
@@ -389,12 +409,18 @@ Regras e roteiro de partidas com as oito profissões:
 
 Os rápidos alternam **1 s de arrancada** e **1 s de recuperação**, com ciclos
 defasados, criando espaço para reposicionar sem depender de Hermes.
-Há até **2 rápidos por onda e 24 ativos**; excedentes viram comuns ou tanks,
-preservando o tamanho da horda e as metas. Esses valores são iniciais para playtests.
+Há até **2 rápidos por onda normal e 16 ativos**; excedentes das ondas normais
+viram comuns ou tanks, preservando suas quantidades e as metas. Um bando dedicado
+tem até 6 rápidos em 5 s, respeitando o mesmo limite de vivos.
 
-As hordas podem misturar tipos ou reunir inimigos do mesmo tipo. A geração não
-tem um orçamento total por fase nem termina pelo relógio. Inimigos desaparecidos
-por distância não contam como mortos e não dão XP.
+As ondas normais podem misturar tipos ou reunir inimigos do mesmo tipo. Além
+delas, um bando homogêneo começa aos **35 s** e depois a cada **40 s** de combate
+da sala: 3 s de aviso, 5 s de entrada e 4 s de respiro interrompem a geração normal.
+Inimigos já vivos continuam lutando. A primeira horda da campanha apresenta o
+**Morcego do Estige**, que atravessa estruturas internas, conta como comum e
+concede 2 XP/2 Almas base na campanha. Não há orçamento total por fase nem prazo
+para cumprir as metas. Inimigos desaparecidos por distância não contam como mortos
+e não dão XP.
 
 Ao cumprir as metas, a passagem é liberada sem exigir eliminar os inimigos vivos.
 As hordas continuam até você pressionar **E ou Enter** para sair. O XP restante é
@@ -559,6 +585,7 @@ Java, Gradle ou uma IDE. Os requisitos mínimos de hardware ainda serão medidos
 | Escolher caminho | Clique ou teclas 1, 2, 3 |
 | Salvar a tentativa e sair nos pontos seguros da campanha | F5 ou Salvar e sair |
 | Continuar / pedir abandono de tentativa salva | Enter / Del, com confirmação para abandonar |
+| Exportar histórico local na tela do relatório | E ou Exportar histórico |
 | Abrir baú próximo | F |
 | Conversar / altar / saves no refúgio | C / L / P |
 | Interagir perto de Caronte, altar ou passagem | E |
@@ -580,6 +607,12 @@ O objetivo da demo é sobreviver por **05:00 de simulação**. Pausa e seleção
 dádivas não avançam o relógio.
 
 ## Desenvolvimento
+
+Para gerar a base controlada de balanceamento, execute `.\gradlew.bat core:balanceBaseline`
+a partir da raiz do projeto. Os arquivos `classes.csv`, `hordes.csv` e `README.md`
+ficam em `build/balance-baseline/`. As medições não abrem gráficos nem modificam
+os saves; os cenários e limites estão no
+[marco de balanceamento](docs/MARCO_7_BALANCEAMENTO_SUBMUNDO.md).
 
 ### Ferramentas
 

@@ -9,19 +9,21 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public float vida;
     private ArcherAttack archer;
+    private StygianFlyer flyer;
     private EnemyType type = EnemyType.COMMON;
     private float stateTime, attackTimer, flashTimer;
     private final PilotArt pilot;
     private final ActorAnimation motion = new ActorAnimation();
     private ExpandedArt.Body body;
     private EquippedArt.Body archerBody;
+    private FlyerArt.Body flyingBody;
     private float releaseAnimation;
     private String visualKind;
     private ReactionArt.Body reactionBody;
     private final ActorReaction reaction=new ActorReaction();
     private ActorAnimation.Direction reactionDirection=ActorAnimation.Direction.DOWN;
     public ActorReaction reaction(){return reaction;}
-    public String deathActor(){return visualKind!=null?visualKind:isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);}
+    public String deathActor(){return isFlyer()?"flyer":visualKind!=null?visualKind:isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);}
     public ActorAnimation.Direction deathDirection(){return reaction.active()?reactionDirection:currentDirection();}
     public float drawBodySize(){return size+2;}
     private ActorAnimation.Direction currentDirection(){
@@ -30,6 +32,11 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public String visualKind() { return visualKind; }
     private void refreshBody() {
         if(pilot==null)return;
+        if(isFlyer()) {
+            visualKind="flyer";body=null;reactionBody=pilot.reactions().body("flyer");
+            flyingBody=pilot.flyer().body();archerBody=null;releaseAnimation=0;reaction.clear();return;
+        }
+        flyingBody=null;
         String kind=isArcher()?"archer":type.name().toLowerCase(java.util.Locale.ROOT);
         if(!kind.equals(visualKind)){
             visualKind=kind;body=pilot.expanded().body(kind);
@@ -60,6 +67,7 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
         this.type = type;
         if (archer != null) archer.clear();
         archer = null;
+        flyer = null;
         speed = type.speed; vida = maxHealth = type.health; damage = type.damage; size = type.size;
         tint.set(type == EnemyType.FAST ? Color.CYAN : type == EnemyType.TANK ? Color.GOLD : Color.WHITE);
         refreshBody();
@@ -71,9 +79,16 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
         damage = ArcherAttack.CONTACT_DAMAGE; tint.set(.75f, .55f, 1, 1);refreshBody();
     }
     public boolean isArcher() { return archer != null; }
+    public void configureFlyer() {
+        configurarTipo(EnemyType.COMMON);flyer=new StygianFlyer(x,y);
+        speed=StygianFlyer.SPEED;vida=maxHealth=StygianFlyer.HEALTH;damage=StygianFlyer.CONTACT_DAMAGE;size=StygianFlyer.SIZE;
+        tint.set(.65f,.48f,.85f,1);refreshBody();
+    }
+    public void flightBounds(StygianFlyer.Bounds bounds) {if(!isFlyer())throw new IllegalStateException("Not a flyer");flyer.bounds(bounds);}
+    public boolean isFlyer() { return flyer != null; }
     public ArcherAttack archer() { return archer; }
-    public String displayName() { return isArcher() ? ArcherAttack.NAME : type.label; }
-    public int getSoulDrop() { return isArcher() ? ArcherAttack.SOULS : SoulRewards.enemy(type); }
+    public String displayName() { return isFlyer()?StygianFlyer.NAME:isArcher() ? ArcherAttack.NAME : type.label; }
+    public int getSoulDrop() { return isFlyer()?StygianFlyer.SOULS:isArcher() ? ArcherAttack.SOULS : SoulRewards.enemy(type); }
     public void applyDifficulty(EnemyDifficulty difficulty) {
         vida *= difficulty.healthMultiplier(); maxHealth = vida;
         damage *= difficulty.damageMultiplier();
@@ -83,11 +98,12 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public float health() { return vida; }
     public float maxHealth() { return maxHealth; }
     public float strength() {
-        return (isArcher() ? 1.8f : type == EnemyType.FAST ? 1.4f : type == EnemyType.TANK ? 4 : 1)
-            * (float) Math.sqrt(maxHealth / (isArcher() ? ArcherAttack.HEALTH : type.health));
+        return (isFlyer()?StygianFlyer.STRENGTH:isArcher() ? 1.8f : type == EnemyType.FAST ? 1.4f : type == EnemyType.TANK ? 4 : 1)
+            * (float) Math.sqrt(maxHealth / (isFlyer()?StygianFlyer.HEALTH:isArcher() ? ArcherAttack.HEALTH : type.health));
     }
     public void hurt(float amount) { sofrerDano(amount); }
     public void push(float dx, float dy, CombatEffects.LineOfSight line) {
+        if(isFlyer()){flyer.push(this,dx,dy);return;}
         // Split the displacement so structures always stop the push.
         for (int i = 0; i < 8; i++) {
             if (!line.clear(centerX(), centerY(), centerX() + dx / 8, centerY() + dy / 8)) break;
@@ -95,20 +111,21 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
         }
     }
     public EnemyType getType() { return type; }
-    public int getXpDrop() { return isArcher() ? ArcherAttack.XP : type.xp; }
+    public int getXpDrop() { return isFlyer()?StygianFlyer.XP:isArcher() ? ArcherAttack.XP : type.xp; }
     public void update(float delta, EnemyNavigation navigation) { update(delta, navigation, true); }
     public void update(float delta, EnemyNavigation navigation, boolean visible) {
         reaction.advance(delta);
         stateTime += delta; attackTimer -= delta; flashTimer -= delta;releaseAnimation=Math.max(0,releaseAnimation-delta);
         float beforeX=x,beforeY=y;
         if (estaMorto()) { if (archer != null) archer.clear(); return; }
-        if (archer == null) navigation.move(this, type == EnemyType.FAST ? FastPursuit.speed(stateTime, pursuitOffset) : speed, delta);
+        if(isFlyer())flyer.move(this,navigation.targetX(),navigation.targetY(),delta);
+        else if (archer == null) navigation.move(this, type == EnemyType.FAST ? FastPursuit.speed(stateTime, pursuitOffset) : speed, delta);
         else {
             int fired=archer.shotsFired();
             archer.update(delta,this,navigation.targetX(),navigation.targetY(),visible,navigation,arrowDamage());
             if(archer.shotsFired()!=fired)releaseAnimation=.22f;
         }
-        if(usesPilot())motion.advance(delta,x-beforeX,y-beforeY);
+        if(usesPilot()||isFlyer())motion.advance(delta,x-beforeX,y-beforeY);
     }
     public float arrowDamage() { return isArcher() ? damage / ArcherAttack.CONTACT_DAMAGE * ArcherAttack.ARROW_DAMAGE : 0; }
     private boolean archerActing(){return isArcher()&&(archer.phase()==ArcherAttack.Phase.AIMING||releaseAnimation>0);}
@@ -121,6 +138,7 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
     public SpriteHitbox hitbox() {
         if(usesPilot()&&reaction.state()==ActorReaction.State.HURT)
             return reactionBody.hitbox(reaction,reactionDirection,centerX(),centerY(),drawBodySize());
+        if(flyingBody!=null)return flyingBody.hitbox(motion,stateTime,centerX(),centerY(),drawBodySize());
         if(archerBody!=null)return archerBody.hitbox(archerPose(),centerX(),centerY(),size+2);
         if(usesPilot())return body.hitbox(motion,centerX(),centerY(),size+2);
         return hitboxes[animation.getKeyFrameIndex(stateTime)].place(x - (size - 16) / 2, y - (size - 16) / 2, size, size, false, false);
@@ -135,7 +153,8 @@ public class Inimigo extends EnemyNavigation.Body implements CombatTarget {
             : type == EnemyType.FAST && FastPursuit.speed(stateTime,pursuitOffset) == FastPursuit.RECOVERY_SPEED ? Color.TEAL : tint);
         if(usesPilot()) {
             batch.setColor(flashTimer>0?Color.SALMON:Color.WHITE);
-            if(archerBody!=null){
+            if(flyingBody!=null)flyingBody.draw(batch,motion,stateTime,centerX(),centerY(),drawBodySize());
+            else if(archerBody!=null){
                 if(archerActing())archerBody.draw(batch,archerPose(),centerX(),centerY(),size+2);
                 else archerBody.draw(batch,motion,centerX(),centerY(),size+2);
             }else body.draw(batch,motion,centerX(),centerY(),size+2);

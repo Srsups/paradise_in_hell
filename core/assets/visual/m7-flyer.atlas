@@ -1,0 +1,460 @@
+m7-flyer.png
+size: 1024, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+flyer-walk-down-0
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-1
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-2
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-3
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-4
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-5
+  rotate: false
+  xy: 331, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-0
+  rotate: false
+  xy: 397, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-1
+  rotate: false
+  xy: 463, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-2
+  rotate: false
+  xy: 529, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-0
+  rotate: false
+  xy: 595, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-1
+  rotate: false
+  xy: 661, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-2
+  rotate: false
+  xy: 727, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-3
+  rotate: false
+  xy: 793, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-0
+  rotate: false
+  xy: 859, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-1
+  rotate: false
+  xy: 925, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-2
+  rotate: false
+  xy: 1, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-3
+  rotate: false
+  xy: 67, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-4
+  rotate: false
+  xy: 133, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-5
+  rotate: false
+  xy: 199, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-0
+  rotate: false
+  xy: 265, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-1
+  rotate: false
+  xy: 331, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-2
+  rotate: false
+  xy: 397, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-0
+  rotate: false
+  xy: 463, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-1
+  rotate: false
+  xy: 529, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-2
+  rotate: false
+  xy: 595, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-3
+  rotate: false
+  xy: 661, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-0
+  rotate: false
+  xy: 727, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-1
+  rotate: false
+  xy: 793, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-2
+  rotate: false
+  xy: 859, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-3
+  rotate: false
+  xy: 925, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-4
+  rotate: false
+  xy: 1, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-left-5
+  rotate: false
+  xy: 67, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-left-0
+  rotate: false
+  xy: 133, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-left-1
+  rotate: false
+  xy: 199, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-left-2
+  rotate: false
+  xy: 265, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-left-0
+  rotate: false
+  xy: 331, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-left-1
+  rotate: false
+  xy: 397, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-left-2
+  rotate: false
+  xy: 463, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-left-3
+  rotate: false
+  xy: 529, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-0
+  rotate: false
+  xy: 595, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-1
+  rotate: false
+  xy: 661, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-2
+  rotate: false
+  xy: 727, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-3
+  rotate: false
+  xy: 793, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-4
+  rotate: false
+  xy: 859, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-up-left-5
+  rotate: false
+  xy: 925, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-left-0
+  rotate: false
+  xy: 1, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-left-1
+  rotate: false
+  xy: 67, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-up-left-2
+  rotate: false
+  xy: 133, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-left-0
+  rotate: false
+  xy: 199, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-left-1
+  rotate: false
+  xy: 265, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-left-2
+  rotate: false
+  xy: 331, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-up-left-3
+  rotate: false
+  xy: 397, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-0
+  rotate: false
+  xy: 463, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-1
+  rotate: false
+  xy: 529, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-2
+  rotate: false
+  xy: 595, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-3
+  rotate: false
+  xy: 661, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-4
+  rotate: false
+  xy: 727, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-walk-down-left-5
+  rotate: false
+  xy: 793, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-left-0
+  rotate: false
+  xy: 859, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-left-1
+  rotate: false
+  xy: 925, 199
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-hurt-down-left-2
+  rotate: false
+  xy: 1, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-left-0
+  rotate: false
+  xy: 67, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-left-1
+  rotate: false
+  xy: 133, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-left-2
+  rotate: false
+  xy: 199, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flyer-death-down-left-3
+  rotate: false
+  xy: 265, 265
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

@@ -8,6 +8,16 @@ test {
   useJUnitPlatform()
 }
 
+tasks.register('balanceBaseline', JavaExec) {
+  group = 'verification'
+  description = 'Exports controlled class and horde baselines without graphics or save writes.'
+  dependsOn testClasses
+  classpath = sourceSets.test.runtimeClasspath
+  mainClass = 'br.com.srsups.paradiseinhell.BalanceBaseline'
+  args rootProject.layout.buildDirectory.dir('balance-baseline').get().asFile.absolutePath
+  if (project.hasProperty('balanceHistoryFile')) args project.property('balanceHistoryFile')
+}
+
 dependencies {
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
   testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'

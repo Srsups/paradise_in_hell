@@ -4,9 +4,9 @@ import java.util.random.RandomGenerator;
 
 /** Chosen once per combat room per attempt; all goal types retain a positive chance. */
 public enum ArenaVariation {
-    BALANCED("Hordas mistas", "Tipos equilibrados", 0.50f, 0.35f),
-    FAST("Caçada veloz", "Mais rápidos", 0.35f, 0.50f),
-    TANK("Marcha pesada", "Mais tanks", 0.40f, 0.25f);
+    BALANCED("Hordas mistas", "Tipos equilibrados", 0.60f, 0.20f),
+    FAST("Caçada veloz", "Mais rápidos", 0.45f, 0.35f),
+    TANK("Marcha pesada", "Mais tanks", 0.50f, 0.15f);
     public final String label, description;
     private final float common, fast;
     ArenaVariation(String label, String description, float common, float fast) {

@@ -16,7 +16,9 @@ public final class PilotArt implements com.badlogic.gdx.utils.Disposable {
     public ExpandedArt expanded() { return expanded; }
     private final EquippedArt equipped=new EquippedArt(expanded.farmer());
     public EquippedArt equipped() { return equipped; }
-    private final ReactionArt reactions=new ReactionArt();
+    private final FlyerArt flyer=new FlyerArt();
+    public FlyerArt flyer(){return flyer;}
+    private final ReactionArt reactions=new ReactionArt(flyer);
     public ReactionArt reactions(){return reactions;}
     private final SceneryArt scenery=new SceneryArt();
     public SceneryArt scenery(){return scenery;}
@@ -52,6 +54,6 @@ public final class PilotArt implements com.badlogic.gdx.utils.Disposable {
     }
     public TextureRegion effect(String name,float progress) {return region(name+"-"+Math.min(3,Math.max(0,(int)(progress*4))));}
     public boolean disposed() { return disposed; }
-    @Override public void dispose() {if(!disposed){disposed=true;atlas.dispose();expanded.dispose();equipped.dispose();reactions.dispose();scenery.dispose();regions.clear();}}
+    @Override public void dispose() {if(!disposed){disposed=true;atlas.dispose();expanded.dispose();equipped.dispose();reactions.dispose();flyer.dispose();scenery.dispose();regions.clear();}}
 }
 

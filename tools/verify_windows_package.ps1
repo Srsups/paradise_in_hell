@@ -44,6 +44,12 @@ foreach ($diagnostic in @('--smoke-test', '--audio-smoke-test', '--display-smoke
     if ($output -notmatch 'PACKAGED_CHECKPOINT_SMOKE_OK') {
         throw 'The package did not confirm its checkpoint diagnostic.'
     }
+    if ($output -notmatch 'PACKAGED_REPORT_EXPORT_SMOKE_OK') {
+        throw 'The package did not confirm its report export diagnostic.'
+    }
+    if ($output -notmatch 'PACKAGED_FLYING_HORDE_SMOKE_OK') {
+        throw 'The package did not confirm its flying horde diagnostic.'
+    }
     $process.Dispose()
 }
-Write-Output 'WINDOWS_PACKAGE_OK: bundled Java, gameplay/menu/report/audio assets, checkpoints/resume/settlement, 24 native effects, streaming music via OpenAL null device, three native display modes and restored window, external working directory'
+Write-Output 'WINDOWS_PACKAGE_OK: bundled Java, flying hordes and sprites, gameplay/menu/report/audio assets, report exports, checkpoints/resume/settlement, 24 native effects, streaming music via OpenAL null device, three native display modes and restored window, external working directory'

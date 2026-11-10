@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-04",
+  "tool": "built-in image_gen",
+  "prompt": "prompt.txt",
+  "source": "flyer-original.png",
+  "sourceSha256": "c3edd3cc78ced5635e5dfd0729c170b6b622bb09935a065c98e5d88affbf4020",
+  "sourceDimensions": [1958, 803],
+  "requestedGrid": [13, 5],
+  "actualGrid": [12, 5],
+  "canonicalDirections": ["down", "up", "left", "up-left", "down-left"],
+  "frameColumns": {"walk": [0, 1, 2, 3, 4, 5], "hurt": [6, 7, 8], "death": [8, 9, 10, 11]},
+  "layoutNote": "The generated sheet contains twelve occupied columns. Hurt frame 2 is reused as the first death anticipation frame; no missing pose was synthesized.",
+  "registration": "registration.csv",
+  "registrationRule": "Central torso mass aligned for flight/hurt; death preserves recovery-frame row root so the authored fall remains. A single fixed scale is shared by every direction/state.",
+  "targetRoot": [32, 33.28],
+  "fixedScale": 0.35834123,
+  "operations": ["transparent-gutter crop", "constant-scale root registration", "nearest-neighbor reduction", "atlas packing"],
+  "preserveGeneratedAlpha": true,
+  "paintOrRecolor": false,
+  "packed": {"atlas": "../../../core/assets/visual/m7-flyer.atlas", "page": "../../../core/assets/visual/m7-flyer.png", "regions": 65, "logicalPosesWithMirrors": 104, "frameDimensions": [64, 64], "dimensions": [1024, 512], "rgbaBytes": 2097152, "sha256": "7d1d891c16fec45ebed73f5035f0fd663d5ad1293d23167bebf40864d052303e"},
+  "tooling": "../../FlyerAtlasBaker.java"
+}

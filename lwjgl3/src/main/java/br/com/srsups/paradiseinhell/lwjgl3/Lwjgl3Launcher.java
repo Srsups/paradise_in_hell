@@ -98,6 +98,10 @@ public class Lwjgl3Launcher {
                     session.applyUpgrade(br.com.srsups.paradiseinhell.Upgrade.CADENCIA); session.advance(4); session.end();
                     br.com.srsups.paradiseinhell.RunReport report=shared().settle(session,br.com.srsups.paradiseinhell.RunOutcome.ABANDONED,0);
                     setScreen(new br.com.srsups.paradiseinhell.RunReportScreen(this,report,()->new RefugeScreen(this)));
+                    if(!reportExports().export(shared().progress().history(),report))
+                        throw new IllegalStateException("Packaged report export did not complete in memory");
+                    getScreen().render(0);
+                    System.out.println("PACKAGED_REPORT_EXPORT_SMOKE_OK: report screen, local bundle serialization and memory-only storage");
                 }
                 if(frames==29) {
                     setScreen(new br.com.srsups.paradiseinhell.VideoSettingsScreen(this,
@@ -116,6 +120,7 @@ public class Lwjgl3Launcher {
                     getScreen().render(0);
                     System.out.println("PACKAGED_HUD_SMOKE_OK: scale panel, sample indicators and memory preferences");
                     verifyCheckpoint();
+                    verifyFlyingHorde();
                 }
                 if(audioSmoke && frames==31) {
                     if(!Gdx.audio.getClass().getSimpleName().contains("OpenAL") || !audio().available())
@@ -155,6 +160,36 @@ public class Lwjgl3Launcher {
                 setScreen(new br.com.srsups.paradiseinhell.CheckpointSaveErrorScreen(this,"Diagnóstico em memória",()->{}));
                 getScreen().render(0);
                 System.out.println("PACKAGED_CHECKPOINT_SMOKE_OK: memory JSON, resume screens and terminal settlement");
+            }
+            private void verifyFlyingHorde() {
+                var schedule=new br.com.srsups.paradiseinhell.HordeSchedule(42);
+                schedule.update(32,32,true,br.com.srsups.paradiseinhell.ArenaVariation.BALANCED,0);
+                if(schedule.allowsRegularSpawns())throw new IllegalStateException("Missing pre-horde quiet window");
+                var first=schedule.update(35,35,true,br.com.srsups.paradiseinhell.ArenaVariation.BALANCED,0);
+                if(first.isEmpty()||first.getFirst().kind()!=br.com.srsups.paradiseinhell.HordeSchedule.Kind.FLYER)
+                    throw new IllegalStateException("Missing first flying horde");
+                var source=new com.badlogic.gdx.graphics.Texture(br.com.srsups.paradiseinhell.Art.ATLAS);
+                var batch=new com.badlogic.gdx.graphics.g2d.SpriteBatch();
+                var actor=new br.com.srsups.paradiseinhell.Inimigo(220,130,source,visuals());
+                try {
+                    actor.configureFlyer();
+                    var navigation=new br.com.srsups.paradiseinhell.EnemyNavigation((x,y)->false);navigation.update(0,120,120);
+                    batch.getProjectionMatrix().setToOrtho2D(0,0,480,270);batch.begin();
+                    for(int frame=0;frame<br.com.srsups.paradiseinhell.FlyerArt.FLIGHT_FRAMES;frame++) {
+                        actor.update(br.com.srsups.paradiseinhell.FlyerArt.FRAME_SECONDS,navigation);actor.draw(batch);
+                    }
+                    actor.sofrerDano(1);actor.draw(batch);
+                    visuals().reactions().draw(batch,"flyer",br.com.srsups.paradiseinhell.ActorReaction.State.DEATH,
+                        br.com.srsups.paradiseinhell.ActorAnimation.Direction.DOWN_LEFT,1,260,130,actor.drawBodySize());
+                    batch.end();
+                    if(actor.getXpDrop()!=br.com.srsups.paradiseinhell.StygianFlyer.XP||actor.isArcher())
+                        throw new IllegalStateException("Flying role was not configured");
+                } finally {actor.dispose();batch.dispose();source.dispose();}
+                schedule.update(40,40,true,br.com.srsups.paradiseinhell.ArenaVariation.BALANCED,0);
+                if(schedule.allowsRegularSpawns())throw new IllegalStateException("Missing post-horde respite");
+                schedule.update(44,44,true,br.com.srsups.paradiseinhell.ArenaVariation.BALANCED,0);
+                if(!schedule.allowsRegularSpawns())throw new IllegalStateException("Regular spawning did not resume");
+                System.out.println("PACKAGED_FLYING_HORDE_SMOKE_OK: quiet windows, flying role, flight/hurt/death sprites and resumed pacing");
             }
         } : new Main(new br.com.srsups.paradiseinhell.GdxVideoBackend(new Lwjgl3WindowPlacement()));
         Lwjgl3ApplicationConfiguration configuration = getDefaultConfiguration();

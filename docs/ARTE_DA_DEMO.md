@@ -241,3 +241,24 @@ Windows aprovados.** As capturas em 960×540 e 800×600, critérios e comandos
 estão no documento do lote; a revisão em partidas completas continua pendente.
 O M6 geral continua em andamento, com expansão de cenários, encontros/interações
 de NPCs e revisão humana em partidas completas.
+
+Em **04/11/2026**, o [lote de hordas e voadores](MARCO_7_HORDAS_E_VOADORES.md)
+acrescenta o **Morcego do Estige**, com seis quadros de voo, três de dano e quatro
+de queda em cinco direções desenhadas, gerando oito por espelhamento. O desenho
+RGBA foi criado com `image_gen` integrado e preservado em
+`tools/art-sources/m7-flyer/flyer-original.png`; o
+[prompt completo](../tools/art-sources/m7-flyer/prompt.txt) acompanha a fonte.
+As asas têm movimento próprio, com contato definido pelo corpo central visível.
+
+O prompt pediu 13 colunas, mas a fonte tem 12. O último quadro de dano é
+reutilizado como antecipação da morte, sem sintetizar a pose ausente. O baker
+[FlyerAtlasBaker.java](../tools/FlyerAtlasBaker.java) faz apenas recorte de gutters,
+registro de raiz/escala constante e empacotamento com transparência preservada.
+[manifest.json](../tools/art-sources/m7-flyer/manifest.json) e
+[registration.csv](../tools/art-sources/m7-flyer/registration.csv) registram a
+grade real e a calibração. O atlas adicional tem 65 regiões de 64×64 em
+1024×512 (2 MiB RGBA), oferecendo 104 poses lógicas com espelhamentos.
+Não substitui a arte dos personagens existentes nem a abertura. Os 534 testes
+de lógica, a validação gráfica e a execução nativa Windows deste lote
+foram aprovados. Revisar em partidas a coesão dos bandos, voo/viradas,
+colisão corporal e leitura dos avisos.

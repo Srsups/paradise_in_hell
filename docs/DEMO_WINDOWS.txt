@@ -318,7 +318,7 @@ Hordas misturam tipos ou reunem inimigos iguais e continuam chegando.
 Rapidos: 1 s de arrancada a 70, depois 1 s de recuperacao a 24 unidades/s.
 Ciclos defasados entre inimigos; novo corpo proprio para os rapidos.
 A recuperacao permite reposicionar sem depender de dadivas de velocidade.
-Ate 2 rapidos por onda e 24 ativos; excedentes viram comuns/tanks.
+Ate 2 rapidos por onda normal e 16 ativos; excedentes normais viram comuns/tanks.
 O limite simultaneo nao muda a meta nem limita o total de inimigos da fase.
 Nao ha prazo para concluir nem quantidade total fixa de inimigos.
 Nao e preciso eliminar todos os inimigos fora da tela.
@@ -480,6 +480,7 @@ Clique ou 1, 2, 3, 4: escolher save ou profissao na pagina atual
 Clique ou 1, 2, 3: escolher dadiva, destino ou compra
 F5 nas telas seguras da campanha: salvar a tentativa e sair ao menu
 ENTER / DEL na retomada: continuar / pedir abandono com confirmacao
+E / Exportar historico, na tela do relatorio: copiar resultados para JSON e CSV locais
 F: abrir bau proximo
 E ou Enter apos cumprir metas: sair da arena
 TAB: consultar/fechar as dadivas da tentativa (setas: paginas)
@@ -523,8 +524,41 @@ Uma compra so desconta moedas se puder ser salva.
 Falha de leitura preserva os arquivos; compras e inicio de campanha ficam bloqueados ate resolver a gravacao.
 
 O tempo para durante pausa e escolhas.
+
+BALANCEAMENTO E EXPORTACAO (04/11/2026)
+A explosao da varinha acompanha a cadencia e usa o dano da arma para o impacto
+secundario. Melhorar Cadencia nao perde mais dano de area por alternar a recarga.
+Essa normalizacao reduz a potencia secundaria de builds aceleradas com arma Rara;
+o dano direto e o raio continuam iguais. Revisar o resultado em partidas.
+Na tela do relatorio (R no resultado/refugio), E ou EXPORTAR HISTORICO cria uma pasta
+em %LOCALAPPDATA%\ParadiseInHell\exports\run-history-<id>\.
+Ela contem history.json, attempts.csv e rooms.csv: ate 20 registros globais disponiveis
+e o relatorio aberto, se ele nao estiver no historico. Nao e um historico vitalicio.
+Exportar nao concede moedas nem altera saves; o resultado ou erro aparece na tela.
+Os arquivos ficam locais. Niveis iniciais do altar, variacao e revisao do balanceamento
+nao constam dos relatorios antigos; anote esses dados ao comparar partidas.
+
+HORDAS, VOADORES E GUARDIAO (04/11/2026)
+Um bando de um unico papel comeca aos 35 s da sala e depois a cada 40 s.
+A geracao normal para nos 3 s de aviso, 5 s de entrada do bando e 4 s de respiro.
+Inimigos ja vivos continuam agindo; pausa, TAB e escolhas congelam o relogio.
+As ondas normais voltam sem descarregar spawns acumulados. O total da fase continua ilimitado.
+Bandos entram agrupados pela mesma fronteira, sem indicadores fora da tela.
+Ate 18 comuns, 6 rapidos, 8 tanks ou 14 morcegos; posicoes invalidas/visiveis podem reduzir o bando.
+O limite de 16 rapidos vivos tambem vale para seu bando; posicoes barradas expiram.
+O primeiro bando da campanha apresenta o Morcego do Estige, com voo e sprites proprios.
+Ele atravessa estruturas internas e respeita os limites externos da sala.
+Conta como comum nas metas e concede 2 XP/2 Almas base na campanha; a demo nao concede moedas.
+Bases: vida 8, dano de contato 5 e velocidade 42. As asas visuais nao ampliam a colisao do corpo.
+Depois os quatro papeis entram em ciclos embaralhados. Na demo, 35 s comuns e 75 s morcegos.
+Guardiao: vida base 800, recuperacao 0,75/0,45 s, tres marcas na fase 2,
+rajada da fase 2 com 11 projeteis a 165 e investida a 230/310 unidades/s.
+O salto conserva aviso vermelho travado por 1 s e a caminhada reduzida na fase 2; use o dash.
+Ao testar, observe a presenca dos rapidos, a espera pela ultima meta e a XP coletada.
+O objetivo e dar variedade e espaco de recuperacao sem alongar a sala ou ampliar ganhos sem intencao.
+
 Audio/efeitos sao provisorios. Ainda faltam revisao sonora/artistica, outros encontros,
-inventario geral, proximas regioes e controles.
+inventario geral e proximas regioes.
 Os atlas foram gerados com IA. Refugio e as salas atuais ja tem temas proprios;
 novos NPCs e regioes ainda precisam de conteudo e arte.
 Movimento, retratos, baus e poderes foram ampliados; revisar o conjunto em partidas.

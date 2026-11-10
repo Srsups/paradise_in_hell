@@ -74,11 +74,15 @@ public class GameScreen extends ScreenAdapter {
     private final List<CombatTarget> targets = new ArrayList<>();
     private final java.util.Random combatRandom = new java.util.Random();
     private final EnemyWaves waves = new EnemyWaves();
+    private final HordeSchedule hordes;
+    private EnemySpawner.GroupFormation hordeFormation;
+    private long hordeFormationSeed=Long.MIN_VALUE;
     private boolean disposed,endingStarted,hideEndingPlayer;
     public GameScreen(Main game) { this(game, RunSession.demo()); }
     public GameScreen(Main game, RunSession session) {
         this.game = game;
         this.session = session;
+        hordes=new HordeSchedule(HordeSchedule.seedFor(session.id(),session.isDemo()?"demo":session.arena().id()));
         game.profiles().prepareRun(session);
         this.stats = session.player();
         videoPanel = new VideoPanel(game);
@@ -320,12 +324,38 @@ public class GameScreen extends ScreenAdapter {
         for (DamageNumber number : damageNumbers) number.update(delta);
         damageNumbers.removeIf(DamageNumber::deveSerRemovido);
 
+        spawnEnemies(delta);
+        spawnMiniBoss();
+        updateChests(delta);
+        if (stats.podeSubirDeNivel()) iniciarLevelUp();
+        tutorialPanel.advance(delta, tutorialContext());
+    }
+    private int activeFast(){return (int)enemies.stream().filter(enemy->!enemy.estaMorto()&&enemy.getType()==EnemyType.FAST).count();}
+    private void spawnEnemies(float delta) {
+        var batches=hordes.update(session.isDemo()?progress.elapsed():session.arenaElapsed(),progress.elapsed(),
+            !session.isDemo(),session.variation(),activeFast());
+        if(!hordes.allowsRegularSpawns()) {
+            spawnTimer=0;
+            for(var request:batches) {
+                if(hordeFormation==null||hordeFormationSeed!=request.formationSeed()) {
+                    hordeFormationSeed=request.formationSeed();
+                    hordeFormation=EnemySpawner.formation((OrthographicCamera)world.getCamera(),hordeFormationSeed);
+                }
+                int count=Math.min(request.count(),Math.max(0,160-enemies.size()));
+                if(request.kind()==HordeSchedule.Kind.FAST)count=Math.min(count,Math.max(0,EnemyWaves.MAX_FAST-activeFast()));
+                if(count>0)for(Inimigo enemy:hordeFormation.spawnBatch((OrthographicCamera)world.getCamera(),atlas,map,
+                    request.kind().enemyType(),navigation,game.visuals(),count,request.kind()==HordeSchedule.Kind.FLYER)) {
+                    enemy.applyDifficulty(session.enemyDifficulty());enemies.add(enemy);
+                }
+            }
+            return;
+        }
         spawnTimer += delta;
         while (spawnTimer >= session.spawnInterval()) {
             spawnTimer -= session.spawnInterval();
             int activeArchers = (int) enemies.stream().filter(Inimigo::isArcher).count(), waveArchers = 0;
             for (EnemyType type : waves.next(session.waveSize(), session.difficultyTime(), !session.isDemo(), session.variation(),
-                    (int) enemies.stream().filter(enemy -> enemy.getType() == EnemyType.FAST).count())) {
+                    activeFast())) {
                 // Bound simultaneous simulation work, never total enemies generated for the phase.
                 if (enemies.size() >= 160) break;
                 Inimigo enemy = EnemySpawner.spawnInimigoForaDaTela((OrthographicCamera) world.getCamera(), atlas, map, type, navigation, game.visuals());
@@ -337,15 +367,12 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
         }
-        spawnMiniBoss();
-        updateChests(delta);
-        if (stats.podeSubirDeNivel()) iniciarLevelUp();
-        tutorialPanel.advance(delta, tutorialContext());
     }
     private TutorialGuide.Context tutorialContext() {
         boolean active = state == State.PLAYING && !endingStarted && !controlsPanel.open() && !videoPanel.open() && !tutorialPanel.open() && !boonPanel.open() && !audioPanel.open();
         boolean priority = session.fury().warned() || exitNoticeTimer > 0 || chestFeedbackTimer > 0 || encounterFeedbackTimer > 0
-            || chests.nearby(player.x + 8, player.y + 8) != null || !game.profiles().error().isEmpty();
+            || chests.nearby(player.x + 8, player.y + 8) != null || !game.profiles().error().isEmpty()
+            || hordes.phase()==HordeSchedule.Phase.WARNING || hordes.phase()==HordeSchedule.Phase.HORDE;
         return new TutorialGuide.Context(TutorialGuide.Place.COMBAT, active, priority, session.arenaComplete(),
             !orbs.isEmpty() || stats.getXpAtual() > 0 || stats.getNivel() > 1, false);
     }
@@ -597,6 +624,10 @@ public class GameScreen extends ScreenAdapter {
         if(exitNoticeTimer>0)UiTheme.caption(batch,font,"Passagem liberada — "+primaryControl(ControlAction.INTERACT)+" para avançar",320,85,Color.GOLD);
         if(chestFeedbackTimer>0)UiTheme.caption(batch,font,chestFeedback,18,79,Color.GOLD);
         if(encounterFeedbackTimer>0)UiTheme.caption(batch,font,encounterFeedback,18,57,Color.GOLD);
+        if(hordes.phase()==HordeSchedule.Phase.WARNING || hordes.phase()==HordeSchedule.Phase.HORDE) {
+            String message=hordes.phase()==HordeSchedule.Phase.WARNING?"Um bando se aproxima: "+hordes.kind().label():"Horda de "+hordes.kind().label();
+            UiTheme.caption(batch,font,message,320,135,hordes.phase()==HordeSchedule.Phase.WARNING?Color.ORANGE:Color.GOLD);
+        }
         tutorialPanel.footer(batch, font, tutorialContext());
         if(!session.isDemo() && session.fury().warned()) {
             UiTheme.caption(batch,font,session.fury().level()>0?"Fúria "+session.fury().level()+"/3 — inimigos mais fortes, XP reduzida. "+primaryControl(ControlAction.INTERACT)+": avançar"

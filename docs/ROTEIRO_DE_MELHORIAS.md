@@ -71,6 +71,30 @@ recolher moedas novamente após recarga. **495 testes de lógica, integração O
 e execução nativa do pacote Windows aprovados.**
 [Contrato e limites](MARCO_7_CHECKPOINTS.md).
 
+Em **04/11/2026**, iniciou-se a rodada de **balanceamento do Submundo**:
+baseline controlado de classes/hordas por `core:balanceBaseline`, exportação
+local do histórico por E no relatório e correção da explosão da varinha que
+podia perder DPS ao melhorar Cadência. A normalização também reduz a potência
+secundária de builds Raras aceleradas e exige revisão em partidas.
+O perfil evoluído do baseline usa altar
+nível 3 e arma Rara; o piso das hordas não simula habilidade ou combate real.
+**515 testes de lógica, integração OpenGL e pacote Windows aprovados** neste lote. Planejar 18 partidas comparáveis
+na Média (novo/evoluído por profissão), depois dificuldades/rotas.
+[Condições, exportação e roteiro da coleta](MARCO_7_BALANCEAMENTO_SUBMUNDO.md).
+
+O feedback seguinte de **04/11/2026** mantém a prioridade no Submundo: Guardião
+ainda fraco e rápidos muito presentes. O lote de [hordas e voadores](MARCO_7_HORDAS_E_VOADORES.md)
+acrescenta bandos homogêneos periódicos, pausas dos spawns normais antes/depois,
+Morcego do Estige com arte/voo próprios e pressão maior do Guardião. Rápidos
+têm menor peso bruto nas ondas normais e limite de 16 vivos. As três metas
+continuam separadas. **534 testes de lógica passaram sem falhas ou erros**;
+OpenGL e execução nativa Windows deste lote aprovados. Os 515
+testes acima pertencem ao incremento anterior de baseline/exportação.
+O novo piso de fornecimento mostra uma espera maior pelos rápidos e mais XP
+potencial em algumas variações. A próxima coleta deve verificar esses efeitos
+junto à redução de proeminência, evitando alongar a sala ou ampliar ganhos
+de forma indesejada.
+
 ## Base existente e objetivo
 
 A campanha já permite atravessar o Estige, escolher Cinzas/Sombras ou o Guardião,
@@ -102,6 +126,7 @@ balanceamento ou produção de arte ainda presentes no Submundo.
 | HUD | Apenas informações essenciais; XP em barra, sem contador numérico durante o combate |
 | Mini-boss | Sons dos seus ataques apenas enquanto ele aparece na tela |
 | Guardião | Aumentar o desafio do encontro |
+| Feedback de 04/11: rápidos, voador e hordas | Reduzir a presença dos rápidos; bandos periódicos de um único papel com pausa dos spawns normais antes/depois; novo Morcego do Estige |
 | Ataques e poderes | Substituir a apresentação por linhas/formas por sprites e animações |
 | Tipografia e telas | Nova fonte, menus polidos e conversas com retrato/caixa de diálogo |
 | Personagens | Visuais distintos para inimigos e profissões, com mudanças de direção suaves |
@@ -123,7 +148,7 @@ salas do mesmo Submundo.
 | M4 — implementado; playtests pendentes | Seis dádivas gerais novas, Eco do Estige e três compras do altar | M2/M3 | 263 testes/OpenGL; validar builds, dificuldade e economia em partidas |
 | M5 — implementado; playtests pendentes | NPC de desafio, missão persistente e Fazendeiro desbloqueável | M2–M4 | 290 testes/OpenGL/Windows aprovados; validar utilidade das ferramentas e ritmo em partidas |
 | M6 — em andamento | Elenco/efeitos, diálogos, dano/morte e cenários/rotas implementados | M3–M5 | Cenários: 336 testes/0 falhas, OpenGL/Windows aprovados; revisar o conjunto em partidas |
-| M7 — tutorial/Centelha, vídeo, abertura, controles, escala do HUD, três modos e checkpoints implementados | Guia, desfecho, três modos, introdução, remapeamento, tamanho do HUD e retomada entre salas | M1–M6 | 495 testes/0 falhas ou erros, OpenGL e Windows aprovados; revisão humana, monitores reais e playtests antes da expansão |
+| M7 — tutorial/Centelha, vídeo, abertura, controles, HUD, checkpoints, balanceamento e hordas implementados | Guia, desfecho, três modos, introdução, remapeamento, HUD, retomada, exportação, comparativos e voadores | M1–M6 | 534 testes/0 falhas ou erros, OpenGL e Windows aprovados; revisão humana, monitores reais e playtests antes da expansão |
 
 Cada marco deve gerar um build jogável e um registro curto dos resultados.
 Não há estimativa de prazo fechada: medir o trabalho do primeiro pacote de arte
@@ -596,10 +621,14 @@ por dificuldade; produção de nova região reutiliza dados/assets e os mesmos s
 
 ## Próxima entrega concreta e decisões restantes
 
-Concluir a verificação dos checkpoints e então **balancear o Submundo em partidas
-completas**. Comparar personagens novos/evoluídos por profissão e dificuldade,
+Checkpoints verificados; concluir a verificação das **hordas periódicas, voador
+e Guardião** e continuar a rodada de balanceamento do Submundo em partidas
+completas, apoiada no baseline atualizado e na exportação de relatórios.
+Comparar personagens novos/evoluídos por profissão e dificuldade,
 incluindo Fazendeiro/Necromante, rotas diretas/opcionais, tempo até as passagens,
-pressão dos rápidos, Guardião e economia. Ajustes precisam registrar o problema
+pressão dos rápidos, Guardião e economia. Comparar também a espera pela última
+meta e a XP coletada: reduzir a proeminência dos rápidos não deve alongar a sala
+nem multiplicar ganhos sem intenção. Ajustes precisam registrar o problema
 observado e o efeito esperado para a rodada seguinte.
 
 Em seguida, revisar estabilidade e apresentação em sessões longas e hardware

@@ -51,13 +51,13 @@ class BossEncounterTest {
         powered.hurt(BossEncounter.MAX_HEALTH / 2);
         assertTrue(powered.enraged());
         until(powered, BossEncounter.Attack.MARKS, BossEncounter.State.TELEGRAPH, 120, 80);
-        assertEquals(2, powered.marks().size());
+        assertEquals(3, powered.marks().size());
         until(normal, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE, 120, 80);
         until(powered, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE, 120, 80);
-        assertEquals(5, normal.shots().size()); assertEquals(9, powered.shots().size());
+        assertEquals(5, normal.shots().size()); assertEquals(BossEncounter.MAX_SHOTS, powered.shots().size());
         for (int frame = 0; frame < 600; frame++) {
             normal.update(0.02f, 120, 80);
-            assertTrue(normal.shots().size() <= 9, "No unbounded accumulation of projectiles");
+            assertTrue(normal.shots().size() <= BossEncounter.MAX_SHOTS, "No unbounded accumulation of projectiles");
         }
     }
     @Test void defeatClearsHazardsStopsAttacksAndDoesNotReviveBoss() {

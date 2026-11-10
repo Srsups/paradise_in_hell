@@ -40,6 +40,11 @@ Comparar classes/builds em personagens novos e evoluídos, com/sem Atena e forja
 nas rotas direta/opcionais e nas três dificuldades.
 As seções seguintes descrevem as regras já implementadas.
 
+O feedback de **04/11/2026** gerou um novo lote de hordas periódicas, Morcego
+do Estige e Guardião mais exigente. Pesos, limites e ritmo atuais estão no
+[contrato do lote](MARCO_7_HORDAS_E_VOADORES.md). As tabelas do primeiro baseline
+permanecem históricas; não medem essa nova geração.
+
 ## Base visual e expansão do elenco atual
 
 Fontes e diálogo do M3 foram ampliados em 15/10/2026 com os visuais das oito
@@ -178,9 +183,33 @@ dádivas e níveis, dano efetivo por origem, causa da morte, ressurreições e m
 Setas laterais trocam páginas e acima/baixo percorrem tentativas do personagem.
 O arquivo compartilhado conserva as 20 últimas tentativas de todos os saves.
 
+Desde **04/11/2026**, **E / Exportar histórico** nessa tela gera `history.json`,
+`attempts.csv` e `rooms.csv` numa pasta própria em
+`%LOCALAPPDATA%\ParadiseInHell\exports\`. A exportação inclui o histórico global
+disponível e o relatório aberto se necessário; não altera saves, saldos ou
+recompensas. Campos históricos ausentes ficam vazios.
+
 Bloqueios, invulnerabilidade e overkill não entram no dano. Os dados permitem
 comparar classes, rotas e construções; não comprovam diversão automaticamente.
 Testar tentativas completas, avaliando também legibilidade, ritmo e vontade de repetir.
+
+O [primeiro lote de balanceamento do Submundo](MARCO_7_BALANCEAMENTO_SUBMUNDO.md)
+acrescenta a tarefa `core:balanceBaseline`: gera comparativos controlados de
+profissões/armas e do fornecimento de inimigos das metas, em
+`build/balance-baseline/`. O piso de fornecimento usa abates instantâneos e não
+equivale ao tempo de conclusão por um jogador. Os 17 relatórios locais iniciais,
+todos da Média e sem data/bases iniciais, orientam hipóteses sem provar dominância.
+
+Nesse lote, a varinha corrige uma recarga secundária maior que o intervalo do
+tiro: a explosão acompanha o intervalo e usa `getDano()/6` por vizinho válido.
+Isso evita perder DPS de área em certas melhorias de Cadência, preservando
+aproximadamente 1,33 DPS secundário por vizinho na base Comum. Força e raridade
+aumentam o impacto; Cadência aumenta a frequência. O raio permanece 18/32 para
+Comum/Rara, com linha de visão. Também reduz a potência secundária de builds
+Raras aceleradas: por exemplo, Cadência 5/6 muda de aproximadamente 5,16/3,98
+para 2,93/3,15 DPS por vizinho no cenário sem altar. É um ajuste de potência
+em grupos e precisa de partidas; não é somente uma correção sem efeito na força.
+As demais bases/economia aguardam partidas.
 
 ## Bases e bônus percentuais
 
@@ -323,10 +352,17 @@ ataques pelas costas e de chão. Solte o escudo para iniciar um dash.
 ## Pressão dos inimigos rápidos
 
 Ajuste motivado pelo relato de rápidos acumulando e exigindo dádivas de movimento.
-Agora há até **2 rápidos por onda** e **24 ativos por arena**. Novos rápidos que
+Agora há até **2 rápidos por onda normal** e **16 ativos por arena**. Novos rápidos que
 excederiam os limites são substituídos por comuns/tanks, conforme os pesos relativos
 da sala; a onda não encolhe. Na introdução da demo, o substituto ainda é comum.
 O total de inimigos ao longo da fase continua ilimitado e a meta de rápidos não muda.
+
+Na revisão de 04/11, os pesos brutos de comuns/rápidos/tanks nas ondas normais
+passam a **60/20/20%** em Hordas mistas, **45/35/20%** em Caçada veloz e
+**50/15/35%** em Marcha pesada. O novo bando dedicado gera até seis rápidos
+ao longo de cinco segundos; continua respeitando o limite de 16 vivos.
+Posições barradas desse bando expiram em vez de virar outro tipo ou acumular
+para depois. A redução de presença não muda o ciclo de movimento descrito abaixo.
 
 Cada rápido alterna **1 s a 70 unidades/s** e **1 s a 24 unidades/s**.
 Os ciclos são defasados por spawn, evitando arrancadas sincronizadas de toda a horda.
@@ -339,6 +375,36 @@ Pausa, Tab e escolhas também congelam esse ciclo.
 Os pesos de eventos continuam sendo os pesos do sorteio inicial. Os limites
 redistribuem parte dos resultados, então não representam a composição final
 exata de cada onda. Metas, risco das rotas e duração ainda precisam de playtests.
+
+## Hordas periódicas e Morcego do Estige
+
+Além das ondas normais, há um bando de um único papel aos **35 s** da sala e
+a cada **40 s** depois disso. A geração normal para 3 s antes, durante os 5 s
+de entrada do bando e por 4 s depois. Inimigos vivos continuam agindo. O timer
+normal é reiniciado, sem descarregar spawns acumulados. Pausa/Tab/painéis e
+escolhas congelam também esse relógio. As quantidades máximas são 18 comuns,
+6 rápidos, 8 tanks ou 14 morcegos; posições inválidas ou visíveis podem reduzir
+o grupo, preservando seu ponto de entrada e seu único papel.
+
+O primeiro bando da campanha é de morcegos. Esse novo papel conta para a meta
+de comuns e tem bases de **8 de vida, 5 de dano, velocidade 42, 2 XP e 2 Almas**.
+Vida/dano/recompensas recebem as regras já existentes da tentativa. O voo ignora
+estruturas internas e respeita os limites externos definidos pela sala; asas
+visuais não ampliam a colisão do corpo central. Não há uma quarta meta de abates.
+
+O Guardião passa a 800 de vida base, recuperação 0,75/0,45 s, três marcas na
+fase 2, rajada da fase 2 com 11 projéteis a 165 unidades/s e investida a 230/310
+unidades/s. Dano dos padrões e contrato do salto permanecem. Regras e limites:
+[hordas/voador](MARCO_7_HORDAS_E_VOADORES.md) e [Guardião](CHEFE_DO_SUBMUNDO.md).
+
+Na medição de fornecimento com abates instantâneos, o Estige em Hordas mistas
+passa de 94,86 s para 142,08 s de piso mediano até todas as metas. A XP base
+potencial média passa de 199,85 para 391,37. A meta de 30 rápidos termina por
+último na mediana; comuns e tanks continuam chegando durante a espera. Esses
+números não são duração ou ganho de uma partida real. A rodada seguinte deve
+verificar a redução de proeminência sem alongar a sala ou ampliar a XP de forma
+indesejada. O novo contrato traz a tabela das nove combinações e seus limites.
+Os 534 testes de lógica passaram; OpenGL e execução nativa do pacote Windows foram aprovados.
 
 ## Arqueiro do Estige
 

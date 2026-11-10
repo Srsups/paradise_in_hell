@@ -17,7 +17,7 @@ Rara ou superior. Eventos de hordas são anunciados na escolha de caminho:
 
 A arena é fechada, sem obstáculos interiores. A vida, profissão, arma e dádivas
 vêm da mesma tentativa. A arma forjada também é restaurada nas próximas runs;
-dádivas continuam temporárias. O chefe tem **500 pontos de vida base**, multiplicados
+dádivas continuam temporárias. O chefe tem **800 pontos de vida base**, multiplicados
 pela escala linear de tempo total e dificuldade da sala no momento da entrada.
 A vitória exige zerar a vida resultante, indicada no HUD.
 Tab consulta as dádivas escolhidas e pausa a luta; Esc ou Tab fecha a lista.
@@ -37,9 +37,9 @@ os padrões; o sorteio pode receber uma semente nos testes.
 
 | Padrão | Aviso e esquiva | Fase 1 | Fase 2 |
 | --- | --- | --- | --- |
-| Marcas do Tártaro | Círculos travam a posição no início do aviso; saia da área antes da explosão | Uma marca, 22 de dano | Duas marcas, 28 de dano |
-| Investida | Faixa indica o percurso fixo; saia para o lado | 200 unidades/s, 18 de dano | 275 unidades/s, 24 de dano |
-| Rajada | Arco e direção indicam o leque; desvie entre os projéteis | 5 projéteis a 115 unidades/s, 12 de dano | 9 projéteis a 150 unidades/s, 14 de dano |
+| Marcas do Tártaro | Círculos travam a posição no início do aviso; saia da área antes da explosão | Uma marca, 22 de dano | Três marcas, 28 de dano |
+| Investida | Faixa indica o percurso fixo; saia para o lado | 230 unidades/s, 18 de dano | 310 unidades/s, 24 de dano |
+| Rajada | Arco e direção indicam o leque; desvie entre os projéteis | 5 projéteis a 115 unidades/s, 12 de dano | 11 projéteis a 165 unidades/s, 14 de dano |
 | Queda do Tártaro | Chefe salta para fora da tela; círculo crescente persegue, trava vermelho no último segundo e explode na aterrissagem | Marcador a 45 unidades/s; 36 de dano | Marcador a 130 unidades/s; caminhada limitada a 24 unidades/s durante o vermelho; 48 de dano |
 
 Os danos da tabela são valores base: todos recebem o multiplicador da sala e
@@ -84,8 +84,8 @@ quando Raro; marcas no chão e a queda atravessam a defesa. A fúria por farming
 avançar e não cresce na luta. Regras: [CLASSES_SINERGIAS_E_DESTINO.md](CLASSES_SINERGIAS_E_DESTINO.md).
 
 A segunda fase começa com metade da vida ou menos. Os próximos ataques usam
-avisos de 0,75 s para marcas, investida e rajada e recuperação de 0,65 s,
-contra 0,95 s e 0,95 s da fase inicial. A queda conserva seus 3 s de aviso e 1 s vermelho.
+avisos de 0,75 s para marcas, investida e rajada e recuperação de 0,45 s,
+contra 0,95 s e 0,75 s da fase inicial. A queda conserva seus 3 s de aviso e 1 s vermelho.
 O HUD mostra fase, vida e padrão. Desde a expansão de 15/10/2026, o Guardião
 tem corpo próprio em oito direções, armadura escura/dourada e manto violeta.
 A revisão seguinte acrescentou respiração, corrida/ombrada, conjuração, salto e
@@ -105,7 +105,7 @@ rajada 5/7 → 5/9, velocidade 110/135 → 115/150 e dano de projétil
 
 Os avisos de preparação não foram encurtados. A queda mantém seu último segundo
 vermelho e a pressão com dash preservado. Nova rajada substitui projéteis da
-rajada anterior; a queda limpa os projéteis para sua esquiva. O teto é nove ativos.
+rajada anterior; a queda limpa os projéteis para sua esquiva. O teto atual é 11 ativos.
 Cada projétil conserva o dano de sua fase de origem, inclusive ao cruzar 50% da vida.
 
 O relatório R ganhou página por sala de chefe: tempo de fase 1/2, DPS efetivo médio,
@@ -118,15 +118,46 @@ Ainda medir diversão e dificuldade em partidas com classes de curto/longo alcan
 escudo e aliados, com/sem altar, forja, Atena e rotas. Os três modos estão no [M2](MARCO_2_DIFICULDADES_E_ECONOMIA.md), com vida/dano
 multiplicados sem encurtar os avisos.
 
+### Segunda revisão após o parecer do autor — 04/11/2026
+
+O Guardião ainda foi percebido como fraco nas partidas. Esta revisão aumenta a
+vida base de 500 para **800** e reduz as recuperações de 0,95/0,65 para
+**0,75/0,45 s**. A investida passa de 200/275 para **230/310 unidades/s**.
+Seu alvo e a faixa continuam fixados na preparação; o dano do impacto não muda.
+
+Na segunda fase, as marcas passam de duas para **três**: posição inicial do
+jogador e duas zonas deslocadas na direção horizontal/vertical do interior da
+arena. Todas aparecem antes do ataque e mantêm os centros travados. A distribuição
+deixa uma rota de saída; dash ajuda as profissões mais lentas a sair dos círculos.
+Não há dano novo fora das áreas sinalizadas.
+
+A rajada da segunda fase passa de nove para **11 projéteis**, a 165 unidades/s
+(antes 150). O leque conserva os mesmos **56° para cada lado** do eixo anunciado;
+o espaçamento entre projéteis fica menor. A primeira fase mantém cinco projéteis
+a 115 unidades/s. Uma rajada substitui a anterior e o salto limpa os projéteis.
+O dano de marcas, investida, projéteis, contato e queda foi preservado.
+
+Os avisos permanecem em 0,95/0,75 s. O salto continua com 3 s, círculo travado
+vermelho por 1 s e pressão de caminhada somente na segunda fase, preservando o
+dash. O ciclo introdutório continua apresentando os quatro padrões antes do
+embaralhamento. As recuperações ainda oferecem oportunidade de contra-ataque
+para espada, socos e escudo; o chefe pode ser atingido durante os avisos de chão.
+
+Os testes de regras acrescentam esquiva das marcas para todas as profissões em
+60/120 Hz, colisão única da investida em 60/120 Hz e no passo máximo de 0,05 s,
+leque dentro do aviso e limpeza antes do salto, além da maior frequência de
+ataques na segunda fase. Verificação final e partidas de duração/dificuldade
+serão registradas junto ao lote principal; a alteração não comprova equilíbrio.
+
 ## Verificação e próximo ajuste
 
 Os testes puros cobrem avisos, alvo travado, esquiva, colisão da investida,
 limites, segunda fase, expiração de projéteis e fim dos perigos após a derrota.
 A queda tem testes de crescimento, perseguição limitada, trava do centro,
 aterrissagem única, área de dano, exclusão de alvos no ar e retorno do ciclo.
-As oito profissões, inclusive com bônus máximos de velocidade, são verificadas:
+As nove profissões, inclusive com bônus máximos de velocidade, são verificadas:
 a caminhada sob pressão não sai da área e o dash no aviso vermelho permite escapar.
-A verificação gráfica testa as oito armas contra o chefe, preservação de poderes,
+A verificação gráfica testa armas contra o chefe, preservação de poderes,
 aura, pausa, redimensionamento, ressurreição e resultados de vitória/derrota.
 Também verifica a queda na tela real: chefe fora da arena, arma/aura sem acertar
 a posição vazia, movimento contínuo do círculo, pausa do crescimento, trava vermelha,

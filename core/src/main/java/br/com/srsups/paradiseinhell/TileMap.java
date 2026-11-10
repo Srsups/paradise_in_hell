@@ -63,6 +63,8 @@ public class TileMap {
         if (bounds != null && !bounds.contains(x, y)) return true;
         return solid((int)Math.floor(x/Tile.TILE_SIZE),(int)Math.floor(y/Tile.TILE_SIZE));
     }
+    /** Flight ignores inner scenery, while a bounded arena still limits its body. */
+    public boolean insideBounds(float x,float y) { return Float.isFinite(x)&&Float.isFinite(y)&&(bounds==null||bounds.contains(x,y)); }
     public void setBounds(float x, float y, float width, float height) {
         bounds = new Rectangle(x, y, width, height);
     }

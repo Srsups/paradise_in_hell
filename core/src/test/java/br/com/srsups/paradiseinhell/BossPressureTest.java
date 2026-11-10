@@ -42,7 +42,7 @@ class BossPressureTest {
             until(boss,BossEncounter.Attack.MARKS,BossEncounter.State.RECOVERY);
             float recoveryStart=boss.elapsed();
             until(boss,BossEncounter.Attack.CHARGE,BossEncounter.State.TELEGRAPH);
-            assertEquals(enraged?.65f:.95f,boss.elapsed()-recoveryStart,.025f);
+            assertEquals(enraged?BossEncounter.ENRAGED_RECOVERY_SECONDS:BossEncounter.RECOVERY_SECONDS,boss.elapsed()-recoveryStart,.025f);
         }
     }
     @Test void oldVolleyKeepsItsDamageSnapshotAfterTheHealthThresholdChanges() {
@@ -53,14 +53,14 @@ class BossPressureTest {
         assertEquals(12,boss.update(.01f,x,y,false));
         BossEncounter powered=new BossEncounter();powered.hurt(powered.health()/2);
         until(powered,BossEncounter.Attack.VOLLEY,BossEncounter.State.ACTIVE);
-        shot=powered.shots().get(4);
+        shot=powered.shots().get(BossEncounter.MAX_SHOTS/2);
         assertEquals(14,powered.update(.01f,shot.x,shot.y,false));
     }
     @Test void currentPatternsStayBoundedAndLeapRemovesOtherHazardsAcrossManyCycles() {
         BossEncounter boss=new BossEncounter(EnemyDifficulty.BASE,new Random(12));boss.hurt(boss.health()/2);
         for(int i=0;i<15000;i++) {
             boss.update(.01f,120,80,false);
-            assertTrue(boss.shots().size()<=9);
+            assertTrue(boss.shots().size()<=BossEncounter.MAX_SHOTS);
             if(boss.airborne())assertTrue(boss.shots().isEmpty());
         }
     }
@@ -83,6 +83,64 @@ class BossPressureTest {
         boss.update(2,120,80,false);assertEquals(5,fight.phaseTwoSeconds(),.001f);
         assertThrows(IllegalArgumentException.class,()->new BossFightSummary(-1,0,Map.of()));
         assertThrows(IllegalArgumentException.class,()->new BossFightSummary(0,0,Map.of(BossEncounter.Attack.LEAP,0)));
+    }
+    @Test void denserPhaseTwoMarksRemainLockedAndEveryProfessionCanTakeTheOpenEscapeRoute() {
+        for(int fps:new int[]{60,120})for(Profession profession:Profession.values())for(boolean phaseTwo:List.of(false,true)) {
+            BossEncounter boss=new BossEncounter();if(phaseTwo)boss.hurt(boss.health()/2);
+            until(boss,BossEncounter.Attack.MARKS,BossEncounter.State.TELEGRAPH);
+            List<BossEncounter.Mark> original=List.copyOf(boss.marks());
+            PlayerState player=new PlayerState(profession);
+            if(phaseTwo){assertTrue(player.canDash());player.tryDash();assertTrue(player.isDashing());}
+            float x=120,y=80,damage=0,step=1f/fps;
+            for(int frame=0;frame<fps*2&&boss.attack()==BossEncounter.Attack.MARKS;frame++) {
+                x-=player.movementSpeed()*step;
+                x=Math.max(BossEncounter.MIN_X+BossEncounter.PLAYER_RADIUS,x);
+                damage=Math.max(damage,boss.update(step,x,y,false));player.advance(step);
+                if(boss.attack()==BossEncounter.Attack.MARKS&&boss.state()==BossEncounter.State.TELEGRAPH)
+                    assertEquals(original,boss.marks(),"Warnings must not chase the escape");
+            }
+            assertEquals(0,damage,profession+" must escape phase "+(phaseTwo?2:1)+" at "+fps+"Hz");
+            assertEquals(phaseTwo?3:1,original.size());
+        }
+    }
+    @Test void fasterChargeKeepsItsSweptSingleHitAtTypicalAndClampedFrameSteps() {
+        for(float step:new float[]{1f/60,1f/120,.05f})for(boolean phaseTwo:List.of(false,true)) {
+            BossEncounter boss=new BossEncounter();if(phaseTwo)boss.hurt(boss.health()/2);
+            until(boss,BossEncounter.Attack.CHARGE,BossEncounter.State.TELEGRAPH);
+            float damage=0;int impactCount=0;
+            while(boss.state()==BossEncounter.State.TELEGRAPH||boss.state()==BossEncounter.State.ACTIVE) {
+                damage+=boss.update(step,120,80,false);
+                impactCount+=boss.hits().stream().filter(hit->hit.kind()==CombatHit.Kind.CONTACT).count();
+            }
+            assertEquals(phaseTwo?24:18,damage,.001f);
+            assertEquals(1,impactCount,"A faster charge must not tunnel or hit again on successive frames");
+        }
+    }
+    @Test void tighterPhaseTwoFanStillFitsTheAnnouncedConeAndCannotStackWithTheLeap() {
+        BossEncounter boss=new BossEncounter();boss.hurt(boss.health()/2);
+        until(boss,BossEncounter.Attack.VOLLEY,BossEncounter.State.ACTIVE);
+        assertEquals(BossEncounter.MAX_SHOTS,boss.shots().size());
+        for(BossEncounter.Shot shot:boss.shots()) {
+            double angle=Math.atan2(shot.y-boss.y(),shot.x-boss.x());
+            double offset=Math.atan2(Math.sin(angle-boss.aimAngle()),Math.cos(angle-boss.aimAngle()));
+            assertTrue(Math.abs(Math.toDegrees(offset))<=56.01,"No projectile may leave the visual warning cone");
+        }
+        boss.update(1.5f,460,210,false);
+        assertTrue(boss.shots().isEmpty(),"The following leap removes the fan instead of stacking hazards");
+        assertTrue(boss.airborne());
+    }
+    @Test void phaseTwoInitiatesMoreThreatsWithoutShorteningTheThreeSecondLeap() {
+        for(int fps:new int[]{60,120}) {
+            BossEncounter normal=new BossEncounter(EnemyDifficulty.BASE,new Random(4));
+            BossEncounter powered=new BossEncounter(EnemyDifficulty.BASE,new Random(4));powered.hurt(powered.health()/2);
+            for(int frame=0;frame<30*fps;frame++) {
+                normal.update(1f/fps,120,80,false);powered.update(1f/fps,120,80,false);
+            }
+            int normalAttacks=normal.summary().attacks().values().stream().mapToInt(Integer::intValue).sum();
+            int poweredAttacks=powered.summary().attacks().values().stream().mapToInt(Integer::intValue).sum();
+            assertTrue(poweredAttacks>normalAttacks,"Phase two needs more attacks, not only a larger life bar");
+            assertEquals(30,normal.elapsed(),.015f);assertEquals(30,powered.elapsed(),.015f);
+        }
     }
 }
 

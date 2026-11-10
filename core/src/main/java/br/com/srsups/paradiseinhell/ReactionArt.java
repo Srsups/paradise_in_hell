@@ -12,15 +12,23 @@ import java.util.Map;
 /** Authored reactions share one atlas. Living bodies own their mutable hitbox placements. */
 public final class ReactionArt implements com.badlogic.gdx.utils.Disposable {
     public static final String[] ACTORS={"cacador","ferreiro","vigilante","apostador","feiticeira","sacerdote",
-        "necromante","guerreiro","farmer-rake","farmer-scythe","common","fast","tank","archer","carrasco","guardian"};
+        "necromante","guerreiro","farmer-rake","farmer-scythe","common","fast","tank","archer","carrasco","guardian","flyer"};
     private final TextureAtlas atlas=new TextureAtlas(Gdx.files.internal("visual/m6-reactions.atlas"));
     private final Map<String,Frames> clips=new HashMap<>();
+    private final FlyerArt flyer;
+    private final boolean ownsFlyer;
     private record Frames(TextureRegion[] frames,SpriteHitbox.Shape[] masks,int count) {}
 
-    public ReactionArt() {
+    public ReactionArt(){this(new FlyerArt(),true);}
+    public ReactionArt(FlyerArt flyer){this(flyer,false);}
+    private ReactionArt(FlyerArt flyer,boolean ownsFlyer) {
+        this.flyer=java.util.Objects.requireNonNull(flyer);this.ownsFlyer=ownsFlyer;
         var pixels=new java.util.IdentityHashMap<Texture,Pixmap>();
         try {
             for(Texture texture:atlas.getTextures()) {
+                var data=texture.getTextureData();if(!data.isPrepared())data.prepare();pixels.put(texture,data.consumePixmap());
+            }
+            for(Texture texture:flyer.atlas().getTextures()) {
                 var data=texture.getTextureData();if(!data.isPrepared())data.prepare();pixels.put(texture,data.consumePixmap());
             }
             for(String actor:ACTORS)for(ActorReaction.State state:new ActorReaction.State[]{ActorReaction.State.HURT,ActorReaction.State.DEATH}) {
@@ -29,7 +37,7 @@ public final class ReactionArt implements com.badlogic.gdx.utils.Disposable {
                 var shapes=new HashMap<String,SpriteHitbox.Shape>();
                 for(var direction:ActorAnimation.Direction.values())for(int frame=0;frame<count;frame++) {
                     String name=actor+"-"+action(state)+"-"+direction.authored().key()+"-"+frame;
-                    var region=atlas.findRegion(name);
+                    var region=(actor.equals("flyer")?flyer.atlas():atlas).findRegion(name);
                     if(region==null)throw new IllegalStateException("Missing reaction sprite "+name);
                     TextureRegion sampled=region;
                     if(direction.mirrored()){sampled=new TextureRegion(region);sampled.flip(true,false);}
@@ -38,7 +46,8 @@ public final class ReactionArt implements com.badlogic.gdx.utils.Disposable {
                         Pixmap source=pixels.get(region.getTexture());
                         boolean unarmed=actor.equals("common")||actor.equals("fast")||actor.equals("tank");
                         masks[index]=shapes.computeIfAbsent(name,ignored->SpriteHitbox.Shape.fromAlpha(region.getRegionWidth(),region.getRegionHeight(),
-                            (x,y)->unarmed||EquippedArt.bodyPixel(x,y,region.getRegionWidth(),region.getRegionHeight())
+                            (x,y)->(actor.equals("flyer")?FlyerArt.bodyPixel(x,y,region.getRegionWidth(),region.getRegionHeight())
+                                :unarmed||EquippedArt.bodyPixel(x,y,region.getRegionWidth(),region.getRegionHeight()))
                                 ? source.getPixel(region.getRegionX()+x,region.getRegionY()+y)&255:0));
                     }
                 }
@@ -94,5 +103,5 @@ public final class ReactionArt implements com.badlogic.gdx.utils.Disposable {
             ReactionArt.this.draw(batch,actor,reaction.state(),direction,reaction.progress(),x,y,bodySize);
         }
     }
-    @Override public void dispose(){atlas.dispose();clips.clear();}
+    @Override public void dispose(){atlas.dispose();if(ownsFlyer)flyer.dispose();clips.clear();}
 }

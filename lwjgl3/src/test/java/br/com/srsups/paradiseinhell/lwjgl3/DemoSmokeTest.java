@@ -137,6 +137,8 @@ public final class DemoSmokeTest {
         HudSmoke.verify();
         DisplayModeSmoke.verify();
         CheckpointSmoke.verify();
+        BalanceSmoke.verify();
+        HordeSmoke.verify();
     }
     @SuppressWarnings("unchecked")
     private static void verifyCampaign(Main game) throws Exception {
@@ -185,6 +187,9 @@ public final class DemoSmokeTest {
         player.ganharXP(9);
         meetGoals(session);
         check(session.arenaComplete(), "All three quotas must unlock access");
+        // The scripted 400-second jump lands in a horde's respite; normal generation resumes afterward.
+        session.advance(HordeSchedule.RECOVERY_SECONDS+1);screen.render(0);
+        check(((HordeSchedule)field(screen,"hordes")).allowsRegularSpawns(),"The post-goal fixture reaches a regular spawn window");
         int before = enemies.size();
         set(screen, "spawnTimer", session.spawnInterval() * 2);
         screen.render(0);
@@ -279,7 +284,7 @@ public final class DemoSmokeTest {
         renderUntil(game, room, boss, BossEncounter.Attack.VOLLEY, BossEncounter.State.TELEGRAPH);
         screenshot("boss-phase-two");
         renderUntil(game, room, boss, BossEncounter.Attack.VOLLEY, BossEncounter.State.ACTIVE);
-        check(boss.shots().size() == 9, "The second phase must emit nine real projectiles");
+        check(boss.shots().size() == BossEncounter.MAX_SHOTS, "The second phase must emit its denser real projectile fan");
         room.render(0); screenshot("boss-volley");
 
         actor.x = boss.x() + 38 - 8; actor.y = boss.y() - 8;
@@ -567,7 +572,12 @@ public final class DemoSmokeTest {
         check(orb.x < originalX, "The magnet must move an actual XP crystal toward the player");
         for (int i = 0; i < 12 && !orbs.isEmpty(); i++) screen.render(0.05f);
         check(orbs.isEmpty() && session.player().getXpAtual() == 1, "The magnet must collect and award XP once");
-        session.advance(600); set(screen, "spawnTimer", session.spawnInterval() * 2); screen.render(0);
+        session.advance(600);screen.render(0);
+        HordeSchedule pacing=(HordeSchedule)field(screen,"hordes");
+        while(!pacing.allowsRegularSpawns()) {
+            session.advance(pacing.secondsRemaining()+.05f);screen.render(0);
+        }
+        set(screen, "spawnTimer", session.spawnInterval() * 2); screen.render(0);
         java.util.List<Inimigo> enemies = (java.util.List<Inimigo>) field(screen, "enemies");
         check(!enemies.isEmpty(), "Continuous hordes must still spawn with scaled stats");
         for (Inimigo enemy : enemies) {
@@ -1258,7 +1268,7 @@ public final class DemoSmokeTest {
             run.advance(15);
             set(room,"waves",new EnemyWaves(new java.util.Random(){@Override public float nextFloat(){return .6f;}}));
             set(room,"spawnTimer",run.spawnInterval()); room.render(0);
-            check(enemies.stream().filter(e->e.getType()==EnemyType.FAST).count()==24 && enemies.size()>24,
+            check(enemies.stream().filter(e->e.getType()==EnemyType.FAST).count()==EnemyWaves.MAX_FAST && enemies.size()>EnemyWaves.MAX_FAST,
                 "A crowded arena must replace excess fast spawns while continuing to produce other enemies");
             screenshot("fast-horde-balanced");
         } finally {game.dispose();}
@@ -1585,7 +1595,7 @@ public final class DemoSmokeTest {
                 check(run.difficulty() == mode && run.earnedSouls() == 0, "Restart preserves mode and clears pending rewards");
                 meetGoals(run); run.enterArena("portoes"); game.setScreen(new BossRoomScreen(game,run));
                 BossEncounter boss = (BossEncounter)field(game.getScreen(),"boss");
-                check(Math.abs(boss.maxHealth() - 500 * run.enemyDifficulty().healthMultiplier()) < .001f, "Boss room uses composed health scaling");
+                check(Math.abs(boss.maxHealth() - BossEncounter.MAX_HEALTH * run.enemyDifficulty().healthMultiplier()) < .001f, "Boss room uses composed health scaling");
                 check(Math.abs((float)field(boss,"damageMultiplier") - run.enemyDifficulty().damageMultiplier()) < .001f, "Boss attacks use composed damage scaling");
                 game.finishRun(run,RunOutcome.ABANDONED);
                 game.startDemo(); room = (GameScreen)game.getScreen(); run = (RunSession)field(room,"session");
@@ -2880,7 +2890,9 @@ public final class DemoSmokeTest {
                             boolean visible=(regionPixel(region,image,x,y)&255)>=96;if(visible)opaque++;
                             if(mask!=null) {
                                 boolean basic=actor.equals("common")||actor.equals("fast")||actor.equals("tank");
-                                boolean expected=visible && (basic||EquippedArt.bodyPixel(region.isFlipX()?63-x:x,y,64,64));
+                                int sourceX=region.isFlipX()?63-x:x;
+                                boolean expected=visible && (actor.equals("flyer")?FlyerArt.bodyPixel(sourceX,y,64,64)
+                                    :basic||EquippedArt.bodyPixel(sourceX,y,64,64));
                                 check(mask.contains(x+.5f,63-y+.5f)==expected,"Hurt contact must follow the visible body and exclude its weapon: "+actor);
                                 if(expected)body++;
                             }
@@ -2894,7 +2906,8 @@ public final class DemoSmokeTest {
                         && sample.isFlipX()==direction.mirrored(),"Right reactions must mirror their authored left direction");
                 }
             }
-            check(poses==896,"Every actor, farmer tool, direction, hurt and death frame must load in OpenGL");
+            check(poses==ReactionArt.ACTORS.length*ActorAnimation.Direction.values().length*(ReactionArt.count(ActorReaction.State.HURT)
+                +ReactionArt.count(ActorReaction.State.DEATH)),"Every actor, farmer tool, direction, hurt and death frame must load in OpenGL");
         } finally {for(var entry:pixels.entrySet())if(entry.getKey().getTextureData().disposePixmap())entry.getValue().dispose();}
     }
 

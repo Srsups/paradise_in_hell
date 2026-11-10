@@ -98,7 +98,7 @@ public final class CombatEffects {
             float radius = player.getWeaponRarity() == WeaponRarity.RARE ? 32 : 18;
             for (CombatTarget other : targets) {
                 if (other != target && other.targetable() && distance(target, other) <= radius * radius
-                    && line.clear(target.centerX(), target.centerY(), other.centerX(), other.centerY())) damageSink.deal(other,dps * 0.25f,DamageSource.SPELL);
+                    && line.clear(target.centerX(), target.centerY(), other.centerX(), other.centerY())) damageSink.deal(other,player.getDano() / 6,DamageSource.SPELL);
             }
             flash(Kind.SPELL, target.centerX(), target.centerY(), radius, 0);
         }

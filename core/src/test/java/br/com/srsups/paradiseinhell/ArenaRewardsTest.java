@@ -86,9 +86,9 @@ class ArenaRewardsTest {
             // Single-member waves measure the variation's raw weights without the per-wave fast cap.
             for (int i = 0; i < 40000; i++) for (EnemyType t : waves.next(1, 300, true, v)) { count[t.ordinal()]++; total++; }
             float[] expected = switch (v) {
-                case BALANCED -> new float[]{.50f, .35f, .15f};
-                case FAST -> new float[]{.35f, .50f, .15f};
-                case TANK -> new float[]{.40f, .25f, .35f};
+                case BALANCED -> new float[]{.60f, .20f, .20f};
+                case FAST -> new float[]{.45f, .35f, .20f};
+                case TANK -> new float[]{.50f, .15f, .35f};
             };
             for (int i = 0; i < 3; i++) assertEquals(expected[i], count[i] / (float) total, .025f);
             assertEquals(EnemyType.COMMON, new EnemyWaves(new Random(1)).next(1, 0, false, v).get(0));
